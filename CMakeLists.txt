@@ -23,11 +23,6 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 )
 
-add_executable(${CMAKE_PROJECT_NAME} main.cpp)
-
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/SDL/include)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/SDL/build/include)
-
 ExternalProject_Get_Property(SDL2 BINARY_DIR)
 
 set(SDL2_LIBS 
@@ -38,14 +33,26 @@ set(SDL2_LIBS
 
 find_library(SDL2_LIB libSDL2-2.0.so PATHS ${BINARY_DIR})
 
-message("Lib path ${SDL2_LIB}")
+if (SDL2_LIB)
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${SDL2_LIB})
+    add_executable(${CMAKE_PROJECT_NAME} main.cpp)
 
-# set rpath for executable to $ORIGIN (look in the same folder as itself)
-set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES 
-    INSTALL_RPATH "$ORIGIN/lib" 
-    BUILD_WITH_INSTALL_RPATH TRUE)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/SDL/include)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/SDL/build/include)
 
+    add_dependencies(${PROJECT_NAME} SDL2)
 
-install(FILES ${SDL2_LIBS} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/build/lib)
+    message("Lib path ${SDL2_LIB}")
+
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${SDL2_LIB})
+
+    # set rpath for executable to $ORIGIN (look in the same folder as itself)
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES 
+        INSTALL_RPATH "$ORIGIN/lib" 
+        BUILD_WITH_INSTALL_RPATH TRUE)
+
+    install(FILES ${SDL2_LIBS} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/build/lib)
+else()
+    message("SDL has not been built yet. Build now")
+endif()
+
