@@ -1,4 +1,8 @@
 # Base image for msbuild (uses Mono)
+# TODO: so far the lib and exe are built successfully, but don't work
+# The app just hangs there without any activity
+# If built on host machine (Ubuntu 22.04) everything works as expected
+# The image might be too old, try something newer?
 FROM didstopia/msbuild
 
 # Working directory
