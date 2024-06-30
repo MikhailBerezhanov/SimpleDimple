@@ -37,5 +37,6 @@ Use local workspace
 Use DockerFile
 ```
 After that VSCode should run the container in accordance with Dockerfile contents
+
 The project folder is mapped automatically into the container, 
 so any changes to sources are preserved and may be later accessed outside of the container
