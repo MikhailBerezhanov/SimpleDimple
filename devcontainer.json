@@ -1,0 +1,7 @@
+{
+    "name": "SDL Dev Container",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "."
+    }
+}
