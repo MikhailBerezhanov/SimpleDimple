@@ -1,7 +1,13 @@
-## Usage
+## SDL2
 Build SDL2:
+
+Build for Linux with clang (default):
 ```
-./build_sdl
+./build_sdl.sh
+```
+Build for Windows with MinGW (cross-compile)
+```
+./build_sdl.sh windows
 ```
 The following folders are created after that:
 ```
@@ -10,7 +16,7 @@ include
 lib
 share
 ```
-Use clang to build the executable, though GCC should work too
+It's also possible to build SDL on Windows with MSVC+Clang (see build_sdl.ps1)
 
 ### Configure
 ```

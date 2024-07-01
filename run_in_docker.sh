@@ -6,6 +6,8 @@ set -e
 
 # Container name
 CONTAINER="sdl-container"
+# Script args
+PLATFORM="$1"
 
 # Build image
 docker build -t "$CONTAINER" .
@@ -22,5 +24,5 @@ docker run -it --rm \
     -v $(pwd):/workspace \
     -w /workspace \
     "$CONTAINER" \
-    /bin/bash -c "./build_sdl.sh; /bin/bash"
+    /bin/bash -c "./build_sdl.sh $PLATFORM ; exec /bin/bash"
     

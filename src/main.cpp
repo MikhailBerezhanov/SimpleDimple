@@ -1,3 +1,7 @@
+//mingw-specific
+#ifndef SDL_MAIN_HANDLED
+#define SDL_MAIN_HANDLED 
+#endif
 // for initializing and shutdown functions
 #include <SDL2/SDL.h>
  
