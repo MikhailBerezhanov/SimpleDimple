@@ -9,15 +9,17 @@
 		"dockerfile": "../Dockerfile"
 	},
 	"customizations": {
-    // Configure properties specific to VS Code.
-    "vscode": {
-      // Add the IDs of extensions you want installed when the container is created.
-      "extensions": [
-        "ms-vscode.cpptools-extension-pack",
-        "ms-vscode.cmake-tools"
-      ]
-    }
-  }
+		// Configure properties specific to VS Code.
+		"vscode": {
+		// Add the IDs of extensions you want installed when the container is created.
+		"extensions": [
+			"ms-vscode.cpptools-extension-pack",
+			"ms-vscode.cmake-tools"
+		]
+		}
+	},
+	// remove container when stopped
+	"runArgs": ["--rm"]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
