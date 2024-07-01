@@ -15,7 +15,10 @@ set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 
 if(WIN32)
-    # For some reason for Windows we need 2 libs
+    # On Windows, these 2 libraries are so-called "import libraries"
+    # We need them to link against SDL2.dll located in the bin/ folder
+    # So we need to use these 2 .libs to link that SDL2.dll
+    # And then we need to ensure that the SDL2.dll is available at runtime 
     set(SDL_LIB_NAME "SDL2d" "SDL2maind")
 elseif(UNIX)
     set(SDL_LIB_NAME "libSDL2-2.0.so")
