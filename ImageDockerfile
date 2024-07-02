@@ -1,0 +1,63 @@
+FROM debian:buster-slim
+
+# Update and install cross-platform build dependencies
+# Ignore apt-get weird error related to https absence
+RUN apt-get update || true
+
+RUN apt-get install -y \
+    clang \
+    build-essential \
+    xutils-dev \
+    libreadline6-dev \
+    libncurses5-dev \
+    mingw-w64 \
+    cmake \
+    gdb \
+    libx11-dev \
+    xorg-dev \
+    libgl1-mesa-glx \
+    libglib2.0-0
+
+# Install other dependencies
+# python-pip git-core
+RUN apt-get install -y \
+    unzip \
+    zip \
+    curl \
+    bash
+
+# Create Unix/Windows directories for SDL libs and includes
+RUN mkdir -p /SDL/Unix
+RUN mkdir -p /SDL/Windows
+RUN mkdir -p /SDL/Sources
+
+# Copy SDL sources
+COPY src/SDL /SDL/Sources
+
+# Build SDL
+RUN mkdir -p /SDL/Sources/build
+
+WORKDIR /SDL/Sources/build
+RUN rm -rf ./*
+# Configure, build, install for Linux
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_INSTALL_PREFIX=/SDL/Unix
+
+RUN cmake --build . --config Release
+RUN cmake --build . --target install
+
+# Configure, build, install for Windows
+RUN rm -rf ./*
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+    -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres \
+    -DCMAKE_SYSTEM_NAME=Windows \
+    -DCMAKE_INSTALL_PREFIX=/SDL/Windows
+
+RUN cmake --build . --config Release
+RUN cmake --build . --target install
+
+WORKDIR /SDL
+# Cleanup
+RUN rm -rf Sources
