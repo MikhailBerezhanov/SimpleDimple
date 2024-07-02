@@ -1,6 +1,6 @@
 # Base image for msbuild (uses Mono)
 # FROM didstopia/msbuild
-FROM ubuntu
+FROM debian:buster-slim
 
 # Working directory
 ARG WORKING_DIRECTORY="/workspaces/SimpleDimple"
@@ -9,8 +9,8 @@ ARG WORKING_DIRECTORY="/workspaces/SimpleDimple"
 # Ignore apt-get weird error related to https absence
 RUN apt-get update || true
 # Add support for https
-RUN apt-get install -y apt-transport-https || true
-RUN apt-get install -y \
+# RUN apt-get install -y apt-transport-https || true
+RUN apt-get install --no-install-recommends -y \
     clang \
     build-essential \
     xutils-dev \
@@ -22,4 +22,4 @@ RUN apt-get install -y \
 
 # Install other dependencies
 # python-pip git-core
-RUN apt-get install -y unzip zip curl bash
+RUN apt-get install --no-install-recommends -y unzip zip curl bash

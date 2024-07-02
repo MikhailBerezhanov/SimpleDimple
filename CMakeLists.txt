@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16.0)
+cmake_minimum_required(VERSION 3.10.0)
 set(CMAKE_PROJECT_NAME test_game)
 
 project(${CMAKE_PROJECT_NAME} VERSION 0.1.0 LANGUAGES C CXX)
@@ -36,7 +36,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     endif()
 else()
     # Unix
-    set(SDL_LIB_NAME "libSDL2-2.0.so")
+    set(SDL_LIB_NAME "libSDL2.so")
 endif()
 
 add_executable(${EXEC_NAME} ${SOURCE_DIR}/main.cpp)
