@@ -9,13 +9,13 @@ project(${CMAKE_PROJECT_NAME} VERSION 0.1.0 LANGUAGES C CXX)
 
 # Set to "Windows" to force compile for Windows
 # set(CMAKE_SYSTEM_NAME "Windows")
+
 # Executable name
 set(EXEC_NAME "test_game")
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
@@ -35,8 +35,10 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         # mingw
         set(SDL_LIB_NAME "libSDL2main.a" "libSDL2.dll.a")
     endif()
+    set(SDL_LIB_DIR "/SDL/Windows/lib")
 else()
     # Unix
+    set(SDL_LIB_DIR "/SDL/Unix/lib")
     set(SDL_LIB_NAME "libSDL2.so")
 endif()
 
@@ -48,7 +50,7 @@ set(SDL_LIB "")
 
 # Collect all libs
 foreach(X IN LISTS SDL_LIB_NAME)
-    find_library(SDL_EL ${X} PATHS ${LIB_DIR})
+    find_library(SDL_EL ${X} PATHS ${SDL_LIB_DIR})
     list(APPEND SDL_LIB "${SDL_EL}")
     unset(SDL_EL CACHE)
 endforeach()
