@@ -16,12 +16,17 @@ set(EXEC_NAME "test_game")
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
+
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
-set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
+
+# Static linkage for stdlib to reduce dependencies
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 message("Configuring for ${CMAKE_SYSTEM_NAME}")
 message("Compiler ${CMAKE_CXX_COMPILER}")
+
+# Add executable
+add_executable(${EXEC_NAME} ${SOURCE_DIR}/main.cpp)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     # On Windows, these 2 libraries are so-called "import libraries"
@@ -30,40 +35,66 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     # And then we need to ensure that the SDL2.dll is available at runtime 
     if(${CMAKE_CXX_COMPILER} MATCHES "cl.exe")
         # clang
-        set(SDL_LIB_NAME "SDL2d" "SDL2maind")
+        set(SDL_LIB_NAMES "SDL2d" "SDL2maind")
     else()
-        # mingw
-        set(SDL_LIB_NAME "libSDL2main.a" "libSDL2.dll.a")
+        # mingw 
+        # From sdl2-config --libs
+        # !PUT THESE BEFORE SDL2 LIBS!
+        set(SDL_EXTRA_LIBS "-lmingw32" "-mwindows")
+        # libSDL2main.a libSDL2.dll.a
+        set(SDL_LIB_NAMES "SDL2main" "SDL2.dll")
     endif()
-    set(SDL_LIB_DIR "/SDL/Windows/lib")
+    set(SDL_PREFIX "/SDL/Windows")
+    # From sdl2-config --cflags
+    set(SDL_DEFINITIONS main=SDL_main)
 else()
     # Unix
-    set(SDL_LIB_DIR "/SDL/Unix/lib")
-    set(SDL_LIB_NAME "libSDL2.so")
+    set(SDL_PREFIX "/SDL/Unix")
+    set(SDL_EXTRA_LIBS "")
+    # libSDL2.so
+    set(SDL_LIB_NAMES "SDL2") 
+    # From sdl2-config --cflags
+    set(SDL_DEFINITIONS _REENTRANT) 
 endif()
 
-add_executable(${EXEC_NAME} ${SOURCE_DIR}/main.cpp)
-
-target_include_directories(${EXEC_NAME} PRIVATE ${INCLUDE_DIR})
-
-set(SDL_LIB "")
+set(SDL_LIB_DIR "${SDL_PREFIX}/lib")
+set(SDL_INCLUDE_DIR "${SDL_PREFIX}/include")
+set(SDL_LIBS "")
 
 # Collect all libs
-foreach(X IN LISTS SDL_LIB_NAME)
+foreach(X IN LISTS SDL_LIB_NAMES)
     find_library(SDL_EL ${X} PATHS ${SDL_LIB_DIR})
-    list(APPEND SDL_LIB "${SDL_EL}")
+    list(APPEND SDL_LIBS "${SDL_EL}")
     unset(SDL_EL CACHE)
 endforeach()
 
-message("Lib path ${SDL_LIB}")
+message("SDL Libs: ${SDL_EXTRA_LIBS} ${SDL_LIBS}")
+message("SDL defs: ${SDL_DEFINITIONS}")
 
-target_link_libraries(${EXEC_NAME} ${SDL_LIB})
+# Add definitions
+target_compile_definitions(${EXEC_NAME} PRIVATE ${SDL_DEFINITIONS})
+# Add include dirs
+target_include_directories(${EXEC_NAME} PRIVATE ${SDL_INCLUDE_DIR})
+# Link libs
+target_link_libraries(${EXEC_NAME} ${SDL_EXTRA_LIBS} ${SDL_LIBS})
 
-# set rpath for executable to $ORIGIN (look in the same folder as itself)
+# set rpath for executable relative to $ORIGIN (the executable location)
 set_target_properties(${EXEC_NAME} PROPERTIES 
     INSTALL_RPATH "$ORIGIN/../lib" 
     BUILD_WITH_INSTALL_RPATH TRUE)
 
+# Installation
 install(TARGETS ${EXEC_NAME} DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+# Installation - windows-specific
+    install(FILES ${SDL_PREFIX}/bin/SDL2.dll 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+else()
+# Installation - linux-specific
+    install(DIRECTORY ${SDL_PREFIX}/lib/ 
+        DESTINATION ${CMAKE_SOURCE_DIR}/lib
+        FILES_MATCHING PATTERN "*.so")
+endif()
 
 

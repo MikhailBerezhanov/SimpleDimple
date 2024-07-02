@@ -49,5 +49,9 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp"
     },
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "cmake.configureArgs": [
+        // comment this for Linux
+        "-DCMAKE_SYSTEM_NAME=Windows"
+    ]
 }
