@@ -21,13 +21,14 @@ set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
 
 message("Configuring for ${CMAKE_SYSTEM_NAME}")
+message("Compiler ${CMAKE_CXX_COMPILER}")
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     # On Windows, these 2 libraries are so-called "import libraries"
     # We need them to link against SDL2.dll located in the bin/ folder
     # So we need to use these 2 .libs to link that SDL2.dll
     # And then we need to ensure that the SDL2.dll is available at runtime 
-    if(${CMAKE_CXX_COMPILER} STREQUAL "clang++")
+    if(${CMAKE_CXX_COMPILER} MATCHES "cl.exe")
         # clang
         set(SDL_LIB_NAME "SDL2d" "SDL2maind")
     else()
