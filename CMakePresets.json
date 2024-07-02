@@ -1,0 +1,33 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 10,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "SDL for Linux",
+            "description": "Build app for Linux using Clang compiler",
+            "binaryDir": "${sourceDir}/build/",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "SDL for Windows",
+            "description": "Build app for Windows using MinGW compiler",
+            "binaryDir": "${sourceDir}/build/",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/usr/bin/x86_64-w64-mingw32-gcc",
+                "CMAKE_CXX_COMPILER": "/usr/bin/x86_64-w64-mingw32-g++",
+                "CMAKE_SYSTEM_NAME": "Windows",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ]
+}
