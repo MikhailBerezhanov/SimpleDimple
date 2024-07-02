@@ -2,9 +2,6 @@
 # FROM didstopia/msbuild
 FROM debian:buster-slim
 
-# Working directory
-ARG WORKING_DIRECTORY="/workspaces/SimpleDimple"
-
 # Update and install cross-platform build dependencies
 # Ignore apt-get weird error related to https absence
 RUN apt-get update || true
@@ -18,7 +15,11 @@ RUN apt-get install --no-install-recommends -y \
     libncurses5-dev \
     mingw-w64 \
     cmake \
-    gdb
+    gdb \
+    libx11-dev \
+    xorg-dev \
+    libgl1-mesa-glx \
+    libglib2.0-0
 
 # Install other dependencies
 # python-pip git-core

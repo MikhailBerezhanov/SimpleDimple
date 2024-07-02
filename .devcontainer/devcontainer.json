@@ -15,9 +15,19 @@
 		"extensions": [
 			"ms-vscode.cpptools-extension-pack",
 			"ms-vscode.cmake-tools"
-		]
+		],
+		// Set env variable $DISPLAY
+		"settings": {
+			"terminal.integrated.env.linux": {
+      			"DISPLAY": "${localEnv:DISPLAY}"
+			}
+		}
 		}
 	},
+	// Map X11 
+	"mounts": [
+    	"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+  	],
 	// remove container when stopped
 	"runArgs": ["--rm"]
 

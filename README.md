@@ -46,3 +46,13 @@ After that VSCode should run the container in accordance with Dockerfile content
 
 The project folder is mapped automatically into the container, 
 so any changes to sources are preserved and may be later accessed outside of the container
+
+## Xhost
+Allow Docker to use X11 server for video:
+```
+xhost +local:docker
+```
+Remove Docker from X11 list:
+```
+xhost -local:docker
+```
