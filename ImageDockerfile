@@ -1,3 +1,7 @@
+#
+#   This dockerfile is to be used only to create a working image with SDL support
+#
+
 FROM debian:buster-slim
 
 # Update and install cross-platform build dependencies
