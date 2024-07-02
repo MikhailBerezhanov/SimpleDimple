@@ -9,15 +9,27 @@
 		"dockerfile": "../Dockerfile"
 	},
 	"customizations": {
-    // Configure properties specific to VS Code.
-    "vscode": {
-      // Add the IDs of extensions you want installed when the container is created.
-      "extensions": [
-        "ms-vscode.cpptools-extension-pack",
-        "ms-vscode.cmake-tools"
-      ]
-    }
-  }
+		// Configure properties specific to VS Code.
+		"vscode": {
+		// Add the IDs of extensions you want installed when the container is created.
+		"extensions": [
+			"ms-vscode.cpptools-extension-pack",
+			"ms-vscode.cmake-tools"
+		],
+		// Set env variable $DISPLAY
+		"settings": {
+			"terminal.integrated.env.linux": {
+      			"DISPLAY": "${localEnv:DISPLAY}"
+			}
+		}
+		}
+	},
+	// Map X11 
+	"mounts": [
+    	"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+  	],
+	// remove container when stopped
+	"runArgs": ["--rm"]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
