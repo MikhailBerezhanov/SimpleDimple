@@ -17,6 +17,7 @@ if [[ "$PLATFORM" == "windows" ]]; then
     # Cross-compile for Windows with MinGW
     cmake .. -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+        -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres \
         -DCMAKE_SYSTEM_NAME=Windows \
         -DCMAKE_SYSTEM_PROCESSOR=x86_64 \
         -DCMAKE_INSTALL_PREFIX=${WORKING_DIRECTORY}

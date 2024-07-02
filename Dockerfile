@@ -7,7 +7,7 @@ FROM debian:buster-slim
 RUN apt-get update || true
 # Add support for https
 # RUN apt-get install -y apt-transport-https || true
-RUN apt-get install --no-install-recommends -y \
+RUN apt-get install -y \
     clang \
     build-essential \
     xutils-dev \
@@ -23,4 +23,9 @@ RUN apt-get install --no-install-recommends -y \
 
 # Install other dependencies
 # python-pip git-core
-RUN apt-get install --no-install-recommends -y unzip zip curl bash
+RUN apt-get install -y \
+    unzip \
+    zip \
+    curl \
+    bash \
+    openssh-client
