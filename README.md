@@ -95,7 +95,7 @@ lib/ - contains .so/.a libs for Linux or "import" libs for Windows
 
 ```libSDL2.so``` for Linux (Clang)
 
-```libSDL2main.a``` ```libSDL2.a``` for Windows (MinGW)
+```libSDL2main.a``` ```libSDL2.dll.a``` for Windows (MinGW)
 
 ```libSDL2d.lib``` ```libSDL2maind.lib``` for Windows (Clang)
 
