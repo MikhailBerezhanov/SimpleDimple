@@ -29,8 +29,6 @@ It's possible to use ```CMakePresets.json``` to configure project for Linux or W
 
 ```>Cmake: Select Configure preset```
 
-(though it's rather buggy and you need to manually clear build/ folder each time you switch the preset)
-
 After installation, the files should be arranged as follows:
 
 Linux:
