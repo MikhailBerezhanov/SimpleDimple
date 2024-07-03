@@ -70,7 +70,6 @@ enable_testing()
 set(GTEST_SOURCES "")
 # Specify include path for tests
 set(GTEST_INCLUDE_DIR 
-    ${SDL_INCLUDE_DIR} 
     ${INCLUDE_DIR}
 )
 # Add subdir with tests
