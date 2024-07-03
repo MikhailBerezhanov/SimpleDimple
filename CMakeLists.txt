@@ -8,12 +8,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Executable name
 set(EXEC_NAME ${CMAKE_PROJECT_NAME})
-# Sources location
-set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
-# Bin/runtime libs destination
-set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/bin)
 # Config header location
 set(CONFIG_DIR ${CMAKE_SOURCE_DIR}/config)
+# Sources location
+set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+# Include location
+set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+# Bin/runtime libs destination
+set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/bin)
 # Tests location
 set(TESTS_DIR ${CMAKE_SOURCE_DIR}/tests)
 # Static linkage for stdlib to reduce dependencies
@@ -25,10 +27,10 @@ set(SOURCES
 )
 
 # Include SDL assets configs (SDL_ASSETS_DIR, SDL_ASSETS_IMAGES_DIR,...)
-include(Assets.cmake)
+include(${CONFIG_DIR}/Assets.cmake)
 
 # Include platform-specific settings (SDL_PREFIX, SDL_LIB_DIR, SDL_LIB_NAMES, ...)
-include(PlatformSettings.cmake)
+include(${CONFIG_DIR}/SDLPlatformSettings.cmake)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     message(STATUS "DEBUG: Configuring for ${CMAKE_SYSTEM_NAME}")
@@ -41,7 +43,7 @@ endif()
 add_executable(${EXEC_NAME} ${SOURCES})
 
 # Generate config.h from config.h.in
-configure_file(${CONFIG_DIR}/config.h.in ${CONFIG_DIR}/config.h @ONLY)
+configure_file(${CONFIG_DIR}/config.h.in ${INCLUDE_DIR}/config.h @ONLY)
 
 # Add definitions
 target_compile_definitions(${EXEC_NAME} PRIVATE 
@@ -51,7 +53,7 @@ target_compile_definitions(${EXEC_NAME} PRIVATE
 # Add include dirs
 target_include_directories(${EXEC_NAME} PRIVATE 
     ${SDL_INCLUDE_DIR} 
-    ${CONFIG_DIR}
+    ${INCLUDE_DIR}
 )
 # Link libs
 target_link_libraries(${EXEC_NAME} ${SDL_EXTRA_LIBS} ${SDL_LIBS})
@@ -69,12 +71,12 @@ set(GTEST_SOURCES "")
 # Specify include path for tests
 set(GTEST_INCLUDE_DIR 
     ${SDL_INCLUDE_DIR} 
-    ${CONFIG_DIR}
+    ${INCLUDE_DIR}
 )
 # Add subdir with tests
 add_subdirectory(${TESTS_DIR}/utest)
 
 # Include installation rules
-include(InstallRules.cmake)
+include(${CONFIG_DIR}/InstallRules.cmake)
 
 

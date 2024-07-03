@@ -2,7 +2,6 @@ build/
 stamp/
 tmp/
 bin/
-include/
 lib/
 share/
 cmake/

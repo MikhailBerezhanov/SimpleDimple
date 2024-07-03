@@ -6,14 +6,35 @@
 $COMPILER = "clang-cl.exe"
 $WORKING_DIRECTORY = Get-Location
 
-New-Item -Force -ItemType Directory -Path "$WORKING_DIRECTORY/src/SDL/build"
-Set-Location "$WORKING_DIRECTORY/src/SDL/build"
+function BuildLibrary {
 
-cmake .. -DCMAKE_BUILD_TYPE=Release \
+    param (
+        $LibrarySource
+    )
+
+    $ErrorActionPreference = "Stop"
+
+    New-Item -Force -ItemType Directory -Path $WORKING_DIRECTORY/$LibrarySource/build
+    Set-Location $WORKING_DIRECTORY/$LibrarySource/build
+
+    Remove-Item $WORKING_DIRECTORY/$LibrarySource/build/* -Recurse -Force
+
+    Write-Output "Building $LibrarySource"
+
+    cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER=$COMPILER \
     -DCMAKE_SYSTEM_NAME=Windows \
     -DCMAKE_SYSTEM_PROCESSOR=x86_64 \
     -DCMAKE_INSTALL_PREFIX=$WORKING_DIRECTORY
     
-cmake --build . --config Release
-cmake --build . --target install
+    cmake --build . --config Release
+    cmake --build . --target install
+
+}
+
+BuildLibrary "SDL"
+
+BuildLibrary "SDL_Image"
+
+
+

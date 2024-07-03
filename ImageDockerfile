@@ -50,7 +50,7 @@ RUN mkdir -p /SDL/Sources
 #### SDL ####
 
 # Copy SDL sources
-COPY src/SDL /SDL/Sources
+COPY SDL /SDL/Sources
 
 RUN mkdir -p /SDL/Sources/build
 
@@ -82,7 +82,7 @@ RUN rm -rf Sources/*
 #### SDL_Image ####
 
 # Copy SDL_Image sources 
-COPY src/SDL_Image /SDL/Sources
+COPY SDL_Image /SDL/Sources
 
 RUN mkdir -p /SDL/Sources/build
 
