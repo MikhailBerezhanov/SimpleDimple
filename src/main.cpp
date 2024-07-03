@@ -37,6 +37,8 @@ int main(int argc, char *args[])
 			throw std::runtime_error("SDL_CreateRenderer error! SDL_Error: " + std::string(SDL_GetError()));
 		}
 
+		std::cout << "Created renderer" << std::endl; 
+
 		std::string logo_file = std::string(SDL_ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 		// load bmp
 		auto logo_surface = IMG_Load(logo_file.c_str());
