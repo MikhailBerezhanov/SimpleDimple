@@ -80,7 +80,7 @@ target_link_libraries(${EXEC_NAME} ${SDL_EXTRA_LIBS} ${SDL_LIBS})
 
 # set rpath for executable relative to $ORIGIN (the executable location)
 set_target_properties(${EXEC_NAME} PROPERTIES 
-    INSTALL_RPATH "$ORIGIN/../lib" 
+    INSTALL_RPATH "$ORIGIN" 
     BUILD_WITH_INSTALL_RPATH TRUE)
 
 # Installation
@@ -93,8 +93,10 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 else()
 # Installation - linux-specific
     install(DIRECTORY ${SDL_PREFIX}/lib/ 
-        DESTINATION ${CMAKE_SOURCE_DIR}/lib
-        FILES_MATCHING PATTERN "*.so")
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin
+        FILES_MATCHING PATTERN "*.so" PATTERN "*.so*"
+        PATTERN "cmake" EXCLUDE
+        PATTERN "pkgconfig" EXCLUDE)
 endif()
 
 

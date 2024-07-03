@@ -37,7 +37,6 @@ Linux:
 ```
 bin/
     your_app_executable
-lib/
     SDL2.so
     ...all_other_sdl_libs.so
 ```
@@ -101,8 +100,7 @@ lib/ - contains .so/.a libs for Linux or "import" libs for Windows
 
 Runtime lib for Windows ```SDL2.dll``` should be in the same folder as the executable
 
-Runtime libs for Linux ```.so``` should be placed in ```$ORIGIN/..lib/``` folder, 
-where ```$ORIGIN``` is the executable location 
+Runtime libs for Linux ```.so``` should be placed in the same folder as the executable
 
 You can override ```SDL_PREFIX``` with cmake cli parameters to specify SDL installation location:
 

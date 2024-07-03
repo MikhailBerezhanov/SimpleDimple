@@ -9,7 +9,7 @@
         {
             "name": "SDL for Linux",
             "description": "Build app for Linux using Clang compiler",
-            "binaryDir": "${sourceDir}/build/",
+            "binaryDir": "${sourceDir}/build/Linux",
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "/usr/bin/clang",
@@ -20,7 +20,7 @@
         {
             "name": "SDL for Windows",
             "description": "Build app for Windows using MinGW compiler",
-            "binaryDir": "${sourceDir}/build/",
+            "binaryDir": "${sourceDir}/build/Windows",
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "/usr/bin/x86_64-w64-mingw32-gcc",
