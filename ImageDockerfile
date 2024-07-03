@@ -46,7 +46,6 @@ RUN rm /tmp/cmake-3.21.0-linux-x86_64.tar.gz
 RUN mkdir -p /SDL/Unix
 RUN mkdir -p /SDL/Windows
 RUN mkdir -p /SDL/Sources
-RUN mkdir -p /SDL/Sources_Image
 
 #### SDL ####
 
