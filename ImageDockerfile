@@ -15,12 +15,19 @@ RUN apt-get install -y \
     libreadline6-dev \
     libncurses5-dev \
     mingw-w64 \
-    cmake \
     gdb \
     libx11-dev \
     xorg-dev \
     libgl1-mesa-glx \
     libglib2.0-0
+
+# For SDL_Image (Linux only, for MinGW there's no Windows substitutes)
+# TODO: Do something with that
+RUN apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libtiff-dev \
+    libwebp-dev
 
 # Install other dependencies
 # python-pip git-core
@@ -30,15 +37,22 @@ RUN apt-get install -y \
     curl \
     bash
 
+# Install CMake 3.21
+ADD https://cmake.org/files/v3.21/cmake-3.21.0-linux-x86_64.tar.gz /tmp
+RUN tar -xzf /tmp/cmake-3.21.0-linux-x86_64.tar.gz -C /usr/local --strip-components=1 --no-same-owner 
+RUN rm /tmp/cmake-3.21.0-linux-x86_64.tar.gz
+
 # Create Unix/Windows directories for SDL libs and includes
 RUN mkdir -p /SDL/Unix
 RUN mkdir -p /SDL/Windows
 RUN mkdir -p /SDL/Sources
+RUN mkdir -p /SDL/Sources_Image
+
+#### SDL ####
 
 # Copy SDL sources
 COPY src/SDL /SDL/Sources
 
-# Build SDL
 RUN mkdir -p /SDL/Sources/build
 
 WORKDIR /SDL/Sources/build
@@ -60,6 +74,38 @@ RUN cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/SDL/Windows
 
 RUN cmake --build . --config Release
+RUN cmake --build . --target install
+
+WORKDIR /SDL
+# Cleanup
+RUN rm -rf Sources/*
+
+#### SDL_Image ####
+
+# Copy SDL_Image sources 
+COPY src/SDL_Image /SDL/Sources
+
+RUN mkdir -p /SDL/Sources/build
+
+WORKDIR /SDL/Sources/build
+
+RUN rm -rf ./*
+# Install for Linux
+RUN cmake .. -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_INSTALL_PREFIX=/SDL/Unix
+
+RUN cmake --build .
+RUN cmake --build . --target install
+
+RUN rm -rf ./*
+
+# Install for Windows (MinGW)
+RUN cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+    -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres \
+    -DCMAKE_SYSTEM_NAME=Windows \
+    -DCMAKE_INSTALL_PREFIX=/SDL/Windows
+
+RUN cmake --build .
 RUN cmake --build . --target install
 
 WORKDIR /SDL
