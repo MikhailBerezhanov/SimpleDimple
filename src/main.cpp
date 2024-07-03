@@ -1,17 +1,15 @@
 
 // for initializing and shutdown functions
 #include <SDL2/SDL.h>
-
 // for rendering images and graphics on screen
-// #include <SDL2/SDL_image.h>
-
+#include <SDL2/SDL_image.h>
 // for using SDL_Delay() functions
 #include <SDL2/SDL_timer.h>
+// for SDL paths' generated definitions
+#include "config.h"
 
 #include <iostream>
 #include <stdexcept>
-
-#include "config.h"
 
 // Screen dimension constants
 const int SCREEN_WIDTH = 1000;
@@ -35,10 +33,13 @@ int main(int argc, char *args[])
 		}
 
 		auto rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+		if (! rend) {
+			throw std::runtime_error("SDL_CreateRenderer error! SDL_Error: " + std::string(SDL_GetError()));
+		}
 
 		std::string logo_file = std::string(SDL_ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 		// load bmp
-		auto logo_surface = SDL_LoadBMP(logo_file.c_str());
+		auto logo_surface = IMG_Load(logo_file.c_str());
 
 		// convert bmp to display format
 		auto tex = SDL_CreateTextureFromSurface(rend, logo_surface);

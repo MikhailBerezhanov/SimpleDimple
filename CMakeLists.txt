@@ -58,7 +58,7 @@ target_link_libraries(${EXEC_NAME} ${SDL_EXTRA_LIBS} ${SDL_LIBS})
 # Linux-only, ignored for windows
 set_target_properties(${EXEC_NAME} PROPERTIES 
     INSTALL_RPATH "$ORIGIN" 
-    BUILD_WITH_INSTALL_RPATH FALSE) # TRUE
+    BUILD_WITH_INSTALL_RPATH FALSE)
 
 # Include installation rules
 include(InstallRules.cmake)

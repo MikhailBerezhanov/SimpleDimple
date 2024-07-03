@@ -3,11 +3,12 @@ install(TARGETS ${EXEC_NAME} DESTINATION ${INSTALL_DIR})
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     # Installation - windows-specific
-    install(FILES ${SDL_PREFIX}/bin/SDL2.dll 
-        DESTINATION ${INSTALL_DIR})
+    install(DIRECTORY ${SDL_BIN_DIR}
+        DESTINATION ${INSTALL_DIR}
+        FILES_MATCHING PATTERN "*.dll")
 else()
     # Installation - linux-specific
-    install(DIRECTORY ${SDL_PREFIX}/lib/ 
+    install(DIRECTORY ${SDL_LIB_DIR}
         DESTINATION ${INSTALL_DIR}
         FILES_MATCHING PATTERN "*.so" PATTERN "*.so*"
         PATTERN "cmake" EXCLUDE
