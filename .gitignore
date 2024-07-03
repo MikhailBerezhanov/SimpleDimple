@@ -7,3 +7,4 @@ lib/
 share/
 cmake/
 licenses/
+config/config.h

@@ -11,9 +11,11 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "config.h"
+
 // Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1000;
+const int SCREEN_HEIGHT = 1000;
 
 int main(int argc, char *args[])
 {
@@ -32,39 +34,105 @@ int main(int argc, char *args[])
 			throw std::runtime_error("SDL_CreateWindow error! SDL_Error: " + std::string(SDL_GetError()));
 		}
 
-		auto screenSurface = SDL_GetWindowSurface(window);
-		if (!screenSurface){
-			throw std::runtime_error("Init surface error! SDL_Error: " + std::string(SDL_GetError()));
-		}
-		// Fill the surface white
-		SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
+		auto rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-		// Update the surface
-		SDL_UpdateWindowSurface(window);
+		std::string logo_file = std::string(SDL_ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
+		// load bmp
+		auto logo_surface = SDL_LoadBMP(logo_file.c_str());
 
-		// Hack to get window to stay up
-		SDL_Event e;
+		// convert bmp to display format
+		auto tex = SDL_CreateTextureFromSurface(rend, logo_surface);
+
+		// clear mem
+		SDL_FreeSurface(logo_surface);
+
+		// connect texture with dest to control position
+		SDL_Rect dest;
+		SDL_QueryTexture(tex, nullptr, nullptr, &dest.w, &dest.h);
+
+		// adjust height and width of image box
+		dest.w /= 6;
+		dest.h /= 6;
+
+		// sets initial x-position of object
+		dest.x = (1000 - dest.w) / 2;
+	
+		// sets initial y-position of object
+		dest.y = (1000 - dest.h) / 2;
+	
+		// speed of box
+		int speed = 300;
+
+		SDL_Event event;
 		bool quit = false;
 		while (!quit)
 		{
-			while (SDL_PollEvent(&e))
+			while (SDL_PollEvent(&event))
 			{
-				if (e.type == SDL_QUIT)
-				{
-					quit = true;
-				}
-				if (e.type == SDL_KEYDOWN)
-				{
-					quit = true;
-				}
-				if (e.type == SDL_MOUSEBUTTONDOWN)
-				{
-					quit = true;
+				switch (event.type) {
+					case SDL_QUIT:{
+						quit = true;
+						break;
+					}
+					case SDL_KEYDOWN: {
+						switch (event.key.keysym.scancode) {
+							case SDL_SCANCODE_W:
+							case SDL_SCANCODE_UP:
+								dest.y -= speed / 30;
+								break;
+							case SDL_SCANCODE_A:
+							case SDL_SCANCODE_LEFT:
+								dest.x -= speed / 30;
+								break;
+							case SDL_SCANCODE_S:
+							case SDL_SCANCODE_DOWN:
+								dest.y += speed / 30;
+								break;
+							case SDL_SCANCODE_D:
+							case SDL_SCANCODE_RIGHT:
+								dest.x += speed / 30;
+								break;
+							default:
+								break;
+						}
+					}
 				}
 			}
+			// right boundary
+			if (dest.x + dest.w > 1000)
+				dest.x = 1000 - dest.w;
+	
+			// left boundary
+			if (dest.x < 0)
+				dest.x = 0;
+	
+			// bottom boundary
+			if (dest.y + dest.h > 1000)
+				dest.y = 1000 - dest.h;
+	
+			// upper boundary
+			if (dest.y < 0)
+				dest.y = 0;
+	
+			// clears the screen
+			SDL_RenderClear(rend);
+			SDL_RenderCopy(rend, tex, NULL, &dest);
+	
+			// triggers the double buffers
+			// for multiple rendering
+			SDL_RenderPresent(rend);
+	
+			// calculates to 60 fps
+			SDL_Delay(1000 / 60);
 		}
 
 		std::cout << "End of loop!" << std::endl;
+
+		// destroy texture
+		SDL_DestroyTexture(tex);
+	
+		// destroy renderer
+		SDL_DestroyRenderer(rend);
 
 		// Destroy window
 		SDL_DestroyWindow(window);

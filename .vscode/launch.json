@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) Launch Linux",
             "type": "cppdbg",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/build/test_game",
+            "program": "${workspaceFolder}/build/Linux/test_game",
             "args": [],
             "MIMode": "gdb",
             "setupCommands": [

@@ -7,11 +7,13 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Executable name
-set(EXEC_NAME "${CMAKE_PROJECT_NAME}")
+set(EXEC_NAME ${CMAKE_PROJECT_NAME})
 # Sources location
-set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
+set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 # Bin/runtime libs destination
-set(INSTALL_DIR "${CMAKE_SOURCE_DIR}/bin")
+set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/bin)
+# Config header location
+set(CONFIG_DIR ${CMAKE_SOURCE_DIR}/config)
 # Static linkage for stdlib to reduce dependencies
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
@@ -20,19 +22,11 @@ set(SOURCES
     ${SOURCE_DIR}/main.cpp
 )
 
-# Include platform-specific settings
+# Include SDL assets configs (SDL_ASSETS_DIR, SDL_ASSETS_IMAGES_DIR,...)
+include(Assets.cmake)
+
+# Include platform-specific settings (SDL_PREFIX, SDL_LIB_DIR, SDL_LIB_NAMES, ...)
 include(PlatformSettings.cmake)
-
-set(SDL_LIB_DIR "${SDL_PREFIX}/lib")
-set(SDL_INCLUDE_DIR "${SDL_PREFIX}/include")
-set(SDL_LIBS "")
-
-# Collect all SDL libs
-foreach(X ${SDL_LIB_NAMES})
-    find_library(SDL_EL ${X} PATHS ${SDL_LIB_DIR})
-    list(APPEND SDL_LIBS "${SDL_EL}")
-    unset(SDL_EL CACHE)
-endforeach()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     message(STATUS "DEBUG: Configuring for ${CMAKE_SYSTEM_NAME}")
@@ -44,10 +38,19 @@ endif()
 # Add executable
 add_executable(${EXEC_NAME} ${SOURCES})
 
+# Generate config.h from config.h.in
+configure_file(${CONFIG_DIR}/config.h.in ${CONFIG_DIR}/config.h @ONLY)
+
 # Add definitions
-target_compile_definitions(${EXEC_NAME} PRIVATE ${SDL_DEFINITIONS})
+target_compile_definitions(${EXEC_NAME} PRIVATE 
+    ${SDL_DEFINITIONS} 
+)
+
 # Add include dirs
-target_include_directories(${EXEC_NAME} PRIVATE ${SDL_INCLUDE_DIR})
+target_include_directories(${EXEC_NAME} PRIVATE 
+    ${SDL_INCLUDE_DIR} 
+    ${CONFIG_DIR}
+)
 # Link libs
 target_link_libraries(${EXEC_NAME} ${SDL_EXTRA_LIBS} ${SDL_LIBS})
 
@@ -55,7 +58,7 @@ target_link_libraries(${EXEC_NAME} ${SDL_EXTRA_LIBS} ${SDL_LIBS})
 # Linux-only, ignored for windows
 set_target_properties(${EXEC_NAME} PROPERTIES 
     INSTALL_RPATH "$ORIGIN" 
-    BUILD_WITH_INSTALL_RPATH TRUE)
+    BUILD_WITH_INSTALL_RPATH FALSE) # TRUE
 
 # Include installation rules
 include(InstallRules.cmake)
