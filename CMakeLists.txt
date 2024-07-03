@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.0)
 project(test_game VERSION 0.1.0 LANGUAGES C CXX)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Executable name
@@ -14,6 +14,8 @@ set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/bin)
 # Config header location
 set(CONFIG_DIR ${CMAKE_SOURCE_DIR}/config)
+# Tests location
+set(TESTS_DIR ${CMAKE_SOURCE_DIR}/tests)
 # Static linkage for stdlib to reduce dependencies
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
@@ -59,6 +61,18 @@ target_link_libraries(${EXEC_NAME} ${SDL_EXTRA_LIBS} ${SDL_LIBS})
 set_target_properties(${EXEC_NAME} PROPERTIES 
     INSTALL_RPATH "$ORIGIN" 
     BUILD_WITH_INSTALL_RPATH FALSE)
+
+# Enable tests
+enable_testing()
+# Specify sources for tests (nothing for now)
+set(GTEST_SOURCES "")
+# Specify include path for tests
+set(GTEST_INCLUDE_DIR 
+    ${SDL_INCLUDE_DIR} 
+    ${CONFIG_DIR}
+)
+# Add subdir with tests
+add_subdirectory(${TESTS_DIR}/utest)
 
 # Include installation rules
 include(InstallRules.cmake)
