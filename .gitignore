@@ -6,4 +6,4 @@ lib/
 share/
 cmake/
 licenses/
-config/config.h
+include/config.h
