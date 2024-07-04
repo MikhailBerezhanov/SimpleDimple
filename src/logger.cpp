@@ -97,10 +97,7 @@ void Logger::error(const std::string &message)
 
 void Logger::debug(const std::string &message, size_t depth)
 {
-    if (depth > 0)
-    {
-        size_t temp = static_cast<size_t>(LOG_LEVEL::DEBUG_1) + depth - 1;
-        LOG_LEVEL dbg_level = static_cast<LOG_LEVEL>(temp);
-        log(message, dbg_level);
-    }
+    size_t temp = static_cast<size_t>(LOG_LEVEL::DEBUG_1) + depth;
+    LOG_LEVEL dbg_level = static_cast<LOG_LEVEL>(temp);
+    log(message, dbg_level);
 }
