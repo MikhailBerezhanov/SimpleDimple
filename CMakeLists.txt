@@ -26,7 +26,7 @@ set(SOURCES
     ${SOURCE_DIR}/main.cpp
 )
 
-# Include SDL assets configs (SDL_ASSETS_DIR, SDL_ASSETS_IMAGES_DIR,...)
+# Include SDL assets configs (ASSETS_DIR, ASSETS_IMAGES_DIR,...)
 include(${CONFIG_DIR}/Assets.cmake)
 
 # Include platform-specific settings (SDL_PREFIX, SDL_LIB_DIR, SDL_LIB_NAMES, ...)
