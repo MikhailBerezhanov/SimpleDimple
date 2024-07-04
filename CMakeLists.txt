@@ -34,6 +34,7 @@ set(SOURCES
 # Include runtime configs (LOGS_DIR, ASSETS_DIR,...)
 include(${CONFIG_DIR}/RuntimeConfigs.cmake)
 
+add_definitions(-DZIP_DISABLE_CRYPTO)
 # Include platform-specific settings (SDL_PREFIX, SDL_LIB_DIR, SDL_LIB_NAMES, ...)
 include(${CONFIG_DIR}/PlatformDependencies.cmake)
 
@@ -43,6 +44,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     message(STATUS "DEBUG: SDL Libs: ${SDL_EXTRA_LIBS} ${SDL_LIBS}")
     message(STATUS "DEBUG: SDL defs: ${SDL_DEFINITIONS}")
     message(STATUS "DEBUG: ZLIB libs: ${ZLIB_LIBS}")
+    message(STATUS "DEBUG: LIBZIP libs: ${LIBZIP_LIBS}")
 endif()
 
 # Add executable
@@ -58,11 +60,17 @@ target_compile_definitions(${EXEC_NAME} PRIVATE
 
 # Add include dirs
 target_include_directories(${EXEC_NAME} PRIVATE 
-    ${SDL_INCLUDE_DIR} 
     ${INCLUDE_DIR}
+    ${SDL_INCLUDE_DIR} 
+    ${LIBZIP_INCLUDE_DIR}
 )
-# Link libs
-target_link_libraries(${EXEC_NAME} ${SDL_EXTRA_LIBS} ${SDL_LIBS})
+# Link libs (ZLIB after LIBZIP)
+target_link_libraries(${EXEC_NAME} 
+    ${SDL_EXTRA_LIBS} 
+    ${SDL_LIBS}
+    ${LIBZIP_LIBS}
+    ${ZLIB_LIBS}
+)
 
 # set rpath for executable relative to $ORIGIN (the executable location)
 # Linux-only, ignored for windows
@@ -70,15 +78,17 @@ set_target_properties(${EXEC_NAME} PROPERTIES
     INSTALL_RPATH "$ORIGIN" 
     BUILD_WITH_INSTALL_RPATH FALSE)
 
-# Enable tests
-enable_testing()
-# Specify sources for tests (nothing for now)
-set(GTEST_SOURCES ${SOURCES_NO_MAIN})
-# Specify include path for tests
-set(GTEST_INCLUDE_DIR ${INCLUDE_DIR})
-# Add subdir with tests
-add_subdirectory(${TESTS_DIR}/utest)
-
+# No testing for Windows version as there's no way we can run .exe in linux container
+if (ENABLE_GTESTS)
+    # Enable tests
+    enable_testing()
+    # Specify sources for tests (nothing for now)
+    set(GTEST_SOURCES ${SOURCES_NO_MAIN})
+    # Specify include path for tests
+    set(GTEST_INCLUDE_DIR ${INCLUDE_DIR})
+    # Add subdir with tests
+    add_subdirectory(${TESTS_DIR}/utest)
+endif()
 # Include installation rules
 include(${CONFIG_DIR}/InstallRules.cmake)
 
