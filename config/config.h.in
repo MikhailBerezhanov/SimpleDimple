@@ -4,6 +4,7 @@
 
 // Logs
 #define LOGS_DIR "@LOGS_DIR@"
+#define MAIN_LOG_PREFIX "@MAIN_LOG_PREFIX@"
 
 // Assets
 #define ASSETS_DIR "@ASSETS_DIR@"

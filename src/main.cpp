@@ -11,7 +11,6 @@
 
 #include "logger.h"
 
-
 // Screen dimension constants
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 1000;
@@ -20,7 +19,7 @@ int main(int argc, char *args[])
 {
     try
     {
-        Logger logger(std::string(LOGS_DIR) + "/mylog", 1);
+        Logger logger(MAIN_LOG_PREFIX, 1);
 
         logger.info("Hello");
 

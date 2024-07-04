@@ -10,8 +10,8 @@ const char *log_levels[] = {_LOG_LEVELS_};
 #undef LOG_X
 
 Logger::Logger(const std::string &prefix, size_t max_debug_verbosity, bool nostdout)
-    : m_info_file(prefix + "-info.log")
-    , m_err_file(prefix + "-error.log")
+    : m_info_file(prefix + "-info.log", std::ios::app)
+    , m_err_file(prefix + "-error.log", std::ios::app)
     , m_dbg_file(prefix + "-debug.log")
     , m_max_debug_verbosity(max_debug_verbosity)
     , m_no_stdout(nostdout)
@@ -55,6 +55,7 @@ void Logger::log(const std::string &message, LOG_LEVEL level, size_t debug_verbo
             if (!m_no_stdout)
                 std::cout << ss.str();
             m_info_file << ss.str();
+            m_info_file.flush();
             break;
         }
         case LOG_LEVEL::DEBUG:
@@ -64,6 +65,7 @@ void Logger::log(const std::string &message, LOG_LEVEL level, size_t debug_verbo
                 if (!m_no_stdout)
                     std::cout << ss.str();
                 m_dbg_file << ss.str();
+                m_dbg_file.flush();
             }
             break;
         }
@@ -74,6 +76,7 @@ void Logger::log(const std::string &message, LOG_LEVEL level, size_t debug_verbo
             if (!m_no_stdout)
                 std::cerr << ss.str();
             m_err_file << ss.str();
+            m_err_file.flush();
             break;
         }
     }
