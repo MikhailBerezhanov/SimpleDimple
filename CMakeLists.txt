@@ -13,7 +13,7 @@ set(CONFIG_DIR ${CMAKE_SOURCE_DIR}/config)
 # Sources location
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 # Include location
-set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 # Bin/runtime libs destination
 set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/bin)
 # Tests location
