@@ -21,13 +21,18 @@ set(TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
 # Static linkage for stdlib to reduce dependencies
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
-# List sources
+# List sources (except for main.cpp)
+set(SOURCES_NO_MAIN 
+    ${SOURCE_DIR}/logger.cpp
+)
+# Full list of sources
 set(SOURCES 
+    ${SOURCES_NO_MAIN}
     ${SOURCE_DIR}/main.cpp
 )
 
-# Include SDL assets configs (ASSETS_DIR, ASSETS_IMAGES_DIR,...)
-include(${CONFIG_DIR}/Assets.cmake)
+# Include runtime configs (LOGS_DIR, ASSETS_DIR,...)
+include(${CONFIG_DIR}/RuntimeConfigs.cmake)
 
 # Include platform-specific settings (SDL_PREFIX, SDL_LIB_DIR, SDL_LIB_NAMES, ...)
 include(${CONFIG_DIR}/SDLPlatformSettings.cmake)
@@ -67,11 +72,9 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 # Enable tests
 enable_testing()
 # Specify sources for tests (nothing for now)
-set(GTEST_SOURCES "")
+set(GTEST_SOURCES ${SOURCES_NO_MAIN})
 # Specify include path for tests
-set(GTEST_INCLUDE_DIR 
-    ${INCLUDE_DIR}
-)
+set(GTEST_INCLUDE_DIR ${INCLUDE_DIR})
 # Add subdir with tests
 add_subdirectory(${TESTS_DIR}/utest)
 

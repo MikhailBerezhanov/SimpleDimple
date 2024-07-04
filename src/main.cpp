@@ -1,4 +1,5 @@
-
+#include <iostream>
+#include <stdexcept>
 // for initializing and shutdown functions
 #include <SDL2/SDL.h>
 // for rendering images and graphics on screen
@@ -8,8 +9,8 @@
 // for SDL paths' generated definitions
 #include "config.h"
 
-#include <iostream>
-#include <stdexcept>
+#include "logger.h"
+
 
 // Screen dimension constants
 const int SCREEN_WIDTH = 1000;
@@ -19,6 +20,10 @@ int main(int argc, char *args[])
 {
     try
     {
+        Logger logger(std::string(LOGS_DIR) + "/mylog", 1);
+
+        logger.info("Hello");
+
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));

@@ -2,7 +2,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define SDL_ASSETS_DIR "@ASSETS_DIR@"
-#define SDL_ASSETS_IMAGES_DIR "@ASSETS_IMAGES_DIR@"
+// Logs
+#define LOGS_DIR "@LOGS_DIR@"
+
+// Assets
+#define ASSETS_DIR "@ASSETS_DIR@"
+#define ASSETS_IMAGES_DIR "@ASSETS_IMAGES_DIR@"
 
 #endif
