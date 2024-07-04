@@ -35,13 +35,14 @@ set(SOURCES
 include(${CONFIG_DIR}/RuntimeConfigs.cmake)
 
 # Include platform-specific settings (SDL_PREFIX, SDL_LIB_DIR, SDL_LIB_NAMES, ...)
-include(${CONFIG_DIR}/SDLPlatformSettings.cmake)
+include(${CONFIG_DIR}/PlatformDependencies.cmake)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     message(STATUS "DEBUG: Configuring for ${CMAKE_SYSTEM_NAME}")
     message(STATUS "DEBUG: Compiler ${CMAKE_CXX_COMPILER}")
     message(STATUS "DEBUG: SDL Libs: ${SDL_EXTRA_LIBS} ${SDL_LIBS}")
     message(STATUS "DEBUG: SDL defs: ${SDL_DEFINITIONS}")
+    message(STATUS "DEBUG: ZLIB libs: ${ZLIB_LIBS}")
 endif()
 
 # Add executable
