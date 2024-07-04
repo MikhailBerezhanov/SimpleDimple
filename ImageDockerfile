@@ -4,8 +4,8 @@
 
 FROM debian:buster-slim
 
-# Update and install cross-platform build dependencies
-# Ignore apt-get weird error related to https absence
+#### Dependencies ####
+
 RUN apt-get update || true
 
 RUN apt-get install -y \
@@ -42,24 +42,44 @@ ADD https://cmake.org/files/v3.21/cmake-3.21.0-linux-x86_64.tar.gz /tmp
 RUN tar -xzf /tmp/cmake-3.21.0-linux-x86_64.tar.gz -C /usr/local --strip-components=1 --no-same-owner 
 RUN rm /tmp/cmake-3.21.0-linux-x86_64.tar.gz
 
+#### Build from sources ####
+
 # Create Unix/Windows directories for SDL libs and includes
-RUN mkdir -p /SDL/Unix
-RUN mkdir -p /SDL/Windows
-RUN mkdir -p /SDL/Sources
+ENV SDL_PREFIX_UNIX=/SDL/Unix
+ENV SDL_PREFIX_WINDOWS=/SDL/Windows
+
+ENV ZLIB_PREFIX_UNIX=/ZLIB/Unix
+ENV ZLIB_PREFIX_WINDOWS=/ZLIB/Windows
+
+ARG SDL_SRC=/tmp/SDL_SOURCES
+ARG SDL_IMAGE_SRC=/tmp/SDL_IMAGE_SOURCES
+ARG ZLIB_SRC=/tmp/ZLIB_SOURCES
+
+RUN mkdir -p ${SDL_PREFIX_UNIX}
+RUN mkdir -p ${SDL_PREFIX_WINDOWS}
+RUN mkdir -p ${ZLIB_PREFIX_UNIX}
+RUN mkdir -p ${ZLIB_PREFIX_WINDOWS}
+
+RUN mkdir -p ${SDL_SRC}/build
+RUN mkdir -p ${SDL_IMAGE_SRC}/build
+RUN mkdir -p ${ZLIB_SRC}/build
+
+# Copy SDL sources
+COPY SDL ${SDL_SRC}
+# Copy SDL_Image sources 
+COPY SDL_Image ${SDL_IMAGE_SRC}
+# Copy zlib sources
+COPY ZLIB ${ZLIB_SRC}
 
 #### SDL ####
 
-# Copy SDL sources
-COPY SDL /SDL/Sources
+WORKDIR ${SDL_SRC}/build
 
-RUN mkdir -p /SDL/Sources/build
-
-WORKDIR /SDL/Sources/build
 RUN rm -rf ./*
 # Configure, build, install for Linux
 RUN cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER=clang \
-    -DCMAKE_INSTALL_PREFIX=/SDL/Unix
+    -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_UNIX}
 
 RUN cmake --build . --config Release
 RUN cmake --build . --target install
@@ -70,28 +90,19 @@ RUN cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
     -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres \
     -DCMAKE_SYSTEM_NAME=Windows \
-    -DCMAKE_INSTALL_PREFIX=/SDL/Windows
+    -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_WINDOWS}
 
 RUN cmake --build . --config Release
 RUN cmake --build . --target install
 
-WORKDIR /SDL
-# Cleanup
-RUN rm -rf Sources/*
-
 #### SDL_Image ####
 
-# Copy SDL_Image sources 
-COPY SDL_Image /SDL/Sources
-
-RUN mkdir -p /SDL/Sources/build
-
-WORKDIR /SDL/Sources/build
+WORKDIR ${SDL_IMAGE_SRC}/build
 
 RUN rm -rf ./*
 # Install for Linux
 RUN cmake .. -DCMAKE_C_COMPILER=clang \
-    -DCMAKE_INSTALL_PREFIX=/SDL/Unix
+    -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_UNIX}
 
 RUN cmake --build .
 RUN cmake --build . --target install
@@ -102,18 +113,36 @@ RUN rm -rf ./*
 RUN cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
     -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres \
     -DCMAKE_SYSTEM_NAME=Windows \
-    -DCMAKE_INSTALL_PREFIX=/SDL/Windows
+    -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_WINDOWS}
 
 RUN cmake --build .
 RUN cmake --build . --target install
 
-WORKDIR /SDL
-# Cleanup
-RUN rm -rf Sources
+#### ZLIB ####
 
-# Install zlib from sources
+WORKDIR ${ZLIB_SRC}/build
 
-# ZLIB (Windows)
-# cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX=/ZLIB/Windows
 # Linux
-# cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/ZLIB/Unix
+RUN rm -rf ./*
+RUN cmake .. -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_INSTALL_PREFIX=${ZLIB_PREFIX_UNIX}
+
+RUN cmake --build .
+RUN cmake --build . --target install
+
+# Windows
+RUN rm -rf ./*
+RUN cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+    -DCMAKE_SYSTEM_NAME=Windows \
+    -DCMAKE_INSTALL_PREFIX=${ZLIB_PREFIX_WINDOWS}
+
+RUN cmake --build .
+RUN cmake --build . --target install
+
+#### Cleanup ###
+
+WORKDIR /root
+
+RUN rm -rf ${SDL_SRC}
+RUN rm -rf ${SDL_IMAGE_SRC}
+RUN rm -rf ${ZLIB_SRC}
