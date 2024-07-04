@@ -44,10 +44,11 @@ std::stringstream Logger::get_wrapped_date() const
     return ss;
 }
 
-void Logger::log(const std::string &message, LOG_LEVEL level, size_t debug_verbosity)
+void Logger::log(const std::string &message, LOG_LEVEL level)
 {
     auto ss = get_wrapped_date();
-    ss << " [" << log_levels[static_cast<size_t>(level)] << "]: " << message << "\n";
+    auto log_level_int = static_cast<size_t>(level);
+    ss << " [" << log_levels[log_level_int] << "]: " << message << "\n";
     switch (level)
     {
         case LOG_LEVEL::INFO:
@@ -58,9 +59,11 @@ void Logger::log(const std::string &message, LOG_LEVEL level, size_t debug_verbo
             m_info_file.flush();
             break;
         }
-        case LOG_LEVEL::DEBUG:
+        case LOG_LEVEL::DEBUG_1:
+        case LOG_LEVEL::DEBUG_2:
+        case LOG_LEVEL::DEBUG_3:
         {
-            if (debug_verbosity < m_max_debug_verbosity)
+            if (log_level_int < m_max_debug_verbosity)
             {
                 if (!m_no_stdout)
                     std::cout << ss.str();
@@ -84,15 +87,20 @@ void Logger::log(const std::string &message, LOG_LEVEL level, size_t debug_verbo
 
 void Logger::info(const std::string &message)
 {
-    log(message, LOG_LEVEL::INFO, 0);
+    log(message, LOG_LEVEL::INFO);
 }
 
 void Logger::error(const std::string &message)
 {
-    log(message, LOG_LEVEL::ERROR, 0);
+    log(message, LOG_LEVEL::ERROR);
 }
 
 void Logger::debug(const std::string &message, size_t depth)
 {
-    log(message, LOG_LEVEL::DEBUG, depth);
+    if (depth > 0)
+    {
+        size_t temp = static_cast<size_t>(LOG_LEVEL::DEBUG_1) + depth - 1;
+        LOG_LEVEL dbg_level = static_cast<LOG_LEVEL>(temp);
+        log(message, dbg_level);
+    }
 }

@@ -11,7 +11,9 @@
     LOG_X(WARN)                                                                                                                            \
     LOG_X(ERROR)                                                                                                                           \
     LOG_X(FATAL)                                                                                                                           \
-    LOG_X(DEBUG)
+    LOG_X(DEBUG_1)                                                                                                                         \
+    LOG_X(DEBUG_2)                                                                                                                         \
+    LOG_X(DEBUG_3)
 #define LOG_X(name) name,
 enum class LOG_LEVEL : unsigned int
 {
@@ -39,7 +41,7 @@ public:
 
     void set_date_format(const char *fmt);
 
-    void log(const std::string &message, LOG_LEVEL level, size_t debug_verbosity = 0);
+    void log(const std::string &message, LOG_LEVEL level);
 
     void info(const std::string &message);
     void error(const std::string &message);

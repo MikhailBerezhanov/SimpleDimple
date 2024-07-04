@@ -110,3 +110,10 @@ RUN cmake --build . --target install
 WORKDIR /SDL
 # Cleanup
 RUN rm -rf Sources
+
+# Install zlib from sources
+
+# ZLIB (Windows)
+# cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX=/ZLIB/Windows
+# Linux
+# cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=/ZLIB/Unix
