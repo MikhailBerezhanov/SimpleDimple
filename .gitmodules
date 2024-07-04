@@ -9,3 +9,6 @@
 [submodule "ZLIB"]
 	path = ZLIB
 	url = https://github.com/madler/zlib.git
+[submodule "LIBZIP"]
+	path = LIBZIP
+	url = https://github.com/nih-at/libzip.git

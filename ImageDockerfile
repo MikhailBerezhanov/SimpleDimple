@@ -51,18 +51,25 @@ ENV SDL_PREFIX_WINDOWS=/SDL/Windows
 ENV ZLIB_PREFIX_UNIX=/ZLIB/Unix
 ENV ZLIB_PREFIX_WINDOWS=/ZLIB/Windows
 
+ENV LIBZIP_PREFIX_UNIX=/LIBZIP/Unix
+ENV LIBZIP_PREFIX_WINDOWS=/LIBZIP/Windows
+
 ARG SDL_SRC=/tmp/SDL_SOURCES
 ARG SDL_IMAGE_SRC=/tmp/SDL_IMAGE_SOURCES
 ARG ZLIB_SRC=/tmp/ZLIB_SOURCES
+ARG LIBZIP_SRC=/tmp/LIBZIP_SOURCES
 
 RUN mkdir -p ${SDL_PREFIX_UNIX}
 RUN mkdir -p ${SDL_PREFIX_WINDOWS}
 RUN mkdir -p ${ZLIB_PREFIX_UNIX}
 RUN mkdir -p ${ZLIB_PREFIX_WINDOWS}
+RUN mkdir -p ${LIBZIP_PREFIX_UNIX}
+RUN mkdir -p ${LIBZIP_PREFIX_WINDOWS}
 
 RUN mkdir -p ${SDL_SRC}/build
 RUN mkdir -p ${SDL_IMAGE_SRC}/build
 RUN mkdir -p ${ZLIB_SRC}/build
+RUN mkdir -p ${LIBZIP_SRC}/build
 
 # Copy SDL sources
 COPY SDL ${SDL_SRC}
@@ -70,6 +77,8 @@ COPY SDL ${SDL_SRC}
 COPY SDL_Image ${SDL_IMAGE_SRC}
 # Copy zlib sources
 COPY ZLIB ${ZLIB_SRC}
+# Copy libzip sources
+COPY LIBZIP ${LIBZIP_SRC}
 
 #### SDL ####
 
@@ -139,6 +148,33 @@ RUN cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
 RUN cmake --build .
 RUN cmake --build . --target install
 
+#### LIBZIP ####
+
+WORKDIR ${LIBZIP_SRC}/build
+
+# Linux
+RUN rm -rf ./*
+RUN cmake .. -DCMAKE_C_COMPILER=clang \
+    -DZLIB_LIBRARY=${ZLIB_PREFIX_UNIX}/lib/libz.a \
+    -DZLIB_INCLUDE_DIR=${ZLIB_PREFIX_UNIX}/include \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_INSTALL_PREFIX=${LIBZIP_PREFIX_UNIX}
+
+RUN cmake --build .
+RUN cmake --build . --target install
+
+# Windows
+RUN rm -rf ./*
+RUN cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+    -DCMAKE_SYSTEM_NAME=Windows \
+    -DZLIB_LIBRARY=${ZLIB_PREFIX_WINDOWS}/lib/libzlibstatic.a \
+    -DZLIB_INCLUDE_DIR=${ZLIB_PREFIX_WINDOWS}/include \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_INSTALL_PREFIX=${LIBZIP_PREFIX_WINDOWS}
+
+RUN cmake --build .
+RUN cmake --build . --target install
+
 #### Cleanup ###
 
 WORKDIR /root
@@ -146,3 +182,4 @@ WORKDIR /root
 RUN rm -rf ${SDL_SRC}
 RUN rm -rf ${SDL_IMAGE_SRC}
 RUN rm -rf ${ZLIB_SRC}
+RUN rm -rf ${LIBZIP_SRC}
