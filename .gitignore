@@ -7,3 +7,4 @@ share/
 cmake/
 licenses/
 include/config.h
+.vscode/
