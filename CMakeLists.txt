@@ -17,7 +17,7 @@ set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 # Bin/runtime libs destination
 set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/bin)
 # Tests location
-set(TESTS_DIR ${CMAKE_SOURCE_DIR}/tests)
+set(TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
 # Static linkage for stdlib to reduce dependencies
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
