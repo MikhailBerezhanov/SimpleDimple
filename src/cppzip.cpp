@@ -47,7 +47,8 @@ std::vector<char> ZIP_Entry::read(size_t size) const
  */
 
 ZIP::ZIP(std::string name, int mode)
-    : m_name(std::move(name))
+    : m_name(std::move(name)),
+    m_num_entries(0)
 {
     int err;
     m_zip = zip_open(m_name.c_str(), mode, &err);
@@ -78,6 +79,7 @@ int ZIP::add_file(const std::string &name, const void *content, size_t size, boo
     int flags = ZIP_FL_ENC_UTF_8;
     if (overwrite)
         flags |= ZIP_FL_OVERWRITE;
+
     // Result is file index in zip archive
     int idx = zip_file_add(m_zip, name.c_str(), source, flags);
     if (idx < 0)
@@ -87,18 +89,9 @@ int ZIP::add_file(const std::string &name, const void *content, size_t size, boo
         throw std::runtime_error(name + " error adding file: " + zip_err_str);
     }
 
+    m_num_entries = idx + 1;
+
     return idx;
-}
-
-size_t ZIP::get_num_entries() const
-{
-    auto num_files = zip_get_num_entries(m_zip, 0);
-    if (num_files < 0)
-    {
-        throw std::runtime_error("error obtaining number of entries in zip");
-    }
-
-    return static_cast<size_t>(num_files);
 }
 
 int ZIP::add_dir(std::string name)
@@ -108,10 +101,34 @@ int ZIP::add_dir(std::string name)
     auto idx = zip_dir_add(m_zip, name.c_str(), ZIP_FL_ENC_UTF_8);
     if (idx < 0)
     {
-        throw std::runtime_error(name + " error creating directory in zip");
+        throw std::runtime_error(name + " error creating directory");
     }
 
+    m_num_entries = idx + 1;
+
     return idx;
+}
+
+void ZIP::delete_entry(size_t index) 
+{
+    auto res = zip_delete(m_zip, index);
+    if (res < 0) {
+        throw std::runtime_error("error deleting entry");
+    }
+}
+
+void ZIP::delete_entry(const std::string &name) 
+{
+    auto index_to_delete = zip_name_locate(m_zip, name.c_str(), 0);
+    if (index_to_delete < 0) {
+        throw std::runtime_error(name + " not found in " + m_name);
+    }
+    delete_entry(index_to_delete);
+}
+
+size_t ZIP::get_num_entries() const
+{
+    return m_num_entries;
 }
 
 std::string ZIP::get_name() const
@@ -134,7 +151,7 @@ zip_stat_t ZIP::get_entry_stat(size_t index) const
     zip_stat_t stat;
     if (zip_stat_index(m_zip, index, 0, &stat) != 0)
     {
-        throw std::runtime_error("Cannot stat file inside zip");
+        throw std::runtime_error("Cannot stat file");
     }
     return stat;
 }
@@ -182,6 +199,16 @@ std::unique_ptr<ZIP_Entry> ZIP::get_entry(const std::string &name) const
         throw std::runtime_error(name + " error creating zip entry");
     }
     return std::unique_ptr<ZIP_Entry>(new ZIP_Entry(name, zf));
+}
+
+std::list<std::unique_ptr<ZIP_Entry>> ZIP::get_entries() const
+{
+    std::list<std::unique_ptr<ZIP_Entry>> res;
+    for (size_t i = 0; i < m_num_entries; ++i)
+    {
+        res.emplace_back(get_entry(i));
+    }
+    return res;
 }
 
 bool ZIP::close() noexcept

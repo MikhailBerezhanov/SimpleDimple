@@ -1,6 +1,7 @@
 #ifndef CPPZIP_H
 #define CPPZIP_H
 
+#include <list>
 #include <memory>
 #include <string>
 #include <vector>
@@ -33,6 +34,7 @@ public:
 class ZIP
 {
     std::string m_name;
+    size_t m_num_entries;
     zip_t *m_zip;
 
 public:
@@ -47,6 +49,14 @@ public:
     int add_file(const std::string &name, const void *content, size_t size, bool overwrite = true);
     // add directory
     int add_dir(std::string name);
+
+    // NOTE: after deletion the changes are applied only after close()
+    // An attempt to read entry once it was deleted results in an error
+    // delete entry by index
+    void delete_entry(size_t index);
+    // delete entry by name
+    void delete_entry(const std::string &name);
+
     // get name
     std::string get_name() const;
     // get archive entries
@@ -65,6 +75,8 @@ public:
     std::unique_ptr<ZIP_Entry> get_entry(size_t index) const;
     // get file instance by name
     std::unique_ptr<ZIP_Entry> get_entry(const std::string &name) const;
+    // get list of entries
+    std::list<std::unique_ptr<ZIP_Entry>> get_entries() const;
 
     // close file and sync
     bool close() noexcept;

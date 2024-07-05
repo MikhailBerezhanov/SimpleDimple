@@ -31,6 +31,18 @@ int main(int argc, char *args[])
         std::string fileContent = "This is the content of a file inside zip";
 
         zip.add_file("example.txt", fileContent.c_str(), fileContent.size());
+        zip.add_file("example2.txt", fileContent.c_str(), fileContent.size());
+        std::cout << "Num: " << zip.get_num_entries() << std::endl;
+        zip.add_dir("directory");
+        std::cout << "Num: " << zip.get_num_entries() << std::endl;
+        zip.delete_entry("example2.txt");
+        std::cout << "Num: " << zip.get_num_entries() << std::endl;
+        zip.add_file("example2.txt", fileContent.c_str(), fileContent.size());
+        std::cout << "Num: " << zip.get_num_entries() << std::endl;
+
+        for(auto &entry : zip.get_entries()) {
+            std::cout << entry->get_name() << std::endl;
+        }
 
         zip.close();
 
