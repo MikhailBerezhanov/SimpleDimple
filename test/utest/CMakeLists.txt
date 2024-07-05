@@ -21,6 +21,9 @@ add_executable(${TEST_EXE} ${GTEST_SOURCES} utests.cpp)
 # Include .h files location
 target_include_directories(${TEST_EXE} PRIVATE ${GTEST_INCLUDE_DIR})
 
+# Link libs
+target_link_libraries(${TEST_EXE} ${GTEST_LINK_LIBS})
+
 # Link gtest libs to test exe
 target_link_libraries(
     ${TEST_EXE}

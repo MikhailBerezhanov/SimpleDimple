@@ -11,7 +11,8 @@
 
 #include "logger.h"
 
-#include <zip.h>
+// #include <zip.h>
+#include "cppzip.h"
 
 // Screen dimension constants
 const int SCREEN_WIDTH = 1000;
@@ -25,22 +26,13 @@ int main(int argc, char *args[])
 
         logger.info("Hello");
 
-        int err;
-        auto zip = zip_open("test_zip.zip", ZIP_CREATE | ZIP_TRUNCATE, &err);
-        if (zip == nullptr) {
-            zip_error_t zipError;
-            zip_error_init_with_code(&zipError, err);
-            std::cerr << "Failed to create zip archive: " << zip_error_strerror(&zipError) << std::endl;
-            zip_error_fini(&zipError);
-        }
+        ZIP zip("test_zip.zip", ZIP_CREATE | ZIP_TRUNCATE);
 
         std::string fileContent = "This is the content of a file inside zip";
-        // Create a new file in the zip archive (freep)
-        auto source = zip_source_buffer(zip, fileContent.c_str(), fileContent.size(), 0);
-        // // Add the file to the zip archive
-        zip_file_add(zip, "example.txt", source, ZIP_FL_OVERWRITE | ZIP_FL_ENC_UTF_8);
-        // // close zip
-        zip_close(zip);
+
+        zip.add_file("example.txt", fileContent.c_str(), fileContent.size());
+
+        zip.close();
 
 
         if (SDL_Init(SDL_INIT_VIDEO) != 0)

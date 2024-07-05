@@ -24,6 +24,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 # List sources (except for main.cpp)
 set(SOURCES_NO_MAIN 
     ${SOURCE_DIR}/logger.cpp
+    ${SOURCE_DIR}/cppzip.cpp
 )
 # Full list of sources
 set(SOURCES 
@@ -42,6 +43,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     message(STATUS "DEBUG: Compiler ${CMAKE_CXX_COMPILER}")
     message(STATUS "DEBUG: Dependency Libs: ${DEPENDENCY_LIBS}")
     message(STATUS "DEBUG: Dependency definitions ${DEPENDENCY_DEFINITIONS}")
+    message(STATUS "DEBUG: Dependency includes ${DEPENDENCY_INCLUDE_DIRS}")
 endif()
 
 # Add executable
@@ -57,8 +59,8 @@ target_compile_definitions(${EXEC_NAME} PRIVATE
 
 # Add include dirs
 target_include_directories(${EXEC_NAME} PRIVATE 
-    ${INCLUDE_DIR}
     ${DEPENDENCY_INCLUDE_DIRS}
+    ${INCLUDE_DIR}
 )
 # Link libs (ZLIB after LIBZIP)
 target_link_libraries(${EXEC_NAME} 
@@ -75,10 +77,15 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 if (ENABLE_GTESTS)
     # Enable tests
     enable_testing()
-    # Specify sources for tests (nothing for now)
+    # Specify sources for tests
     set(GTEST_SOURCES ${SOURCES_NO_MAIN})
     # Specify include path for tests
-    set(GTEST_INCLUDE_DIR ${INCLUDE_DIR})
+    set(GTEST_INCLUDE_DIR 
+        ${DEPENDENCY_INCLUDE_DIRS} 
+        ${INCLUDE_DIR}
+    )
+    # Specify link libs
+    set(GTEST_LINK_LIBS ${DEPENDENCY_LIBS})
     # Add subdir with tests
     add_subdirectory(${TESTS_DIR}/utest)
 endif()
