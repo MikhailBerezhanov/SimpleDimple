@@ -3,11 +3,50 @@
 #include <stdexcept>
 
 #include "logger.h"
+#include "config.h"
 
 // create string representation using redefined macro
 #define LOG_X(name) #name,
 const char *log_levels[] = {_LOG_LEVELS_};
 #undef LOG_X
+
+Logger::log_file::log_file(const std::string &name, const std::ios_base::openmode mode)
+    : name(name)
+    , file(name, mode)
+    , size(0)
+{
+    if (!file.is_open())
+    {
+        throw std::runtime_error("Unable to create " + name);
+    }
+    size = get_size();
+}
+
+void Logger::log_file::write(const std::string &str)
+{
+    if (size >= LOG_MAX_SIZE) {
+        // TODO: handle compression
+        
+        // reopen to clear file
+        file.close();
+        file.open(name, std::ios::trunc);
+    }
+    file << str;
+    size += str.size();
+    file.flush();
+}
+
+size_t Logger::log_file::get_size() const
+{
+    if (size == 0)
+    {
+        std::ifstream file(name, std::ios::binary | std::ios::ate);
+        auto size = file.tellg();
+        file.close();
+    }
+
+    return size;
+}
 
 Logger::Logger(const std::string &prefix, size_t max_debug_verbosity, bool nostdout)
     : m_info_file(prefix + "-info.log", std::ios::app)
@@ -16,20 +55,7 @@ Logger::Logger(const std::string &prefix, size_t max_debug_verbosity, bool nostd
     , m_max_debug_verbosity(max_debug_verbosity)
     , m_no_stdout(nostdout)
     , m_date_format("%c, %Z")
-{
-    if (!m_info_file.is_open())
-    {
-        throw std::runtime_error("Unable to create " + prefix + "-info.log");
-    }
-    if (!m_err_file.is_open())
-    {
-        throw std::runtime_error("Unable to create " + prefix + "-error.log");
-    }
-    if (!m_dbg_file.is_open())
-    {
-        throw std::runtime_error("Unable to create " + prefix + "-error.log");
-    }
-}
+{}
 
 void Logger::set_date_format(const char *fmt)
 {
@@ -55,8 +81,7 @@ void Logger::log(const std::string &message, LOG_LEVEL level)
         {
             if (!m_no_stdout)
                 std::cout << ss.str();
-            m_info_file << ss.str();
-            m_info_file.flush();
+            m_info_file.write(ss.str());
             break;
         }
         case LOG_LEVEL::DEBUG_1:
@@ -67,8 +92,7 @@ void Logger::log(const std::string &message, LOG_LEVEL level)
             {
                 if (!m_no_stdout)
                     std::cout << ss.str();
-                m_dbg_file << ss.str();
-                m_dbg_file.flush();
+                m_dbg_file.write(ss.str());
             }
             break;
         }
@@ -78,8 +102,7 @@ void Logger::log(const std::string &message, LOG_LEVEL level)
         {
             if (!m_no_stdout)
                 std::cerr << ss.str();
-            m_err_file << ss.str();
-            m_err_file.flush();
+            m_err_file.write(ss.str());
             break;
         }
     }

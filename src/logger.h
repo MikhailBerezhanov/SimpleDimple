@@ -24,9 +24,21 @@ enum class LOG_LEVEL : unsigned int
 class Logger
 {
 private:
-    std::ofstream m_info_file;
-    std::ofstream m_err_file;
-    std::ofstream m_dbg_file;
+    struct log_file
+    {
+        std::string name;
+        std::ofstream file;
+        size_t size;
+        log_file(const std::string &name, const std::ios_base::openmode mode = std::ios::out);
+        // std::ofstream *operator->() { return &file; }
+        void write(const std::string &str);
+        size_t get_size() const;
+    };
+
+    log_file m_info_file;
+    log_file m_err_file;
+    log_file m_dbg_file;
+
     size_t m_max_debug_verbosity;
     bool m_no_stdout;
     std::string m_date_format;
