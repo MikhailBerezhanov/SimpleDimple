@@ -47,14 +47,16 @@ public:
     int add_file(const std::string &name, const void *content, size_t size, bool overwrite = true);
     // add directory
     int add_dir(std::string name);
+    // get name
+    std::string get_name() const;
     // get archive entries
     size_t get_num_entries() const;
     // get file name by index
-    std::string get_file_name(size_t index) const;
+    std::string get_entry_name(size_t index) const;
     // get file info by index
-    zip_stat_t get_file_stat(size_t index) const;
+    zip_stat_t get_entry_stat(size_t index) const;
     // get file info by name
-    zip_stat_t get_file_stat(const std::string &name) const;
+    zip_stat_t get_entry_stat(const std::string &name) const;
     // get file size by index
     size_t get_file_size(size_t index) const;
     // get file size by name
@@ -63,6 +65,7 @@ public:
     std::unique_ptr<ZIP_Entry> get_entry(size_t index) const;
     // get file instance by name
     std::unique_ptr<ZIP_Entry> get_entry(const std::string &name) const;
+
     // close file and sync
     bool close() noexcept;
 };

@@ -9,8 +9,7 @@
 ZIP_Entry::ZIP_Entry(std::string name, zip_file_t *zf)
     : m_name(std::move(name))
     , m_zf(zf)
-{
-}
+{}
 
 ZIP_Entry::~ZIP_Entry()
 {
@@ -29,7 +28,8 @@ std::string ZIP_Entry::get_name() const
 
 std::vector<char> ZIP_Entry::read(size_t size) const
 {
-    if (is_directory()) {
+    if (is_directory())
+    {
         throw std::runtime_error(m_name + " read() not applicable to directories");
     }
 
@@ -114,7 +114,12 @@ int ZIP::add_dir(std::string name)
     return idx;
 }
 
-std::string ZIP::get_file_name(size_t index) const
+std::string ZIP::get_name() const
+{
+    return m_name;
+}
+
+std::string ZIP::get_entry_name(size_t index) const
 {
     auto name = zip_get_name(m_zip, index, 0);
     if (name == nullptr)
@@ -124,7 +129,7 @@ std::string ZIP::get_file_name(size_t index) const
     return name;
 }
 
-zip_stat_t ZIP::get_file_stat(size_t index) const
+zip_stat_t ZIP::get_entry_stat(size_t index) const
 {
     zip_stat_t stat;
     if (zip_stat_index(m_zip, index, 0, &stat) != 0)
@@ -134,7 +139,7 @@ zip_stat_t ZIP::get_file_stat(size_t index) const
     return stat;
 }
 
-zip_stat_t ZIP::get_file_stat(const std::string &name) const
+zip_stat_t ZIP::get_entry_stat(const std::string &name) const
 {
     zip_stat_t stat;
     if (zip_stat(m_zip, name.c_str(), 0, &stat) != 0)
@@ -146,21 +151,21 @@ zip_stat_t ZIP::get_file_stat(const std::string &name) const
 
 size_t ZIP::get_file_size(size_t index) const
 {
-    auto stat = get_file_stat(index);
+    auto stat = get_entry_stat(index);
     return stat.size;
 }
 
 size_t ZIP::get_file_size(const std::string &name) const
 {
-    auto stat = get_file_stat(name);
+    auto stat = get_entry_stat(name);
     return stat.size;
 }
 
 std::unique_ptr<ZIP_Entry> ZIP::get_entry(size_t index) const
 {
-    auto stat = get_file_stat(index);
+    auto stat = get_entry_stat(index);
     std::string name = stat.name;
-    auto zf = zip_fopen_index(m_zip, index, 0); 
+    auto zf = zip_fopen_index(m_zip, index, 0);
 
     if (zf == nullptr)
     {
