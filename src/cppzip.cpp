@@ -2,43 +2,62 @@
 
 #include "cppzip.h"
 
-ZIP_File::ZIP_File(zip_file_t *zf)
-    : m_zf(zf)
+/**
+ * ZIP_Entry
+ */
+
+ZIP_Entry::ZIP_Entry(std::string name, zip_file_t *zf)
+    : m_name(std::move(name))
+    , m_zf(zf)
 {
-    if (m_zf == nullptr)
-    {
-        throw std::runtime_error("Error creating zip file");
+}
+
+ZIP_Entry::~ZIP_Entry()
+{
+    zip_fclose(m_zf);
+}
+
+bool ZIP_Entry::is_directory() const
+{
+    return m_name.back() == '/';
+}
+
+std::string ZIP_Entry::get_name() const
+{
+    return m_name;
+}
+
+std::vector<char> ZIP_Entry::read(size_t size) const
+{
+    if (is_directory()) {
+        throw std::runtime_error(m_name + " read() not applicable to directories");
     }
-}
 
-ZIP_File::~ZIP_File()
-{
-    if (m_zf)
-        zip_fclose(m_zf);
-}
-
-std::vector<char> ZIP_File::read(size_t size)
-{
     std::vector<char> buffer(size);
     auto bytes_read = zip_fread(m_zf, buffer.data(), size);
     if (bytes_read < 0)
     {
-        throw std::runtime_error("Error reading from zip file");
+        throw std::runtime_error(m_name + " error reading from zip file");
     }
     return buffer;
 }
 
-ZIP::ZIP(const std::string &name, int mode)
+/**
+ * ZIP
+ */
+
+ZIP::ZIP(std::string name, int mode)
+    : m_name(std::move(name))
 {
     int err;
-    m_zip = zip_open(name.c_str(), mode, &err);
+    m_zip = zip_open(m_name.c_str(), mode, &err);
     if (m_zip == nullptr)
     {
         zip_error_t zipError;
         zip_error_init_with_code(&zipError, err);
         std::string zip_err_str = zip_error_strerror(&zipError);
         zip_error_fini(&zipError);
-        throw std::runtime_error(name + " zip error " + zip_err_str);
+        throw std::runtime_error(m_name + " zip error " + zip_err_str);
     }
 }
 
@@ -82,7 +101,20 @@ size_t ZIP::get_num_entries() const
     return static_cast<size_t>(num_files);
 }
 
-std::string ZIP::get_file_name(size_t index)
+int ZIP::add_dir(std::string name)
+{
+    if (name.back() != '/')
+        name.push_back('/');
+    auto idx = zip_dir_add(m_zip, name.c_str(), ZIP_FL_ENC_UTF_8);
+    if (idx < 0)
+    {
+        throw std::runtime_error(name + " error creating directory in zip");
+    }
+
+    return idx;
+}
+
+std::string ZIP::get_file_name(size_t index) const
 {
     auto name = zip_get_name(m_zip, index, 0);
     if (name == nullptr)
@@ -92,7 +124,7 @@ std::string ZIP::get_file_name(size_t index)
     return name;
 }
 
-zip_stat_t ZIP::get_file_stat(size_t index)
+zip_stat_t ZIP::get_file_stat(size_t index) const
 {
     zip_stat_t stat;
     if (zip_stat_index(m_zip, index, 0, &stat) != 0)
@@ -102,19 +134,54 @@ zip_stat_t ZIP::get_file_stat(size_t index)
     return stat;
 }
 
-size_t ZIP::get_file_size(size_t index)
+zip_stat_t ZIP::get_file_stat(const std::string &name) const
+{
+    zip_stat_t stat;
+    if (zip_stat(m_zip, name.c_str(), 0, &stat) != 0)
+    {
+        throw std::runtime_error("Cannot stat file " + name);
+    }
+    return stat;
+}
+
+size_t ZIP::get_file_size(size_t index) const
 {
     auto stat = get_file_stat(index);
     return stat.size;
 }
 
-std::unique_ptr<ZIP_File> ZIP::get_file(size_t index)
+size_t ZIP::get_file_size(const std::string &name) const
 {
-    return std::unique_ptr<ZIP_File>(new ZIP_File(zip_fopen_index(m_zip, index, 0)));
+    auto stat = get_file_stat(name);
+    return stat.size;
 }
 
-bool ZIP::close() {
-    if (zip_close(m_zip) == 0) 
+std::unique_ptr<ZIP_Entry> ZIP::get_entry(size_t index) const
+{
+    auto stat = get_file_stat(index);
+    std::string name = stat.name;
+    auto zf = zip_fopen_index(m_zip, index, 0); 
+
+    if (zf == nullptr)
+    {
+        throw std::runtime_error(name + " error creating zip entry");
+    }
+    return std::unique_ptr<ZIP_Entry>(new ZIP_Entry(name, zf));
+}
+
+std::unique_ptr<ZIP_Entry> ZIP::get_entry(const std::string &name) const
+{
+    auto zf = zip_fopen(m_zip, name.c_str(), 0);
+    if (zf == nullptr)
+    {
+        throw std::runtime_error(name + " error creating zip entry");
+    }
+    return std::unique_ptr<ZIP_Entry>(new ZIP_Entry(name, zf));
+}
+
+bool ZIP::close() noexcept
+{
+    if (zip_close(m_zip) == 0)
         m_zip = nullptr;
     return m_zip == nullptr;
 }
