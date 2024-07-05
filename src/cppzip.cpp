@@ -47,8 +47,7 @@ std::vector<char> ZIP_Entry::read(size_t size) const
  */
 
 ZIP::ZIP(std::string name, int mode)
-    : m_name(std::move(name)),
-    m_num_entries(0)
+    : m_name(std::move(name))
 {
     int err;
     m_zip = zip_open(m_name.c_str(), mode, &err);
@@ -89,8 +88,6 @@ int ZIP::add_file(const std::string &name, const void *content, size_t size, boo
         throw std::runtime_error(name + " error adding file: " + zip_err_str);
     }
 
-    m_num_entries = idx + 1;
-
     return idx;
 }
 
@@ -104,31 +101,55 @@ int ZIP::add_dir(std::string name)
         throw std::runtime_error(name + " error creating directory");
     }
 
-    m_num_entries = idx + 1;
+    return idx;
+}
+
+size_t ZIP::find_idx_by_name(const std::string &name) const
+{
+    auto idx = zip_name_locate(m_zip, name.c_str(), 0);
+    if (idx < 0)
+    {
+        throw std::runtime_error(name + " not found in " + m_name);
+    }
+    return idx;
+}
+
+
+int ZIP::replace_file(const std::string &name, const void *content, size_t size)
+{
+    auto idx = find_idx_by_name(name);
+    auto source = zip_source_buffer(m_zip, content, size, 0);
+    if (source == nullptr)
+    {
+        throw std::runtime_error(name + " error creating zip source");
+    }
+
+    if (zip_file_replace(m_zip, idx, source, ZIP_FL_OVERWRITE) < 0)
+    {
+        throw std::runtime_error(name + " error replacing: " + zip_strerror(m_zip));
+    }
 
     return idx;
 }
 
-void ZIP::delete_entry(size_t index) 
+void ZIP::delete_entry(size_t index)
 {
     auto res = zip_delete(m_zip, index);
-    if (res < 0) {
+    if (res < 0)
+    {
         throw std::runtime_error("error deleting entry");
     }
 }
 
-void ZIP::delete_entry(const std::string &name) 
+void ZIP::delete_entry(const std::string &name)
 {
-    auto index_to_delete = zip_name_locate(m_zip, name.c_str(), 0);
-    if (index_to_delete < 0) {
-        throw std::runtime_error(name + " not found in " + m_name);
-    }
-    delete_entry(index_to_delete);
+    delete_entry(find_idx_by_name(name));
 }
 
 size_t ZIP::get_num_entries() const
 {
-    return m_num_entries;
+
+    return zip_get_num_entries(m_zip, 0);
 }
 
 std::string ZIP::get_name() const
@@ -193,20 +214,21 @@ std::unique_ptr<ZIP_Entry> ZIP::get_entry(size_t index) const
 
 std::unique_ptr<ZIP_Entry> ZIP::get_entry(const std::string &name) const
 {
-    auto zf = zip_fopen(m_zip, name.c_str(), 0);
-    if (zf == nullptr)
-    {
-        throw std::runtime_error(name + " error creating zip entry");
-    }
-    return std::unique_ptr<ZIP_Entry>(new ZIP_Entry(name, zf));
+    return get_entry(find_idx_by_name(name));
 }
 
 std::list<std::unique_ptr<ZIP_Entry>> ZIP::get_entries() const
 {
     std::list<std::unique_ptr<ZIP_Entry>> res;
-    for (size_t i = 0; i < m_num_entries; ++i)
+    auto num_entries = get_num_entries();
+    for (size_t i = 0; i < num_entries; ++i)
     {
-        res.emplace_back(get_entry(i));
+        auto stat = get_entry_stat(i);
+        if (stat.valid & ZIP_STAT_NAME && stat.name == nullptr) {
+           // is deleted 
+        }else {
+            res.emplace_back(get_entry(i));
+        }
     }
     return res;
 }
@@ -217,3 +239,23 @@ bool ZIP::close() noexcept
         m_zip = nullptr;
     return m_zip == nullptr;
 }
+
+/**
+ * OZIP proxy for simple W operations
+ */
+
+OZIP::OZIP(std::string name, int mode)
+    : ZIP(std::move(name), mode)
+{}
+
+int OZIP::add_text_file(const std::string &name, const std::string &content, bool overwrite)
+{
+    return add_file(name, content.c_str(), content.size(), overwrite);
+}
+/**
+ * IZIP proxy for read operations
+ */
+
+IZIP::IZIP(std::string name)
+    : ZIP(std::move(name), ZIP_RDONLY)
+{}

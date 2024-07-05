@@ -8,6 +8,16 @@
 
 #include <zip.h>
 
+/**
+ *  ZIP modes (Can be ORed together):
+
+    ZIP_CHECKCONS - Perform additional stricter consistency checks on the archive, and error if they fail.
+    ZIP_CREATE - Create the archive if it does not exist.
+    ZIP_EXCL - Error if archive already exists.
+    ZIP_TRUNCATE - If archive exists, ignore its current contents. In other words, handle it the same way as an empty archive.
+    ZIP_RDONLY - Open archive in read-only mode.
+ */
+
 class ZIP_Entry
 {
     std::string m_name;
@@ -15,13 +25,10 @@ class ZIP_Entry
 
     ZIP_Entry(std::string name, zip_file_t *zf);
     friend class ZIP;
+    friend class OZIP;
 
 public:
     ~ZIP_Entry();
-
-    // no copies
-    ZIP_Entry(const ZIP_Entry &) = delete;
-    ZIP_Entry &operator=(const ZIP_Entry &) = delete;
 
     // is directory or a file
     bool is_directory() const;
@@ -33,22 +40,21 @@ public:
 
 class ZIP
 {
+protected:
     std::string m_name;
-    size_t m_num_entries;
     zip_t *m_zip;
+    size_t find_idx_by_name(const std::string &name) const;
 
 public:
     ZIP(std::string name, int mode);
     virtual ~ZIP();
 
-    // no copies
-    ZIP(const ZIP &) = delete;
-    ZIP &operator=(const ZIP &) = delete;
-
     // add file with content
     int add_file(const std::string &name, const void *content, size_t size, bool overwrite = true);
     // add directory
     int add_dir(std::string name);
+    // replace existing file
+    int replace_file(const std::string &name, const void *content, size_t size);
 
     // NOTE: after deletion the changes are applied only after close()
     // An attempt to read entry once it was deleted results in an error
@@ -80,6 +86,34 @@ public:
 
     // close file and sync
     bool close() noexcept;
+};
+
+class OZIP : private ZIP
+{
+public:
+    OZIP(std::string name, int mode = ZIP_CREATE | ZIP_TRUNCATE);
+    ~OZIP() = default;
+
+    using ZIP::add_dir;
+    using ZIP::add_file;
+    using ZIP::close;
+
+    // add text file
+    int add_text_file(const std::string &name, const std::string &content, bool overwrite = true);
+};
+
+class IZIP : private ZIP
+{
+public:
+    IZIP(std::string name);
+    ~IZIP() = default;
+
+    using ZIP::close;
+    using ZIP::get_entries;
+    using ZIP::get_entry;
+    using ZIP::get_entry_stat;
+    using ZIP::get_file_size;
+    using ZIP::get_num_entries;
 };
 
 #endif

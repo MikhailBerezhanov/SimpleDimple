@@ -18,17 +18,6 @@
             }
         },
         {
-            "name": "SDL for Linux GCC",
-            "description": "Build app for Linux using GCC compiler",
-            "binaryDir": "${sourceDir}/build/Linux",
-            "generator": "Unix Makefiles",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "/usr/bin/gcc",
-                "CMAKE_CXX_COMPILER": "/usr/bin/g++",
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
             "name": "SDL for Windows MinGW",
             "description": "Build app for Windows using MinGW compiler",
             "binaryDir": "${sourceDir}/build/Windows",
@@ -36,18 +25,6 @@
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "/usr/bin/x86_64-w64-mingw32-gcc-posix",
                 "CMAKE_CXX_COMPILER": "/usr/bin/x86_64-w64-mingw32-g++-posix",
-                "CMAKE_SYSTEM_NAME": "Windows",
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "SDL for Windows Clang",
-            "description": "Build app for Windows using Clang compiler",
-            "binaryDir": "${sourceDir}/build/Windows",
-            "generator": "Unix Makefiles",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_SYSTEM_NAME": "Windows",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
