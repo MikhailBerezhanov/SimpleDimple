@@ -59,6 +59,20 @@ ARG SDL_IMAGE_SRC=/tmp/SDL_IMAGE_SOURCES
 ARG ZLIB_SRC=/tmp/ZLIB_SOURCES
 ARG LIBZIP_SRC=/tmp/LIBZIP_SOURCES
 
+ARG SDL_ARCHIVE=/tmp/SDL.tar.gz
+ARG SDL_IMAGE_ARCHIVE=/tmp/SDL_Image.tar.gz
+ARG ZLIB_ARCHIVE=/tmp/ZLIB.tar.gz
+ARG LIBZIP_ARCHIVE=/tmp/LIBZIP.tar.gz
+
+# Download SDL sources
+ADD https://github.com/libsdl-org/SDL/archive/refs/tags/release-2.30.4.tar.gz ${SDL_ARCHIVE}
+# Download SDL_Image sources
+ADD https://github.com/libsdl-org/SDL_image/archive/refs/tags/release-2.8.2.tar.gz ${SDL_IMAGE_ARCHIVE}
+# Download ZLIB sources
+ADD https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz ${ZLIB_ARCHIVE}
+# Download libzip sources
+ADD https://github.com/nih-at/libzip/archive/refs/tags/v1.10.1.tar.gz ${LIBZIP_ARCHIVE}
+
 RUN mkdir -p ${SDL_PREFIX_UNIX}
 RUN mkdir -p ${SDL_PREFIX_WINDOWS}
 RUN mkdir -p ${ZLIB_PREFIX_UNIX}
@@ -71,14 +85,15 @@ RUN mkdir -p ${SDL_IMAGE_SRC}/build
 RUN mkdir -p ${ZLIB_SRC}/build
 RUN mkdir -p ${LIBZIP_SRC}/build
 
-# Copy SDL sources
-COPY SDL ${SDL_SRC}
-# Copy SDL_Image sources 
-COPY SDL_Image ${SDL_IMAGE_SRC}
-# Copy zlib sources
-COPY ZLIB ${ZLIB_SRC}
-# Copy libzip sources
-COPY LIBZIP ${LIBZIP_SRC}
+# Unpack
+RUN tar -xzf ${SDL_ARCHIVE} -C ${SDL_SRC}/ --strip-components 1 \
+    && rm ${SDL_ARCHIVE}
+RUN tar -xzf ${SDL_IMAGE_ARCHIVE} -C ${SDL_IMAGE_SRC}/ --strip-components 1 \
+    && rm ${SDL_IMAGE_ARCHIVE}
+RUN tar -xzf ${ZLIB_ARCHIVE} -C ${ZLIB_SRC}/ --strip-components 1 \
+    && rm ${ZLIB_ARCHIVE}
+RUN tar -xzf ${LIBZIP_ARCHIVE} -C ${LIBZIP_SRC}/ --strip-components 1 \
+    && rm ${LIBZIP_ARCHIVE}
 
 #### SDL ####
 
@@ -88,6 +103,7 @@ RUN rm -rf ./*
 # Configure, build, install for Linux
 RUN cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_CXX_COMPILER=clang++ \
     -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_UNIX}
 
 RUN cmake --build . --config Release
@@ -97,6 +113,7 @@ RUN cmake --build . --target install
 RUN rm -rf ./*
 RUN cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+    -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ \
     -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres \
     -DCMAKE_SYSTEM_NAME=Windows \
     -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_WINDOWS}
