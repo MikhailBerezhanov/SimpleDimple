@@ -2,9 +2,9 @@ build/
 stamp/
 tmp/
 bin/
-include/
 lib/
 share/
 cmake/
 licenses/
-config/config.h
+.vscode/
+src/config.h

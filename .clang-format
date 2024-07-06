@@ -1,0 +1,75 @@
+# https://releases.llvm.org/14.0.0/tools/clang/docs/ClangFormatStyleOptions.html
+Language: Cpp
+BasedOnStyle: Mozilla
+AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: None
+AlignConsecutiveBitFields: None
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
+AlignOperands: DontAlign
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: Inline
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+BreakBeforeBraces: Custom
+BreakBeforeTernaryOperators: false
+BreakStringLiterals: false
+ColumnLimit: 140
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+Cpp11BracedListStyle: true
+DerivePointerAlignment: true
+DisableFormat: false
+FixNamespaceComments: true
+IndentExternBlock: NoIndent
+IndentAccessModifiers: false
+IndentGotoLabels: false
+IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: false
+MacroBlockBegin: >
+  mEXTERNAL_TABLE_BEGIN|
+  mINTERNAL_TABLE_BEGIN|
+  mpPROPERTY_TABLE\(
+MacroBlockEnd: >
+  mEXTERNAL_TABLE_END|
+  mINTERNAL_TABLE_END|
+  mpPROPERTY_TABLE_END
+MaxEmptyLinesToKeep: 2
+PackConstructorInitializers: Never
+PPIndentWidth: 4
+PenaltyReturnTypeOnItsOwnLine: 1000000
+ReferenceAlignment: Left
+SortIncludes: false
+SortUsingDeclarations: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeInheritanceColon: true
+SpacesInContainerLiterals: true
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: 1
+Standard: Latest
+StatementMacros: [
+    'EXTERN_C',
+  ]
+TabWidth: 4
+UseCRLF: false
+UseTab: Never
