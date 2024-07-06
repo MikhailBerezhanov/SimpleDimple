@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <cstring>
 
 #include "cppzip.h"
 
@@ -48,6 +49,7 @@ std::vector<char> ZIP_Entry::read(size_t size) const
 
 ZIP::ZIP(std::string name, int mode)
     : m_name(std::move(name))
+     ,m_file_data_storage{}
 {
     int err;
     m_zip = zip_open(m_name.c_str(), mode, &err);
@@ -68,8 +70,11 @@ ZIP::~ZIP()
 }
 
 int ZIP::add_file(const std::string &name, const void *content, size_t size, bool overwrite)
-{
-    auto source = zip_source_buffer(m_zip, content, size, 0);
+{   
+    // we need the content * to stay valid until zip file is closed, so we copy it
+    auto ptr = store_content(content, size);
+
+    auto source = zip_source_buffer(m_zip, ptr, size, 0);
     if (source == nullptr)
     {
         throw std::runtime_error(name + " error creating zip source");
@@ -86,6 +91,52 @@ int ZIP::add_file(const std::string &name, const void *content, size_t size, boo
         std::string zip_err_str = zip_strerror(m_zip);
         zip_source_free(source);
         throw std::runtime_error(name + " error adding file: " + zip_err_str);
+    }
+
+    return idx;
+}
+
+int ZIP::add_existing_file(const std::string &path, const std::string &save_as, bool overwrite)
+{
+    auto source = zip_source_file(m_zip, path.c_str(), 0, ZIP_LENGTH_TO_END);
+    if (source == nullptr)
+    {
+        throw std::runtime_error(path + " error creating zip source");
+    }
+    // Interpret name as UTF-8.
+    int flags = ZIP_FL_ENC_UTF_8;
+    if (overwrite)
+        flags |= ZIP_FL_OVERWRITE;
+    // Result is file index in zip archive
+    int idx = zip_file_add(m_zip, save_as.c_str(), source, flags);
+    if (idx < 0)
+    {
+        std::string zip_err_str = zip_strerror(m_zip);
+        zip_source_free(source);
+        throw std::runtime_error(save_as + " error adding file: " + zip_err_str);
+    }
+
+    return idx;
+}
+
+int ZIP::replace_file(const std::string &name, const void *content, size_t size)
+{
+    auto idx = find_idx_by_name(name);
+
+    // we need the content * to stay valid until zip file is closed, so we copy it
+    auto ptr = store_content(content, size);
+
+    auto source = zip_source_buffer(m_zip, ptr, size, 0);
+    if (source == nullptr)
+    {
+        throw std::runtime_error(name + " error creating zip source");
+    }
+
+    if (zip_file_replace(m_zip, idx, source, ZIP_FL_OVERWRITE) < 0)
+    {
+        std::string zip_err_str = zip_strerror(m_zip);
+        zip_source_free(source);
+        throw std::runtime_error(name + " error replacing: " + zip_err_str);
     }
 
     return idx;
@@ -114,22 +165,12 @@ size_t ZIP::find_idx_by_name(const std::string &name) const
     return idx;
 }
 
-
-int ZIP::replace_file(const std::string &name, const void *content, size_t size)
+uint8_t *ZIP::store_content(const void *content, size_t size)
 {
-    auto idx = find_idx_by_name(name);
-    auto source = zip_source_buffer(m_zip, content, size, 0);
-    if (source == nullptr)
-    {
-        throw std::runtime_error(name + " error creating zip source");
-    }
-
-    if (zip_file_replace(m_zip, idx, source, ZIP_FL_OVERWRITE) < 0)
-    {
-        throw std::runtime_error(name + " error replacing: " + zip_strerror(m_zip));
-    }
-
-    return idx;
+    m_file_data_storage.emplace_back(new uint8_t[size]);
+    auto ptr = m_file_data_storage.back().get();
+    std::memcpy(ptr, content, size);
+    return ptr;
 }
 
 void ZIP::delete_entry(size_t index)

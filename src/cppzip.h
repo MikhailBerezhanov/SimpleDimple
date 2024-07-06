@@ -43,7 +43,9 @@ class ZIP
 protected:
     std::string m_name;
     zip_t *m_zip;
+    std::list<std::unique_ptr<uint8_t[]>> m_file_data_storage;
     size_t find_idx_by_name(const std::string &name) const;
+    uint8_t *store_content(const void *content, size_t size);
 
 public:
     ZIP(std::string name, int mode);
@@ -51,10 +53,12 @@ public:
 
     // add file with content
     int add_file(const std::string &name, const void *content, size_t size, bool overwrite = true);
-    // add directory
-    int add_dir(std::string name);
+    // add already existing file
+    int add_existing_file(const std::string &path, const std::string &save_as, bool overwrite = true);
     // replace existing file
     int replace_file(const std::string &name, const void *content, size_t size);
+    // add directory
+    int add_dir(std::string name);
 
     // NOTE: after deletion the changes are applied only after close()
     // An attempt to read entry once it was deleted results in an error
@@ -96,6 +100,7 @@ public:
 
     using ZIP::add_dir;
     using ZIP::add_file;
+    using ZIP::add_existing_file;
     using ZIP::close;
 
     // add text file
@@ -108,12 +113,12 @@ public:
     IZIP(std::string name);
     ~IZIP() = default;
 
-    using ZIP::close;
     using ZIP::get_entries;
     using ZIP::get_entry;
     using ZIP::get_entry_stat;
     using ZIP::get_file_size;
     using ZIP::get_num_entries;
+    using ZIP::close;
 };
 
 #endif

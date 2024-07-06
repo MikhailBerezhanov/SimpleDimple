@@ -86,6 +86,8 @@ if (ENABLE_GTESTS)
     )
     # Specify link libs
     set(GTEST_LINK_LIBS ${DEPENDENCY_LIBS})
+    # Do not automatically install gtest
+    set(INSTALL_GTEST OFF)
     # Add subdir with tests
     add_subdirectory(${TESTS_DIR}/utest)
 endif()

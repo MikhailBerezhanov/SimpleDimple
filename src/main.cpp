@@ -22,14 +22,24 @@ int main(int argc, char *args[])
 {
     try
     {
-        Logger logger(MAIN_LOG_PREFIX, 1);
-
-        logger.info("Hello");
+        std::ofstream fl("test.txt");
+        fl << "test contentlksrgnknsrgnslfrnLSNEflinsekn ksnek unskuen knske ns\n eske bnksegk ske ";
+        fl.close();
 
         OZIP ozip("ozip_test.zip");
-        ozip.add_text_file("test.txt", "test content");
-        ozip.add_text_file("test2.txt", "test content");
+        ozip.add_existing_file("test.txt", "test.txt");
+        ozip.add_text_file("test2.txt", "test contentlksrgnknsrgnslfrnLSNEflinsekn ksnek unskuen knske ns\n eske bnksegk ske ");
+        // ozip.add_text_file("test2.txt", "test content");
         ozip.close();
+
+        Logger logger(MAIN_LOG_NAME, 1);
+
+        logger.info("Hello");
+        logger.error("<hbKGsbkGKSGrnkSRglSNrkgjnkudsnrgkNSKrngkdnbgkdbrgkbdnrhkgndkhrng");
+        logger.debug("<hbKGsbkGKSGrnkSRglSNrkgjnkudsnrgkNSKrngkdnbgkdbrgkbdnrhkgndkhrng");
+        logger.error("<hbKGsbkGKSGrnkSRglSNrkgjnkudsnrgkNSKrngkdnbgkdbrgkbdnrhkgndkhrng");
+
+        
 
         IZIP izip("ozip_test.zip");
         for (auto &entry : izip.get_entries()) {

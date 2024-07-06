@@ -24,20 +24,20 @@ enum class LOG_LEVEL : unsigned int
 class Logger
 {
 private:
-    struct log_file
+    class LogFileHdl
     {
-        std::string name;
-        std::ofstream file;
-        size_t size;
-        log_file(const std::string &name, const std::ios_base::openmode mode = std::ios::out);
-        // std::ofstream *operator->() { return &file; }
+        std::string m_name;
+        std::ofstream m_file;
+        size_t m_size;
+    public:
+        LogFileHdl(const std::string &name);
+        const std::string &get_name() const;
         void write(const std::string &str);
         size_t get_size() const;
+        void truncate();
     };
 
-    log_file m_info_file;
-    log_file m_err_file;
-    log_file m_dbg_file;
+    LogFileHdl m_log_file;
 
     size_t m_max_debug_verbosity;
     bool m_no_stdout;
@@ -46,7 +46,7 @@ private:
     std::stringstream get_wrapped_date() const;
 
 public:
-    Logger(const std::string &prefix, size_t max_debug_verbosity = 0, bool nostdout = false);
+    Logger(const std::string &name, size_t max_debug_verbosity = 0, bool nostdout = false);
     // disable copies
     Logger(const Logger &) = delete;
     Logger &operator=(const Logger &) = delete;

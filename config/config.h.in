@@ -4,8 +4,11 @@
 
 // Logs
 #define LOGS_DIR "@LOGS_DIR@"
-#define MAIN_LOG_PREFIX "@MAIN_LOG_PREFIX@"
+#define MAIN_LOG_NAME "@MAIN_LOG_NAME@"
+// clang-format off
 #define LOG_MAX_SIZE @LOG_MAX_SIZE@
+// clang-format on
+#define LOG_DATE_FORMAT_DEFAULT "@LOG_DATE_FORMAT_DEFAULT@"
 
 // Assets
 #define ASSETS_DIR "@ASSETS_DIR@"
