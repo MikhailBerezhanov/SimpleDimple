@@ -1,33 +1,34 @@
 ## Prerequisites
 GLIBC >= 2.28 for Linux
 
-## Configure, Build, Install in Docker
+## Docker builder
+Project uses docker image for multi-platfrom application building:
+https://hub.docker.com/r/drone29/sdl2-container
 
-Example for Linux:
 ```
+docker pull drone29/sdl2-container
+```
+
+### Building with terminal
+Prepare build directory
+```
+mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_C_COMPILER=clang \
-        -DCMAKE_INSTALL_PREFIX=${PROJECT_ROOT_LOCATION_HERE}
-cmake --build .
-cmake --build . --target install
 ```
 
-For Windows:
+Build steps for `Linux` target:
 ```
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
-        -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres \
-        -DCMAKE_SYSTEM_NAME=Windows \
-        -DCMAKE_INSTALL_PREFIX=${PROJECT_ROOT_LOCATION_HERE}
-cmake --build .
-cmake --build . --target install
+cmake .. --preset "SDL for Linux CLang"
+cmake --build Linux/
+cmake --build Linux/ --target install
 ```
 
-It's possible to use ```CMakePresets.json``` to configure project for Linux or Windows with VSCode:
-
-```>Cmake: Select Configure preset```
+Build steps for `Windows` target:
+```
+cmake .. --preset "SDL for Windows MinGW"
+cmake --build Windows/
+cmake --build Windows/ --target install
+```
 
 After installation, the files should be arranged as follows:
 
@@ -45,11 +46,9 @@ bin/
     SDL2.dll
 ```
 
-## Docker
-Use with this docker image:
-https://hub.docker.com/r/drone29/sdl2-container
+### Bulding with VSCode
 
-Tested only with VSCode 'Dev Containers' extension:
+Using VSCode 'Dev Containers' extension:
 ```
 Ctrl+Shft+P
 >Dev Containers: Open Folder in Container
@@ -58,10 +57,14 @@ Use DockerFile
 ```
 After that VSCode should run the container in accordance with Dockerfile contents
 
-The project folder is mapped automatically into the container, 
+The project folder is mounted automatically into the container, 
 so any changes to sources are preserved and may be later accessed outside of the container
 
 Also, there's a ```run_in_docker.sh``` script which is meant to mimic 'Dev Containers' behaviour (Linux only)
+
+It's also possible to use ```CMakePresets.json``` to configure project for Linux or Windows target with VSCode:
+
+```>Cmake: Select Configure preset```
 
 ## Xhost
 Allow Docker to use X11 server for video:
