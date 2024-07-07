@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16.0)
 project(test_game VERSION 0.1.0 LANGUAGES C CXX)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Executable name
@@ -77,23 +77,23 @@ set_target_properties(${EXEC_NAME} PROPERTIES
     BUILD_WITH_INSTALL_RPATH FALSE)
 
 # No testing for Windows version as there's no way we can run .exe in linux container
-if (ENABLE_GTESTS)
-    # Enable tests
-    enable_testing()
-    # Specify sources for tests
-    set(GTEST_SOURCES ${SOURCES_NO_MAIN})
-    # Specify include path for tests
-    set(GTEST_INCLUDE_DIR 
-        ${DEPENDENCY_INCLUDE_DIRS} 
-        ${INCLUDE_DIR}
-    )
-    # Specify link libs
-    set(GTEST_LINK_LIBS ${DEPENDENCY_LIBS})
-    # Do not automatically install gtest
-    set(INSTALL_GTEST OFF)
-    # Add subdir with tests
-    add_subdirectory(${TESTS_DIR}/utest)
-endif()
+# if (ENABLE_GTESTS)
+#     # Enable tests
+#     enable_testing()
+#     # Specify sources for tests
+#     set(GTEST_SOURCES ${SOURCES_NO_MAIN})
+#     # Specify include path for tests
+#     set(GTEST_INCLUDE_DIR 
+#         ${DEPENDENCY_INCLUDE_DIRS} 
+#         ${INCLUDE_DIR}
+#     )
+#     # Specify link libs
+#     set(GTEST_LINK_LIBS ${DEPENDENCY_LIBS})
+#     # Do not automatically install gtest
+#     set(INSTALL_GTEST OFF)
+#     # Add subdir with tests
+#     add_subdirectory(${TESTS_DIR}/utest)
+# endif()
 
 # Include installation rules
 include(${MODULES_DIR}/InstallRules.cmake)

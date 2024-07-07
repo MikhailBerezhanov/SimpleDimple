@@ -7,7 +7,7 @@
     },
     "configurePresets": [
         {
-            "name": "SDL for Linux CLang",
+            "name": "linux",
             "description": "Build app for Linux using Clang compiler",
             "binaryDir": "${sourceDir}/build/Linux",
             "generator": "Unix Makefiles",
@@ -18,7 +18,7 @@
             }
         },
         {
-            "name": "SDL for Windows MinGW",
+            "name": "windows",
             "description": "Build app for Windows using MinGW compiler",
             "binaryDir": "${sourceDir}/build/Windows",
             "generator": "Unix Makefiles",
