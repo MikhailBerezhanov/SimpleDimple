@@ -1,15 +1,17 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.16.0)
 
 project(test_game VERSION 0.1.0 LANGUAGES C CXX)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Executable name
 set(EXEC_NAME ${CMAKE_PROJECT_NAME})
 # Config header location
 set(CONFIG_DIR ${CMAKE_SOURCE_DIR}/config)
+# CMake modules location
+set(MODULES_DIR ${CMAKE_SOURCE_DIR}/cmake)
 # Sources location
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 # Include location
@@ -32,10 +34,10 @@ set(SOURCES
 )
 
 # Include runtime configs (LOGS_DIR, ASSETS_DIR,...)
-include(${CONFIG_DIR}/RuntimeConfigs.cmake)
+include(${MODULES_DIR}/RuntimeConfigs.cmake)
 
 # Include platform-specific settings (SDL_PREFIX, SDL_LIB_DIR, SDL_LIB_NAMES, ...)
-include(${CONFIG_DIR}/PlatformDependencies.cmake)
+include(${MODULES_DIR}/PlatformDependencies.cmake)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     message(STATUS "DEBUG: Configuring for ${CMAKE_SYSTEM_NAME}")
@@ -92,6 +94,6 @@ if (ENABLE_GTESTS)
 endif()
 
 # Include installation rules
-include(${CONFIG_DIR}/InstallRules.cmake)
+include(${MODULES_DIR}/InstallRules.cmake)
 
 

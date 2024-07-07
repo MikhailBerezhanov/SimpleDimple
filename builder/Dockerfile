@@ -45,14 +45,14 @@ RUN rm /tmp/cmake-3.21.0-linux-x86_64.tar.gz
 #### Build from sources ####
 
 # Create Unix/Windows directories for SDL libs and includes
-ENV SDL_PREFIX_UNIX=/SDL/Unix
-ENV SDL_PREFIX_WINDOWS=/SDL/Windows
+ENV SDL_PREFIX_UNIX=/opt/sdl/unix
+ENV SDL_PREFIX_WINDOWS=/opt/sdl/windows
 
-ENV ZLIB_PREFIX_UNIX=/ZLIB/Unix
-ENV ZLIB_PREFIX_WINDOWS=/ZLIB/Windows
+ENV ZLIB_PREFIX_UNIX=/opt/zlib/unix
+ENV ZLIB_PREFIX_WINDOWS=/opt/zlib/windows
 
-ENV LIBZIP_PREFIX_UNIX=/LIBZIP/Unix
-ENV LIBZIP_PREFIX_WINDOWS=/LIBZIP/Windows
+ENV LIBZIP_PREFIX_UNIX=/opt/libzip/unix
+ENV LIBZIP_PREFIX_WINDOWS=/opt/libzip/windows
 
 ARG SDL_SRC=/tmp/SDL_SOURCES
 ARG SDL_IMAGE_SRC=/tmp/SDL_IMAGE_SOURCES
@@ -130,7 +130,7 @@ RUN rm -rf ./*
 RUN cmake .. -DCMAKE_C_COMPILER=clang \
     -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_UNIX}
 
-RUN cmake --build .
+RUN cmake --build . --config Release
 RUN cmake --build . --target install
 
 RUN rm -rf ./*
@@ -141,7 +141,7 @@ RUN cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
     -DCMAKE_SYSTEM_NAME=Windows \
     -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_WINDOWS}
 
-RUN cmake --build .
+RUN cmake --build . --config Release
 RUN cmake --build . --target install
 
 #### ZLIB ####
@@ -153,7 +153,7 @@ RUN rm -rf ./*
 RUN cmake .. -DCMAKE_C_COMPILER=clang \
     -DCMAKE_INSTALL_PREFIX=${ZLIB_PREFIX_UNIX}
 
-RUN cmake --build .
+RUN cmake --build . --config Release
 RUN cmake --build . --target install
 
 # Windows
@@ -162,7 +162,7 @@ RUN cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
     -DCMAKE_SYSTEM_NAME=Windows \
     -DCMAKE_INSTALL_PREFIX=${ZLIB_PREFIX_WINDOWS}
 
-RUN cmake --build .
+RUN cmake --build . --config Release
 RUN cmake --build . --target install
 
 #### LIBZIP ####
@@ -178,7 +178,7 @@ RUN cmake .. -DCMAKE_C_COMPILER=clang \
     -DENABLE_LZMA=OFF \
     -DCMAKE_INSTALL_PREFIX=${LIBZIP_PREFIX_UNIX}
 
-RUN cmake --build .
+RUN cmake --build . --config Release
 RUN cmake --build . --target install
 
 # Windows
@@ -192,7 +192,7 @@ RUN cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
     -DENABLE_WINDOWS_CRYPTO=OFF \
     -DCMAKE_INSTALL_PREFIX=${LIBZIP_PREFIX_WINDOWS}
 
-RUN cmake --build .
+RUN cmake --build . --config Release
 RUN cmake --build . --target install
 
 #### Cleanup ###

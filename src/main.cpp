@@ -7,6 +7,8 @@
 // for using SDL_Delay() functions
 #include <SDL2/SDL_timer.h>
 
+#include "config.h"
+
 // Screen dimension constants
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 1000;

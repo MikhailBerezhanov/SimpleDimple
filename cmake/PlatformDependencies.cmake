@@ -1,19 +1,14 @@
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    set(__SDL_PREFIX "/SDL/Windows")
-    set(__ZLIB_PREFIX "/ZLIB/Windows")
-    set(__LIBZIP_PREFIX "/LIBZIP/Windows")
-    if(${CMAKE_CXX_COMPILER} MATCHES "cl.exe")
-        # clang (todo: SDL2_image ?)
-        set(__SDL_LIB_NAMES "SDL2maind" "SDL2d")
-    else()
-        # mingw 
-        # From sdl2-config --libs
-        # !PUT THESE BEFORE SDL2 LIBS!
-        set(__SDL_EXTRA_LIBS "-lmingw32" "-mwindows")
-        set(__SDL_LIB_NAMES "SDL2main" "SDL2.dll" "SDL2_image.dll")
-        # need static pthread for mingw-posix
-        set(__OTHER_LIBS "-static" "winpthread")
-    endif()
+    set(__SDL_PREFIX "/opt/sdl/windows")
+    set(__ZLIB_PREFIX "/opt/zlib/windows")
+    set(__LIBZIP_PREFIX "/opt/libzip/windows")
+    # From sdl2-config --libs
+    # !PUT THESE BEFORE SDL2 LIBS!
+    set(__SDL_EXTRA_LIBS "-lmingw32" "-mwindows")
+    set(__SDL_LIB_NAMES "SDL2main" "SDL2.dll" "SDL2_image.dll")
+    # need static pthread for mingw-posix
+    set(__OTHER_LIBS "-static" "winpthread")
     set(__ZLIB_LIB_NAMES "zlibstatic")
     set(__LIBZIP_LIB_NAMES "zip")
     # From sdl2-config --cflags
@@ -21,9 +16,9 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 else()
     # Unix
     set(ENABLE_GTESTS TRUE)
-    set(__SDL_PREFIX "/SDL/Unix")
-    set(__ZLIB_PREFIX "/ZLIB/Unix")
-    set(__LIBZIP_PREFIX "/LIBZIP/Unix")
+    set(__SDL_PREFIX "/opt/sdl/unix")
+    set(__ZLIB_PREFIX "/opt/zlib/unix")
+    set(__LIBZIP_PREFIX "/opt/libzip/unix")
     set(__SDL_LIB_NAMES "SDL2" "SDL2_image") 
     set(__ZLIB_LIB_NAMES "libz.a")
     set(__LIBZIP_LIB_NAMES "zip")
