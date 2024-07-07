@@ -73,40 +73,6 @@ Remove Docker from X11 list:
 xhost -local:docker
 ```
 
-## Building on Host
-It's possible to build the project directly on the host machine
-
-First, build the SDL library using
-
-```build_sdl.sh``` for Linux (Clang)
-
-```build_sdl.ps1``` for Windows (Clang)
-
-After that, these directories are created:
-```
-bin/ - contains sdl2-config (and SDL2.dll runtime lib for Windows)
-lib/ - contains .so/.a libs for Linux or "import" libs for Windows
-```
-
 #### Linkage:
 
-```libSDL2.so``` for Linux (Clang)
-
-```libSDL2main.a``` ```libSDL2.dll.a``` for Windows (MinGW)
-
-```libSDL2d.lib``` ```libSDL2maind.lib``` for Windows (Clang)
-
-Runtime lib for Windows ```SDL2.dll``` should be in the same folder as the executable
-
-Runtime libs for Linux ```.so``` should be placed in the same folder as the executable
-
-You can override ```SDL_PREFIX``` with cmake cli parameters to specify SDL installation location:
-
-```
-cd build
-cmake .. -DSDL_PREFIX=<PROJECT_ROOT_LOCATION_HERE>
-cmake --build .
-cmake --build . --target install
-```
-
-After installation the folders' structure should be the same as described in the first part
+See PlatformDependencies.cmake

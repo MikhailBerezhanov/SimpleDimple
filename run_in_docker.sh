@@ -6,11 +6,12 @@ set -e
 
 # Container name
 CONTAINER="sdl-container"
-# Script args
-PLATFORM="$1"
 
 # Build image
 docker build -t "$CONTAINER" .
+
+# Allow docker to use X11
+xhost +local:docker
 
 # Run container
 # -it --rm : interactive mode, remove container after it's stopped
@@ -20,7 +21,6 @@ docker build -t "$CONTAINER" .
 # -v $(pwd):/workspace : map current directory into /workspace
 # -w /workspace : set container WORKDIR
 # $CONTAINER : image to use
-# /bin/bash -c "./build_sdl.sh $PLATFORM; /bin/bash" : run script at startup
 docker run -it --rm \
     --name "$CONTAINER-instance" \
     -e DISPLAY=$DISPLAY \
@@ -28,7 +28,7 @@ docker run -it --rm \
     -v $(pwd):/workspace \
     -w /workspace \
     "$CONTAINER" \
-    /bin/bash -c "./build_sdl.sh $PLATFORM; /bin/bash"
+    /bin/bash
 
 
     

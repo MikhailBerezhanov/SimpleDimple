@@ -4,8 +4,6 @@ tmp/
 bin/
 lib/
 share/
-cmake/
 licenses/
-include/config.h
 .vscode/
 src/config.h
