@@ -17,9 +17,11 @@ set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 # Include location
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 # Bin/runtime libs destination
-set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/bin)
+set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/out)
 # Tests location
 set(TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
+# Assets to be installed location ( !ASSETS_DIR already reserved in RuntimeConfigs.cmake! )
+set(ASSETS_TO_INSTALL_DIR ${CMAKE_SOURCE_DIR}/assets)
 # Static linkage for stdlib to reduce dependencies
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
