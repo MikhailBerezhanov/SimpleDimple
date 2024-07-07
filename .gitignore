@@ -2,6 +2,7 @@ build/
 stamp/
 tmp/
 bin/
+out/
 lib/
 share/
 licenses/

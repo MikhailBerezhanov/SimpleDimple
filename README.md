@@ -34,16 +34,22 @@ After installation, the files should be arranged as follows:
 
 Linux:
 ```
-bin/
+out/Linux/bin/
     your_app_executable
     SDL2.so
     ...all_other_sdl_libs.so
+out/Linux/assets/
+    images/
+    ..other assets
 ```
 Windows:
 ```
-bin/
+out/Windows/bin/
     your_app.exe
     SDL2.dll
+out/Windows/assets/
+    images/
+    ..other assets
 ```
 
 ### Bulding with VSCode
