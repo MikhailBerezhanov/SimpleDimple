@@ -1,0 +1,78 @@
+## Prerequisites
+GLIBC >= 2.28 for Linux
+
+## Configure, Build, Install in Docker
+
+Example for Linux:
+```
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_INSTALL_PREFIX=${PROJECT_ROOT_LOCATION_HERE}
+cmake --build .
+cmake --build . --target install
+```
+
+For Windows:
+```
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+        -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres \
+        -DCMAKE_SYSTEM_NAME=Windows \
+        -DCMAKE_INSTALL_PREFIX=${PROJECT_ROOT_LOCATION_HERE}
+cmake --build .
+cmake --build . --target install
+```
+
+It's possible to use ```CMakePresets.json``` to configure project for Linux or Windows with VSCode:
+
+```>Cmake: Select Configure preset```
+
+After installation, the files should be arranged as follows:
+
+Linux:
+```
+bin/
+    your_app_executable
+    SDL2.so
+    ...all_other_sdl_libs.so
+```
+Windows:
+```
+bin/
+    your_app.exe
+    SDL2.dll
+```
+
+## Docker
+Use with this docker image:
+https://hub.docker.com/r/drone29/sdl2-container
+
+Tested only with VSCode 'Dev Containers' extension:
+```
+Ctrl+Shft+P
+>Dev Containers: Open Folder in Container
+Use local workspace
+Use DockerFile
+```
+After that VSCode should run the container in accordance with Dockerfile contents
+
+The project folder is mapped automatically into the container, 
+so any changes to sources are preserved and may be later accessed outside of the container
+
+Also, there's a ```run_in_docker.sh``` script which is meant to mimic 'Dev Containers' behaviour (Linux only)
+
+## Xhost
+Allow Docker to use X11 server for video:
+```
+xhost +local:docker
+```
+Remove Docker from X11 list:
+```
+xhost -local:docker
+```
+
+#### Linkage:
+
+See PlatformDependencies.cmake

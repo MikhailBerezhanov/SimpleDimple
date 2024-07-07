@@ -1,0 +1,9 @@
+build/
+stamp/
+tmp/
+bin/
+lib/
+share/
+licenses/
+.vscode/
+src/config.h
