@@ -54,6 +54,8 @@ add_executable(${EXEC_NAME} ${SOURCES})
 
 # Generate config.h from config.h.in
 configure_file(${CONFIG_DIR}/config.h.in ${INCLUDE_DIR}/config.h @ONLY)
+# Generate sdl.h from sdl.h.in
+configure_file(${CONFIG_DIR}/sdl.h.in ${INCLUDE_DIR}/sdl.h @ONLY)
 
 # Add definitions
 target_compile_definitions(${EXEC_NAME} PRIVATE 
