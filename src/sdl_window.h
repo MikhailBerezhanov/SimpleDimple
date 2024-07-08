@@ -15,6 +15,8 @@ namespace GameEngine
         Window(const std::string &title, size_t width, size_t heigth, size_t pos_x, size_t pos_y, uint32_t flags /*SDL_WindowFlags*/ = 0);
         Window(const std::string &title, size_t width, size_t heigth, bool centered = true, uint32_t flags /*SDL_WindowFlags*/ = 0);
         ~Window();
+        // Get raw pointer
+        SDL_Window *get_raw() const;
         // Title
         void set_title(const std::string &title) const override;
         std::string get_title() const override;
