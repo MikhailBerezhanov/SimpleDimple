@@ -17,6 +17,9 @@ namespace GameEngine
         ~Renderer();
 
         SDL_Renderer *get_raw() const;
+
+        // Size
+        std::tuple<size_t, size_t> get_output_size() const override;
     };
 };
 
