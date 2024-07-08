@@ -6,7 +6,6 @@
 
 namespace GameEngine 
 {
-
     // Implementation Window
     class Window : public IWindow {
         SDL_Window *m_window;
