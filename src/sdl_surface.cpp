@@ -1,0 +1,6 @@
+#include <stdexcept>
+
+namespace GameEngine
+{
+
+};
