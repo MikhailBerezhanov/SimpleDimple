@@ -11,7 +11,7 @@
 #include <@SDL_USED_VERSION@/SDL_timer.h>
 
 // for images (IMG_Load, etc)
-#include <SDL_image.h>
+#include <@SDL_USED_VERSION@/SDL_image.h>
 
 
 #endif 
