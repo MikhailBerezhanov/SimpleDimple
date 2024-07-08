@@ -1,5 +1,4 @@
-#ifndef SDL_TEXTURE_H
-#define SDL_TEXTURE_H
+#pragma once
 
 #include <memory>
 
@@ -22,5 +21,3 @@ namespace GameEngine
         ~Texture();
     };
 };
-
-#endif

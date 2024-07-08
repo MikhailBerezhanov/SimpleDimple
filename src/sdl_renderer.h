@@ -1,5 +1,4 @@
-#ifndef SDL_RENDERER_H
-#define SDL_RENDERER_H
+#pragma once
 
 #include <memory>
 
@@ -22,5 +21,3 @@ namespace GameEngine
         std::tuple<size_t, size_t> get_output_size() const override;
     };
 };
-
-#endif

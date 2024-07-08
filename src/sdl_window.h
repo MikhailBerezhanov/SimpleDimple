@@ -1,5 +1,4 @@
-#ifndef SDL_WINDOW_H
-#define SDL_WINDOW_H
+#pragma once
 
 #include "sdl_interface.h"
 #include "sdl.h"
@@ -47,5 +46,3 @@ namespace GameEngine
         IWindow & restore() override; //Restore the size and position of a minimized or maximized window
     };
 };
-
-#endif
