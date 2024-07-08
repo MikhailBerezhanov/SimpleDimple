@@ -40,5 +40,14 @@ namespace GameEngine
         return m_renderer;
     }
 
+    std::tuple<size_t, size_t> Renderer::get_output_size() const
+    {
+        int w, h;
+        if (SDL_GetRendererOutputSize(m_renderer, &w, &h) < 0) {
+            throw std::runtime_error("Error retrieving renderer size: " + std::string(SDL_GetError()));
+        }
+        return std::make_tuple(static_cast<size_t>(w), static_cast<size_t>(h));
+    }
+
 
 }; // namespace GameEngine

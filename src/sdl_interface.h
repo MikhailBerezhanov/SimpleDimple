@@ -44,6 +44,8 @@ namespace GameEngine
     class IRenderer {
     public:
         ~IRenderer() = default;
+        // Size
+        virtual std::tuple<size_t, size_t> get_output_size() const = 0;
     };
 
     // Interface, handles SDL Texture
