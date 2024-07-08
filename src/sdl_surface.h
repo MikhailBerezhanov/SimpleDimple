@@ -1,5 +1,4 @@
-#ifndef SDL_SURFACE_H
-#define SDL_SURFACE_H
+#pragma once
 
 #include "sdl_interface.h"
 #include "sdl.h"
@@ -14,5 +13,3 @@ namespace GameEngine
         ~Surface();
     };
 };
-
-#endif

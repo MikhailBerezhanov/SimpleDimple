@@ -1,5 +1,4 @@
-#ifndef SDL_INTERFACE_H
-#define SDL_INTERFACE_H
+#pragma once
 
 #include <string>
 #include <tuple>
@@ -60,5 +59,3 @@ namespace GameEngine
         ~ISurface() = default;
     };
 };
-
-#endif
