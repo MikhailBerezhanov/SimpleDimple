@@ -4,7 +4,8 @@
 #include <string>
 #include <tuple>
 
-namespace SDL {
+namespace GameEngine 
+{
 
     // Interface, handles SDL Window
     class IWindow {
