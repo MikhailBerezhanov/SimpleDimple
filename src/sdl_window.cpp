@@ -33,6 +33,12 @@ namespace GameEngine
     {
         SDL_DestroyWindow(m_window);
     }
+
+    SDL_Window *Window::get_raw() const
+    {
+        return m_window;
+    }
+
     std::tuple<size_t, size_t> Window::get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const
     {
         int w, h;
