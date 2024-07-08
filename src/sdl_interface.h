@@ -6,7 +6,6 @@
 
 namespace GameEngine 
 {
-
     // Interface, handles SDL Window
     class IWindow {
     public:
@@ -43,17 +42,20 @@ namespace GameEngine
 
     // Interface, handles SDL Renderer
     class IRenderer {
-
+    public:
+        ~IRenderer() = default;
     };
 
     // Interface, handles SDL Texture
     class ITexture {
-
+    public:
+        ~ITexture() = default;
     };
 
     // Interface, handles SDL Surface
     class ISurface {
-
+    public:
+        ~ISurface() = default;
     };
 };
 
