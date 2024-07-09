@@ -47,6 +47,6 @@ namespace GameEngine
         IWindow & restore() override; //Restore the size and position of a minimized or maximized window
         // Nested objects
         // Renderer
-        std::unique_ptr<IRenderer> create_renderer(int index = -1, uint32_t flags = 0) override;
+        std::shared_ptr<IRenderer> create_renderer(int index = -1, uint32_t flags = 0) override;
     };
 };

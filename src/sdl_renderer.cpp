@@ -47,9 +47,9 @@ namespace GameEngine
         return *this;
     }
 
-    IRenderer& Renderer::copy(std::unique_ptr<ITexture>& texture, const Rect* source, const Rect* dest)
+    IRenderer& Renderer::copy(ITexture *texture, const Rect* source, const Rect* dest)
     {
-        auto tex = dynamic_cast<Texture*>(texture.get());
+        auto tex = dynamic_cast<Texture*>(texture);
         if (! tex) {
             throw std::runtime_error("Invalid texture");
         }
@@ -64,17 +64,17 @@ namespace GameEngine
         return *this;
     }
 
-    std::unique_ptr<ITexture> Renderer::create_texture(ISurface &surface)
+    std::shared_ptr<ITexture> Renderer::create_texture(ISurface *surface)
     {
-        auto surf = dynamic_cast<Surface&>(surface);
-        auto tex = new Texture(m_renderer, surf.m_surface);
-        return std::unique_ptr<Texture>(tex);
+        auto surf = dynamic_cast<Surface*>(surface);
+        auto tex = new Texture(m_renderer, surf->m_surface);
+        return std::shared_ptr<Texture>(tex);
     }
 
-    std::unique_ptr<ITexture> Renderer::create_texture(uint32_t format, int access, int width, int heigth)
+    std::shared_ptr<ITexture> Renderer::create_texture(uint32_t format, int access, int width, int heigth)
     {
         auto tex = new Texture(m_renderer, format, access, width, heigth);
-        return std::unique_ptr<Texture>(tex);
+        return std::shared_ptr<Texture>(tex);
     }
 
 

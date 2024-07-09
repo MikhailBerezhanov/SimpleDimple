@@ -21,10 +21,10 @@ namespace GameEngine
         // Modifiers
         IRenderer & clear() override;
         IRenderer & present() override;
-        IRenderer & copy(std::unique_ptr<ITexture> & texture, const Rect *source, const Rect *dest) override;
+        IRenderer & copy(ITexture *texture, const Rect *source, const Rect *dest) override;
         // Nested objects
         // Texture
-        std::unique_ptr<ITexture> create_texture(ISurface &surface) override;
-        std::unique_ptr<ITexture> create_texture(uint32_t format, int access, int width, int heigth) override;
+        std::shared_ptr<ITexture> create_texture(ISurface *surface) override;
+        std::shared_ptr<ITexture> create_texture(uint32_t format, int access, int width, int heigth) override;
     };
 };
