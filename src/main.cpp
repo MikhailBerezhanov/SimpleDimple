@@ -32,11 +32,11 @@ int main(int argc, char *args[])
         // load bmp as surface
         GameEngine::Surface surface(logo_file);
         // create texture from surface
-        auto tex = rend->create_texture(surface);
+        auto tex = rend->create_texture(&surface);
 
         // connect texture with dest to control position
         GameEngine::Rect dest;
-        auto [format, access, w, h] = tex->query();
+        auto [w, h] = tex->get_size();
         dest.w = w;
         dest.h = h;
 
@@ -110,7 +110,7 @@ int main(int argc, char *args[])
 
             // clears the screen
             rend->clear();
-            rend->copy(tex, nullptr, &dest);
+            rend->copy(tex.get(), nullptr, &dest);
             rend->present();
 
             // calculates to 60 fps

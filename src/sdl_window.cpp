@@ -178,10 +178,10 @@ namespace GameEngine
         return *this;
     }
 
-    std::unique_ptr<IRenderer> Window::create_renderer(int index, uint32_t flags)
+    std::shared_ptr<IRenderer> Window::create_renderer(int index, uint32_t flags)
     {
         auto rend = new Renderer(m_window, index, flags);
-        return std::unique_ptr<Renderer>(rend);
+        return std::shared_ptr<Renderer>(rend);
     }
 
     }; // namespace GameEngine

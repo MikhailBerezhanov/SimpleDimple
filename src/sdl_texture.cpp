@@ -41,23 +41,29 @@ namespace GameEngine
         return m_texture;
     }
 
-    std::tuple<uint32_t, int, int, int> Texture::query() const
+    std::tuple<size_t, size_t> Texture::get_size() const
     {
-        uint32_t format;
-        int access, w, h;
-        if (SDL_QueryTexture(m_texture, &format, &access, &w, &h) < 0) {
+        int w, h;
+        if (SDL_QueryTexture(m_texture, nullptr, nullptr, &w, &h) < 0) {
             throw std::runtime_error("Unable to query: " + std::string(SDL_GetError()));
         }
-        return std::make_tuple(format, access, w, h);
+        return std::make_tuple(w, h);
     }
 
     std::tuple<uint8_t, uint8_t, uint8_t> Texture::get_color_mode() const
     {
         uint8_t r, g, b;
-        if(SDL_GetTextureColorMod(m_texture, &r, &g, &b) < 0) {
+        if (SDL_GetTextureColorMod(m_texture, &r, &g, &b) < 0) {
             throw std::runtime_error("Unable to query color mode: " + std::string(SDL_GetError()));
         }
         return std::make_tuple(r,g,b);
+    }
+
+    void Texture::set_color_mode(uint8_t r, uint8_t g, uint8_t b) const 
+    {
+        if (SDL_SetTextureColorMod(m_texture, r, g, b) < 0){
+            throw std::runtime_error("Unable to set color mode: " + std::string(SDL_GetError()));
+        }
     }
 
 

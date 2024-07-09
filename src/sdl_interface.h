@@ -47,7 +47,7 @@ namespace GameEngine
         virtual IWindow & restore() = 0;
         // Nested objects
         // Renderer
-        virtual std::unique_ptr<IRenderer> create_renderer(int index, uint32_t flags) = 0;
+        virtual std::shared_ptr<IRenderer> create_renderer(int index, uint32_t flags) = 0;
     };
 
     // Copy of SDL_Rect
@@ -65,19 +65,20 @@ namespace GameEngine
         // Modifiers
         virtual IRenderer & clear() = 0;
         virtual IRenderer & present() = 0;
-        virtual IRenderer & copy(std::unique_ptr<ITexture> & texture, const Rect *source, const Rect *dest) = 0;
+        virtual IRenderer & copy(ITexture *texture, const Rect *source, const Rect *dest) = 0;
         // Nested objects
         // Texture
-        virtual std::unique_ptr<ITexture> create_texture(ISurface &surface) = 0;
-        virtual std::unique_ptr<ITexture> create_texture(uint32_t format, int access, int width, int heigth) = 0;
+        virtual std::shared_ptr<ITexture> create_texture(ISurface *surface) = 0;
+        virtual std::shared_ptr<ITexture> create_texture(uint32_t format, int access, int width, int heigth) = 0;
     };
 
     // Interface, handles SDL Texture
     class ITexture {
     public:
         virtual ~ITexture() = default;
-        virtual std::tuple<uint32_t, int, int, int> query() const = 0;
+        virtual std::tuple<size_t, size_t> get_size() const = 0;
         virtual std::tuple<uint8_t, uint8_t, uint8_t> get_color_mode() const = 0;
+        virtual void set_color_mode(uint8_t r, uint8_t g, uint8_t b) const = 0;
     };
 
     // Interface, handles SDL Surface
