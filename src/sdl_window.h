@@ -8,6 +8,8 @@ namespace GameEngine
     // Implementation Window
     class Window : public IWindow {
         SDL_Window *m_window;
+        IRenderer *m_renderer = nullptr;
+        // Private methods
         std::tuple<size_t, size_t> get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
         std::tuple<int, int> get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
     public:
@@ -44,5 +46,10 @@ namespace GameEngine
         IWindow & maximize() override;
         IWindow & minimize() override;
         IWindow & restore() override; //Restore the size and position of a minimized or maximized window
+        // Nested objects
+        // Renderer
+        IWindow & add_renderer(int index = -1, uint32_t flags = 0) override;
+        IWindow & remove_renderer() override;
+        const IRenderer *get_renderer() const override;
     };
 };

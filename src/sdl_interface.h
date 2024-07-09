@@ -44,6 +44,11 @@ namespace GameEngine
         virtual IWindow & maximize() = 0;
         virtual IWindow & minimize() = 0;
         virtual IWindow & restore() = 0;
+        // Nested objects
+        // Renderer
+        virtual IWindow & add_renderer(int index, uint32_t flags) = 0;
+        virtual IWindow & remove_renderer() = 0;
+        virtual const IRenderer *get_renderer() const = 0;
     };
 
     // Interface, handles SDL Renderer

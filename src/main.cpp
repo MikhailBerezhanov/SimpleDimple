@@ -11,6 +11,7 @@ const int SCREEN_HEIGHT = 1000;
 
 int main(int argc, char *args[])
 {
+
     try
     {
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
