@@ -8,17 +8,14 @@ namespace GameEngine
     class Texture : public ITexture
     {
         SDL_Texture *m_texture;
+        Texture(SDL_Renderer *renderer, SDL_Surface *surface);
+        Texture(SDL_Renderer *renderer, uint32_t format, int access, int width, int heigth);
+        friend class Renderer;
     public:
-        Texture(std::shared_ptr<IRenderer> renderer, 
-            uint32_t /*SDL_PixelFormatEnum*/ format, 
-            int access /*SDL_TextureAccess*/, 
-            int /*pixels*/ width, 
-            int /*pixels*/heigth
-        );
-        Texture(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ISurface> surface);
+        
         ~Texture();
 
-        SDL_Texture *get_raw() const;
+        const SDL_Texture *get_raw() const;
 
     };
 };

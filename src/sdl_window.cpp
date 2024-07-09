@@ -41,7 +41,7 @@ namespace GameEngine
         SDL_DestroyWindow(m_window);
     }
 
-    SDL_Window *Window::get_raw() const
+    const SDL_Window *Window::get_raw() const
     {
         return m_window;
     }

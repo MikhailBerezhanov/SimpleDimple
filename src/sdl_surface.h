@@ -8,10 +8,14 @@ namespace GameEngine
     class Surface : public ISurface
     {
         SDL_Surface *m_surface;
+        friend class Renderer;
     public:
         Surface(const std::string &image_filename);
         ~Surface();
 
-        SDL_Surface *get_raw() const;
+        const SDL_Surface *get_raw() const;
+
+        ISurface & lock() override;
+        ISurface & unlock() override;
     };
 };
