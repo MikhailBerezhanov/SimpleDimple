@@ -3,6 +3,7 @@
 #include <string>
 #include <tuple>
 #include <memory>
+#include <list>
 
 namespace GameEngine 
 {
@@ -57,6 +58,11 @@ namespace GameEngine
         ~IRenderer() = default;
         // Size
         virtual std::tuple<size_t, size_t> get_output_size() const = 0;
+        // Nested objects
+        // Texture
+        virtual IRenderer & add_texture(ISurface & surface) = 0;
+        virtual IRenderer & add_texture(uint32_t format, int access, int width, int heigth) = 0;
+        virtual const std::list<ITexture*> & get_textures() const = 0;
     };
 
     // Interface, handles SDL Texture
@@ -69,5 +75,7 @@ namespace GameEngine
     class ISurface {
     public:
         ~ISurface() = default;
+        virtual ISurface & lock() = 0;
+        virtual ISurface & unlock() = 0;
     };
 };

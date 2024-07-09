@@ -17,9 +17,23 @@ namespace GameEngine
         SDL_FreeSurface(m_surface);
     }
 
-    SDL_Surface* Surface::get_raw() const
+    const SDL_Surface* Surface::get_raw() const
     {
         return m_surface;
+    }
+
+    ISurface& Surface::lock()
+    {
+        if (SDL_LockSurface(m_surface) < 0) {
+            throw std::runtime_error("Unable to lock surface: " + std::string(SDL_GetError()));
+        }
+        return *this;
+    }
+
+    ISurface& Surface::unlock()
+    {
+        SDL_UnlockSurface(m_surface);
+        return *this;
     }
 
     }; // namespace GameEngine
