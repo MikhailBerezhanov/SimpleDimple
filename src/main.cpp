@@ -14,6 +14,7 @@ const int SCREEN_HEIGHT = 1000;
 
 int main(int argc, char *args[])
 {
+
     try
     {
         // test C++20

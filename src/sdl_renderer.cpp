@@ -5,37 +5,20 @@
 
 namespace GameEngine
 {
-    Renderer::Renderer(std::shared_ptr<IWindow> window, int index, uint32_t flags) 
-        : m_renderer(nullptr)
+    Renderer::Renderer(SDL_Window * window, int index, Uint32 flags) 
+        : m_renderer(SDL_CreateRenderer(window, index, flags))
     {
-        auto win = dynamic_cast<Window*>(window.get());
-        if (! win) {
-            throw std::runtime_error("Invalid Window instance");
-        }
-
-        m_renderer = SDL_CreateRenderer(
-            win->get_raw(),
-            index,
-            flags
-        );
-
         if (! m_renderer) {
-            throw std::runtime_error("Unable to create renderer from window: " + std::string(SDL_GetError()));
+            throw std::runtime_error("Unable to create renderer: " + std::string(SDL_GetError()));
         }
     }
 
-    Renderer::Renderer(std::shared_ptr<ISurface> surface) 
-        : m_renderer(nullptr)
-    {
-        //TODO: DO
-    }
-
-    Renderer::~Renderer() 
+    Renderer::~Renderer()
     {
         SDL_DestroyRenderer(m_renderer);
     }
 
-    SDL_Renderer* Renderer::get_raw() const
+    const SDL_Renderer* Renderer::get_raw() const
     {
         return m_renderer;
     }
