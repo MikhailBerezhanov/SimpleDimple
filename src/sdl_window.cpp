@@ -35,8 +35,6 @@ namespace GameEngine
 
     Window::~Window()
     {
-        // destroy renderer if not null
-        delete m_renderer;
         // destroy window
         SDL_DestroyWindow(m_window);
     }
@@ -118,7 +116,7 @@ namespace GameEngine
     
     int Window::get_display_index() const
     {
-        SDL_GetWindowDisplayIndex(m_window);
+        return SDL_GetWindowDisplayIndex(m_window);
     }
 
     uint32_t Window::get_flags() const
@@ -180,22 +178,10 @@ namespace GameEngine
         return *this;
     }
 
-    IWindow &Window::add_renderer(int index, uint32_t flags)
+    std::unique_ptr<IRenderer> Window::create_renderer(int index, uint32_t flags)
     {
-        m_renderer = new Renderer(m_window, index, flags);
-        return *this;
-    }
-
-    IWindow &Window::remove_renderer()
-    {
-        delete m_renderer;
-        m_renderer = nullptr;
-        return *this;
-    }
-
-    const IRenderer *Window::get_renderer() const
-    {
-        return m_renderer;
+        auto rend = new Renderer(m_window, index, flags);
+        return std::unique_ptr<Renderer>(rend);
     }
 
     }; // namespace GameEngine

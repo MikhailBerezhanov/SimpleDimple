@@ -47,34 +47,43 @@ namespace GameEngine
         virtual IWindow & restore() = 0;
         // Nested objects
         // Renderer
-        virtual IWindow & add_renderer(int index, uint32_t flags) = 0;
-        virtual IWindow & remove_renderer() = 0;
-        virtual const IRenderer *get_renderer() const = 0;
+        virtual std::unique_ptr<IRenderer> create_renderer(int index, uint32_t flags) = 0;
+    };
+
+    // Copy of SDL_Rect
+    struct Rect {
+        int x, y;
+        int w, h;
     };
 
     // Interface, handles SDL Renderer
     class IRenderer {
     public:
-        ~IRenderer() = default;
+        virtual ~IRenderer() = default;
         // Size
         virtual std::tuple<size_t, size_t> get_output_size() const = 0;
+        // Modifiers
+        virtual IRenderer & clear() = 0;
+        virtual IRenderer & present() = 0;
+        virtual IRenderer & copy(std::unique_ptr<ITexture> & texture, const Rect *source, const Rect *dest) = 0;
         // Nested objects
         // Texture
-        virtual IRenderer & add_texture(ISurface & surface) = 0;
-        virtual IRenderer & add_texture(uint32_t format, int access, int width, int heigth) = 0;
-        virtual const std::list<ITexture*> & get_textures() const = 0;
+        virtual std::unique_ptr<ITexture> create_texture(ISurface &surface) = 0;
+        virtual std::unique_ptr<ITexture> create_texture(uint32_t format, int access, int width, int heigth) = 0;
     };
 
     // Interface, handles SDL Texture
     class ITexture {
     public:
-        ~ITexture() = default;
+        virtual ~ITexture() = default;
+        virtual std::tuple<uint32_t, int, int, int> query() const = 0;
+        virtual std::tuple<uint8_t, uint8_t, uint8_t> get_color_mode() const = 0;
     };
 
     // Interface, handles SDL Surface
     class ISurface {
     public:
-        ~ISurface() = default;
+        virtual ~ISurface() = default;
         virtual ISurface & lock() = 0;
         virtual ISurface & unlock() = 0;
     };
