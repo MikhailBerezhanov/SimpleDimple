@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <cstring> 
 
 #include "sdl_renderer.h"
 #include "sdl_window.h"
@@ -17,12 +18,6 @@ namespace GameEngine
 
     Renderer::~Renderer()
     {
-        // destroy textures
-        for(auto p : m_textures) {
-            delete p;
-        }
-        m_textures.clear();
-
         SDL_DestroyRenderer(m_renderer);
     }
 
@@ -40,22 +35,46 @@ namespace GameEngine
         return std::make_tuple(static_cast<size_t>(w), static_cast<size_t>(h));
     }
 
-    IRenderer& Renderer::add_texture(ISurface& surface)
+    IRenderer& Renderer::clear()
     {
-        auto raw_surface = dynamic_cast<Surface&>(surface).m_surface;
-        m_textures.push_back(new Texture(m_renderer, raw_surface));
+        SDL_RenderClear(m_renderer);
         return *this;
     }
 
-    IRenderer& Renderer::add_texture(uint32_t format, int access, int width, int heigth)
+    IRenderer& Renderer::present()
     {
-        m_textures.push_back(new Texture(m_renderer, format, access, width, heigth));
+        SDL_RenderPresent(m_renderer);
         return *this;
     }
 
-    const std::list<ITexture*> & Renderer::get_textures() const
+    IRenderer& Renderer::copy(std::unique_ptr<ITexture>& texture, const Rect* source, const Rect* dest)
     {
-        return m_textures;
+        auto tex = dynamic_cast<Texture*>(texture.get());
+        if (! tex) {
+            throw std::runtime_error("Invalid texture");
+        }
+
+        if (SDL_RenderCopy(m_renderer, tex->m_texture, 
+            reinterpret_cast<const SDL_Rect*>(source), 
+            reinterpret_cast<const SDL_Rect*>(dest)
+            ) < 0) 
+        {
+            throw std::runtime_error("Error copying: " + std::string(SDL_GetError()));
+        }
+        return *this;
+    }
+
+    std::unique_ptr<ITexture> Renderer::create_texture(ISurface &surface)
+    {
+        auto surf = dynamic_cast<Surface&>(surface);
+        auto tex = new Texture(m_renderer, surf.m_surface);
+        return std::unique_ptr<Texture>(tex);
+    }
+
+    std::unique_ptr<ITexture> Renderer::create_texture(uint32_t format, int access, int width, int heigth)
+    {
+        auto tex = new Texture(m_renderer, format, access, width, heigth);
+        return std::unique_ptr<Texture>(tex);
     }
 
 

@@ -27,7 +27,10 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # List sources (except for main.cpp)
 set(SOURCES_NO_MAIN 
-    ""
+    ${SOURCE_DIR}/sdl_window.cpp
+    ${SOURCE_DIR}/sdl_renderer.cpp
+    ${SOURCE_DIR}/sdl_texture.cpp
+    ${SOURCE_DIR}/sdl_surface.cpp
 )
 # Full list of sources
 set(SOURCES 

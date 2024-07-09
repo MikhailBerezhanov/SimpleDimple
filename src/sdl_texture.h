@@ -17,5 +17,8 @@ namespace GameEngine
 
         const SDL_Texture *get_raw() const;
 
+        std::tuple<uint32_t, int, int, int> query() const override;
+        std::tuple<uint8_t, uint8_t, uint8_t> get_color_mode() const override;
+
     };
 };

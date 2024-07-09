@@ -5,8 +5,8 @@
 
 #include "config.h"
 
-#include <vector>
-#include <span>
+#include "sdl_window.h"
+#include "sdl_surface.h"
 
 // Screen dimension constants
 const int SCREEN_WIDTH = 1000;
@@ -17,49 +17,28 @@ int main(int argc, char *args[])
 
     try
     {
-        // test C++20
-        std::cout << "CPP20 test: (should print `43` 100 times)\n";
-        std::vector<int> vec(100, 43);
-        std::span sp(vec.data(), vec.size());
-        for (const auto i : sp)
-        {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
-        // ----
-
-
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
         }
-        auto window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-        if (!window)
-        {
-            throw std::runtime_error("SDL_CreateWindow error! SDL_Error: " + std::string(SDL_GetError()));
-        }
 
-        auto rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-        if (!rend)
-        {
-            throw std::runtime_error("SDL_CreateRenderer error! SDL_Error: " + std::string(SDL_GetError()));
-        }
+        GameEngine::Window win("SDL2 Window", SCREEN_WIDTH, SCREEN_HEIGHT);
+        auto rend = win.create_renderer();
 
         std::cout << "Created renderer" << std::endl;
 
         std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
-        // load bmp
-        auto logo_surface = IMG_Load(logo_file.c_str());
 
-        // convert bmp to display format
-        auto tex = SDL_CreateTextureFromSurface(rend, logo_surface);
-
-        // clear mem
-        SDL_FreeSurface(logo_surface);
+        // load bmp as surface
+        GameEngine::Surface surface(logo_file);
+        // create texture from surface
+        auto tex = rend->create_texture(surface);
 
         // connect texture with dest to control position
-        SDL_Rect dest;
-        SDL_QueryTexture(tex, nullptr, nullptr, &dest.w, &dest.h);
+        GameEngine::Rect dest;
+        auto [format, access, w, h] = tex->query();
+        dest.w = w;
+        dest.h = h;
 
         // adjust height and width of image box
         dest.w /= 6;
@@ -130,27 +109,15 @@ int main(int argc, char *args[])
                 dest.y = 0;
 
             // clears the screen
-            SDL_RenderClear(rend);
-            SDL_RenderCopy(rend, tex, NULL, &dest);
-
-            // triggers the double buffers
-            // for multiple rendering
-            SDL_RenderPresent(rend);
+            rend->clear();
+            rend->copy(tex, nullptr, &dest);
+            rend->present();
 
             // calculates to 60 fps
             SDL_Delay(1000 / 60);
         }
 
         std::cout << "End of loop!" << std::endl;
-
-        // destroy texture
-        SDL_DestroyTexture(tex);
-
-        // destroy renderer
-        SDL_DestroyRenderer(rend);
-
-        // Destroy window
-        SDL_DestroyWindow(window);
 
         // Quit SDL subsystems
         SDL_Quit();
