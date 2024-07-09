@@ -17,7 +17,5 @@ namespace GameEngine
 
         // Size
         std::tuple<size_t, size_t> get_output_size() const override;
-        // Window
-        std::shared_ptr<IWindow> get_window() const override;
     };
 };
