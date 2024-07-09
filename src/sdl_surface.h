@@ -11,5 +11,7 @@ namespace GameEngine
     public:
         Surface(const std::string &image_filename);
         ~Surface();
+
+        SDL_Surface *get_raw() const;
     };
 };

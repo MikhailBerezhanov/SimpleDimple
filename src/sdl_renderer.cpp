@@ -49,5 +49,11 @@ namespace GameEngine
         return std::make_tuple(static_cast<size_t>(w), static_cast<size_t>(h));
     }
 
+    std::shared_ptr<IWindow> Renderer::get_window() const
+    {
+        //auto win = SDL_RenderGetWindow(m_renderer);
+        return std::shared_ptr<IWindow>(nullptr);
+    }
+
 
 }; // namespace GameEngine

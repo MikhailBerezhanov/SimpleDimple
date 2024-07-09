@@ -16,4 +16,10 @@ namespace GameEngine
     {
         SDL_FreeSurface(m_surface);
     }
+
+    SDL_Surface* Surface::get_raw() const
+    {
+        return m_surface;
+    }
+
     }; // namespace GameEngine
