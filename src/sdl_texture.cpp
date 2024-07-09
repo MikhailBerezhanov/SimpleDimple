@@ -2,6 +2,7 @@
 
 #include "sdl_texture.h"
 #include "sdl_renderer.h"
+#include "sdl_surface.h"
 
 namespace GameEngine
 {
@@ -35,6 +36,11 @@ namespace GameEngine
     Texture::~Texture() 
     {
         SDL_DestroyTexture(m_texture);
+    }
+
+    SDL_Texture *Texture::get_raw() const
+    {
+        return m_texture;
     }
 
 

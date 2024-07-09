@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "sdl_interface.h"
 #include "sdl.h"
 
@@ -19,5 +17,8 @@ namespace GameEngine
         );
         Texture(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ISurface> surface);
         ~Texture();
+
+        SDL_Texture *get_raw() const;
+
     };
 };

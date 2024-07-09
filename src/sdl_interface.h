@@ -2,9 +2,16 @@
 
 #include <string>
 #include <tuple>
+#include <memory>
 
 namespace GameEngine 
 {
+    // Forward declarations
+    class IWindow;
+    class IRenderer;
+    class ITexture;
+    class ISurface;
+
     // Interface, handles SDL Window
     class IWindow {
     public:
@@ -45,6 +52,8 @@ namespace GameEngine
         ~IRenderer() = default;
         // Size
         virtual std::tuple<size_t, size_t> get_output_size() const = 0;
+        // Window
+        virtual std::shared_ptr<IWindow> get_window() const = 0;
     };
 
     // Interface, handles SDL Texture
