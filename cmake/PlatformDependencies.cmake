@@ -14,11 +14,11 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     # From sdl2-config --cflags
     set(__SDL_DEFINITIONS main=SDL_main)
 else()
-    # Unix
+    # Linux
     set(ENABLE_GTESTS TRUE)
-    set(__SDL_PREFIX "/opt/sdl/unix")
-    set(__ZLIB_PREFIX "/opt/zlib/unix")
-    set(__LIBZIP_PREFIX "/opt/libzip/unix")
+    set(__SDL_PREFIX "/opt/sdl/linux")
+    set(__ZLIB_PREFIX "/opt/zlib/linux")
+    set(__LIBZIP_PREFIX "/opt/libzip/linux")
     set(__SDL_LIB_NAMES "SDL2" "SDL2_image") 
     set(__ZLIB_LIB_NAMES "libz.a")
     set(__LIBZIP_LIB_NAMES "zip")
@@ -46,6 +46,7 @@ foreach(X ${__SDL_LIB_NAMES})
     unset(__SDL_EL CACHE)
 endforeach()
 
+# Not used for now
 # find_library(__ZLIB_LIBS ${__ZLIB_LIB_NAMES} PATHS ${__ZLIB_LIB_DIR} NO_DEFAULT_PATH)
 # find_library(__LIBZIP_LIBS ${__LIBZIP_LIB_NAMES} PATHS ${__LIBZIP_LIB_DIR} NO_DEFAULT_PATH)
 

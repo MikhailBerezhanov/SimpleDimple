@@ -3,10 +3,10 @@ GLIBC >= 2.28 for Linux
 
 ## Docker builder
 Project uses docker image for multi-platfrom application building:
-https://hub.docker.com/r/drone29/sdl2-container
+https://hub.docker.com/repository/docker/clownmik/sdl2_builder/general
 
 ```
-docker pull drone29/sdl2-container
+docker pull clownmik/sdl2_builder
 ```
 
 ### Building with terminal

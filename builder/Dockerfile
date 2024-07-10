@@ -13,6 +13,7 @@ RUN apt-get update \
     libreadline6-dev \
     libncurses5-dev \
     mingw-w64 \
+    gdb \
     libx11-dev \
     xorg-dev \
     libgl1-mesa-glx \
@@ -23,19 +24,27 @@ ADD https://github.com/Kitware/CMake/releases/download/v3.30.0/cmake-3.30.0-linu
 RUN tar -xzf /tmp/cmake-3.30.0-linux-x86_64.tar.gz -C /usr/local --strip-components=1 --no-same-owner && \
     rm /tmp/cmake-3.30.0-linux-x86_64.tar.gz
 
-# Create Unix/Windows directories for SDL libs and includes
-ENV SDL_PREFIX_UNIX=/opt/sdl/unix
+# Prepare environment for Linux/Windows builds
+ENV SDL_PREFIX_LINUX=/opt/sdl/linux
 ENV SDL_PREFIX_WINDOWS=/opt/sdl/windows
+ENV ZLIB_PREFIX_LINUX=/opt/zlib/linux
+ENV ZLIB_PREFIX_WINDOWS=/opt/zlib/windows
+ENV LIBZIP_PREFIX_LINUX=/opt/libzip/linux
+ENV LIBZIP_PREFIX_WINDOWS=/opt/libzip/windows
 
-ARG SDL_SRC=/tmp/SDL_SOURCES
-ARG SDL_IMAGE_SRC=/tmp/SDL_IMAGE_SOURCES
+ARG SDL_SRC=/tmp/sdl_sources
+ARG SDL_IMAGE_SRC=/tmp/sdl_image_sources
+ARG ZLIB_SRC=/tmp/zlib_sources
+ARG LIBZIP_SRC=/tmp/libzip_sources
 
 ARG SDL_ARCHIVE=/tmp/SDL.tar.gz
 ARG SDL_IMAGE_ARCHIVE=/tmp/SDL_Image.tar.gz
+ARG ZLIB_ARCHIVE=/tmp/ZLIB.tar.gz
+ARG LIBZIP_ARCHIVE=/tmp/LIBZIP.tar.gz
 
 # SDL lib
 ADD https://github.com/libsdl-org/SDL/archive/refs/tags/release-2.30.4.tar.gz ${SDL_ARCHIVE}
-RUN mkdir -p ${SDL_PREFIX_UNIX} && \
+RUN mkdir -p ${SDL_PREFIX_LINUX} && \
     mkdir -p ${SDL_PREFIX_WINDOWS} && \
     mkdir -p ${SDL_SRC} && \
     tar -xzf ${SDL_ARCHIVE} -C ${SDL_SRC}/ --strip-components 1 && \
@@ -43,7 +52,7 @@ RUN mkdir -p ${SDL_PREFIX_UNIX} && \
     mkdir -p ${SDL_SRC}/build && \
     cd ${SDL_SRC}/build && \
     rm -rf ./* && \
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_UNIX} && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_LINUX} && \
     cmake --build . --config Release && \
     cmake --build . --target install && \
     rm -rf ./* && \
@@ -55,12 +64,14 @@ RUN mkdir -p ${SDL_PREFIX_UNIX} && \
 
 # SDL_Image lib
 ADD https://github.com/libsdl-org/SDL_image/archive/refs/tags/release-2.8.2.tar.gz ${SDL_IMAGE_ARCHIVE}
-RUN mkdir -p ${SDL_IMAGE_SRC} && \
+RUN mkdir -p ${SDL_PREFIX_LINUX} && \
+    mkdir -p ${SDL_PREFIX_WINDOWS} && \
+    mkdir -p ${SDL_IMAGE_SRC} && \
     tar -xzf ${SDL_IMAGE_ARCHIVE} -C ${SDL_IMAGE_SRC}/ --strip-components 1 && \
     rm ${SDL_IMAGE_ARCHIVE} && \
     mkdir -p ${SDL_IMAGE_SRC}/build && \
     cd ${SDL_IMAGE_SRC}/build && \
-    cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_UNIX} && \
+    cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_LINUX} && \
     cmake --build . --config Release && \
     cmake --build . --target install && \
     rm -rf ./* && \
@@ -69,6 +80,42 @@ RUN mkdir -p ${SDL_IMAGE_SRC} && \
     cmake --build . --target install && \
     rm -rf ./* && \
     cd / && rm -rf ${SDL_IMAGE_SRC}
+
+# zlib
+ADD https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz ${ZLIB_ARCHIVE}
+RUN mkdir -p ${ZLIB_PREFIX_LINUX} && \
+    mkdir -p ${ZLIB_PREFIX_WINDOWS} && \
+    mkdir -p ${ZLIB_SRC}/build && \
+    tar -xzf ${ZLIB_ARCHIVE} -C ${ZLIB_SRC}/ --strip-components 1 && \
+    rm ${ZLIB_ARCHIVE} && \
+    cd ${ZLIB_SRC}/build && \
+    cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=${ZLIB_PREFIX_LINUX} && \
+    cmake --build . --config Release && \
+    cmake --build . --target install && \
+    rm -rf ./* && \
+    cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX=${ZLIB_PREFIX_WINDOWS} && \
+    cmake --build . --config Release && \
+    cmake --build . --target install && \
+    rm -rf ./* && \
+    cd / && rm -rf ${ZLIB_SRC}
+
+# libzip
+ADD https://github.com/nih-at/libzip/archive/refs/tags/v1.10.1.tar.gz ${LIBZIP_ARCHIVE}
+RUN mkdir -p ${LIBZIP_PREFIX_LINUX} && \
+    mkdir -p ${LIBZIP_PREFIX_WINDOWS} && \
+    mkdir -p ${LIBZIP_SRC}/build && \
+    tar -xzf ${LIBZIP_ARCHIVE} -C ${LIBZIP_SRC}/ --strip-components 1 && \
+    rm ${LIBZIP_ARCHIVE} && \
+    cd ${LIBZIP_SRC}/build && \
+    cmake .. -DCMAKE_C_COMPILER=clang -DZLIB_LIBRARY=${ZLIB_PREFIX_LINUX}/lib/libz.a -DZLIB_INCLUDE_DIR=${ZLIB_PREFIX_LINUX}/include -DBUILD_SHARED_LIBS=OFF -DENABLE_LZMA=OFF -DCMAKE_INSTALL_PREFIX=${LIBZIP_PREFIX_LINUX} && \
+    cmake --build . --config Release && \
+    cmake --build . --target install && \
+    rm -rf ./* && \
+    cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_SYSTEM_NAME=Windows -DZLIB_LIBRARY=${ZLIB_PREFIX_WINDOWS}/lib/libzlibstatic.a -DZLIB_INCLUDE_DIR=${ZLIB_PREFIX_WINDOWS}/include -DBUILD_SHARED_LIBS=OFF -DENABLE_LZMA=OFF -DENABLE_WINDOWS_CRYPTO=OFF -DCMAKE_INSTALL_PREFIX=${LIBZIP_PREFIX_WINDOWS} && \
+    cmake --build . --config Release && \
+    cmake --build . --target install && \
+    rm -rf ./* && \
+    cd / && rm -rf ${LIBZIP_SRC}
 
 # Start from a Bash prompt
 CMD [ "/bin/bash" ]
