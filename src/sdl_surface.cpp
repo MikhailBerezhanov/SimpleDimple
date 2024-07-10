@@ -21,23 +21,14 @@ namespace GameEngine
         return std::shared_ptr<ISurface>(new Surface(image_filename));
     }
 
-    const SDL_Surface* Surface::get_raw() const
-    {
-        return m_surface;
-    }
-
-    ISurface& Surface::lock()
-    {
+    void Surface::lock() const {
         if (SDL_LockSurface(m_surface) < 0) {
             throw std::runtime_error("Unable to lock surface: " + std::string(SDL_GetError()));
         }
-        return *this;
     }
 
-    ISurface& Surface::unlock()
-    {
+    void Surface::unlock() const {
         SDL_UnlockSurface(m_surface);
-        return *this;
     }
 
 }; // namespace GameEngine

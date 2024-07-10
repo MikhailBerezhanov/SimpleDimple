@@ -14,14 +14,14 @@ namespace GameEngine
         
         ~Renderer();
 
-        const SDL_Renderer *get_raw() const;
-
         // Size
         Size2D get_output_size() const override;
         // Modifiers
-        IRenderer & clear() override;
-        IRenderer & present() override;
-        IRenderer & copy(std::shared_ptr<ITexture> &texture, const Rect *source, const Rect *dest) override;
+        void set_draw_color(const RGBColor &rgba) const override;
+        RGBColor get_draw_color() const override;
+        void clear() const override;
+        void present() const override;
+        void copy(std::shared_ptr<ITexture> &texture, const Rect *src_rect, const Rect *dest_rect) const override;
         // Nested objects
         // Texture
         std::shared_ptr<ITexture> create_texture(std::shared_ptr<ISurface> &surface) override;

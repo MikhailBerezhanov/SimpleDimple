@@ -16,9 +16,7 @@ namespace GameEngine
 
         ~Surface();
 
-        const SDL_Surface *get_raw() const;
-
-        ISurface & lock() override;
-        ISurface & unlock() override;
+        void lock() const override;
+        void unlock() const override;
     };
 };
