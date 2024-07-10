@@ -2,13 +2,18 @@
 
 #include "sdl_surface.h"
 
+#define THROW_ERROR(message) \
+    throw std::runtime_error(std::string(__func__) \
+    + " " + std::string(message) \
+    + ": " + std::string(SDL_GetError()));
+
 namespace GameEngine
 {
     GameEngine::Surface::Surface(const std::string& image_filename) 
         : m_surface(IMG_Load(image_filename.c_str()))
     {
         if (! m_surface) {
-            throw std::runtime_error("Unable to create surface from " + image_filename + ": " + std::string(SDL_GetError()));
+            THROW_ERROR("Unable to create surface from");
         }
     }
 
@@ -23,7 +28,7 @@ namespace GameEngine
 
     void Surface::lock() const {
         if (SDL_LockSurface(m_surface) < 0) {
-            throw std::runtime_error("Unable to lock surface: " + std::string(SDL_GetError()));
+            THROW_ERROR("Unable to lock surface");
         }
     }
 

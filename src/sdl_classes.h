@@ -10,6 +10,7 @@ namespace GameEngine {
         int w, h;
     };
 
+    // 000000 - black, ffffff - white
     struct RGBColor {
         uint8_t r = 255;
         uint8_t g = 255;

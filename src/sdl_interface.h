@@ -69,6 +69,15 @@ namespace GameEngine
         // from_rect - specify a part of the texture to render
         // to_rect - where on the rendering target it should be rendered
         virtual void copy(std::shared_ptr<ITexture> &texture, const Rect *from_rect, const Rect *to_rect) const = 0;
+        /// Draw
+        virtual void draw_point(const Pos2D &point) const = 0;
+        virtual void draw_points(const Pos2D *points) const = 0;
+        virtual void draw_line(const Pos2D &start, const Pos2D &end) const = 0;
+        virtual void draw_lines(const Pos2D *lines) const = 0; // todo: figure out the logic in SDL
+        virtual void draw_rect(const Rect &rect) const = 0;
+        virtual void draw_rects(const Rect *rects) const = 0;
+        virtual void fill_rect(const Rect &rect) const = 0;
+        virtual void fill_rects(const Rect *rects) const = 0;
         /// Nested objects
         /// Texture
         virtual std::shared_ptr<ITexture> create_texture(std::shared_ptr<ISurface> &surface) = 0;
