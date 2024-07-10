@@ -7,5 +7,7 @@ lib/
 share/
 licenses/
 .vscode/
+.idea/
+cmake-build-debug/
 src/config.h
 src/sdl.h

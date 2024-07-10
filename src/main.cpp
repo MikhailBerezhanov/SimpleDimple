@@ -8,10 +8,6 @@
 #include "sdl_window.h"
 #include "sdl_surface.h"
 
-// Screen dimension constants
-const int SCREEN_WIDTH = 1000;
-const int SCREEN_HEIGHT = 1000;
-
 int main(int argc, char *args[])
 {
 
@@ -22,7 +18,7 @@ int main(int argc, char *args[])
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
         }
 
-        GameEngine::Window win("SDL2 Window", SCREEN_WIDTH, SCREEN_HEIGHT);
+        GameEngine::Window win("SDL2 Window", GameEngine::Size2D{1000, 1000});
         auto rend = win.create_renderer();
 
         std::cout << "Created renderer" << std::endl;
@@ -30,15 +26,15 @@ int main(int argc, char *args[])
         std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
         // load bmp as surface
-        GameEngine::Surface surface(logo_file);
+        std::shared_ptr<GameEngine::ISurface> surface = std::make_shared<GameEngine::Surface>(logo_file);
         // create texture from surface
-        auto tex = rend->create_texture(&surface);
+        auto tex = rend->create_texture(surface);
 
         // connect texture with dest to control position
-        GameEngine::Rect dest;
-        auto [w, h] = tex->get_size();
-        dest.w = w;
-        dest.h = h;
+        GameEngine::Rect dest{};
+        auto size = tex->get_size();
+        dest.w = size.w;
+        dest.h = size.h;
 
         // adjust height and width of image box
         dest.w /= 6;
@@ -110,7 +106,7 @@ int main(int argc, char *args[])
 
             // clears the screen
             rend->clear();
-            rend->copy(tex.get(), nullptr, &dest);
+            rend->copy(tex, nullptr, &dest);
             rend->present();
 
             // calculates to 60 fps
