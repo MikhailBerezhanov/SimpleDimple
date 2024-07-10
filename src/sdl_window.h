@@ -7,13 +7,17 @@ namespace GameEngine
 {
     // Implementation Window
     class Window : public IWindow {
+        
         SDL_Window *m_window;
         // Private methods
-        std::tuple<size_t, size_t> get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
-        std::tuple<int, int> get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
+        Size2D get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
+        Pos2D get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
+        void set_size_generic(void (*sdl_func)(SDL_Window *, int, int), const Size2D &size) const;
+        void set_pos_generic(void (*sdl_func)(SDL_Window *, int, int), const Pos2D &pos) const;
     public:
-        Window(const std::string &title, size_t width, size_t heigth, size_t pos_x, size_t pos_y, uint32_t flags /*SDL_WindowFlags*/ = 0);
-        Window(const std::string &title, size_t width, size_t heigth, bool centered = true, uint32_t flags /*SDL_WindowFlags*/ = 0);
+
+        Window(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags = 0);
+        Window(const std::string &title, const Size2D &size, bool centered = true, uint32_t flags = 0);
         ~Window();
         // Get raw pointer
         const SDL_Window *get_raw() const;
@@ -21,16 +25,16 @@ namespace GameEngine
         void set_title(const std::string &title) const override;
         std::string get_title() const override;
         // Size
-        void set_size(size_t w, size_t h) const override;
-        std::tuple<size_t, size_t> get_size() const override;
-        std::tuple<size_t, size_t> get_size_in_pixels() const override;
-        void set_minimum_size(size_t w, size_t h) const override;
-        std::tuple<size_t, size_t> get_minimum_size() const override;
-        void set_maximum_size(size_t w, size_t h) const override;
-        std::tuple<size_t, size_t> get_maximum_size() const override;
+        void set_size(const Size2D &size) const override;
+        Size2D get_size() const override;
+        Size2D get_size_in_pixels() const override;
+        void set_minimum_size(const Size2D &size) const override;
+        Size2D get_minimum_size() const override;
+        void set_maximum_size(const Size2D &size) const override;
+        Size2D get_maximum_size() const override;
         // Position
-        void set_position(int x, int y) const override;
-        std::tuple<int, int> get_position() const override;
+        void set_position(const Pos2D &pos) const override;
+        Pos2D get_position() const override;
         // Display index
         int get_display_index() const override;
         // Flags

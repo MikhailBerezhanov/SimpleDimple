@@ -26,13 +26,13 @@ namespace GameEngine
         return m_renderer;
     }
 
-    std::tuple<size_t, size_t> Renderer::get_output_size() const
+    Size2D Renderer::get_output_size() const
     {
         int w, h;
         if (SDL_GetRendererOutputSize(m_renderer, &w, &h) < 0) {
             throw std::runtime_error("Error retrieving renderer size: " + std::string(SDL_GetError()));
         }
-        return std::make_tuple(static_cast<size_t>(w), static_cast<size_t>(h));
+        return Size2D{static_cast<size_t>(w), static_cast<size_t>(h)};
     }
 
     IRenderer& Renderer::clear()
@@ -47,9 +47,9 @@ namespace GameEngine
         return *this;
     }
 
-    IRenderer& Renderer::copy(ITexture *texture, const Rect* source, const Rect* dest)
+    IRenderer& Renderer::copy(std::shared_ptr<ITexture> &texture, const Rect* source, const Rect* dest)
     {
-        auto tex = dynamic_cast<Texture*>(texture);
+        auto tex = dynamic_cast<Texture*>(texture.get());
         if (! tex) {
             throw std::runtime_error("Invalid texture");
         }
@@ -64,16 +64,16 @@ namespace GameEngine
         return *this;
     }
 
-    std::shared_ptr<ITexture> Renderer::create_texture(ISurface *surface)
+    std::shared_ptr<ITexture> Renderer::create_texture(std::shared_ptr<ISurface> &surface)
     {
-        auto surf = dynamic_cast<Surface*>(surface);
+        auto surf = dynamic_cast<Surface*>(surface.get());
         auto tex = new Texture(m_renderer, surf->m_surface);
         return std::shared_ptr<Texture>(tex);
     }
 
-    std::shared_ptr<ITexture> Renderer::create_texture(uint32_t format, int access, int width, int heigth)
+    std::shared_ptr<ITexture> Renderer::create_texture(uint32_t format, int access, const Size2D &size)
     {
-        auto tex = new Texture(m_renderer, format, access, width, heigth);
+        auto tex = new Texture(m_renderer, format, access, size);
         return std::shared_ptr<Texture>(tex);
     }
 

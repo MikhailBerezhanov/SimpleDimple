@@ -35,7 +35,8 @@ RUN apt-get install -y \
     unzip \
     zip \
     curl \
-    bash
+    bash \
+    procps
 
 # Install CMake 3.21
 ADD https://cmake.org/files/v3.21/cmake-3.21.0-linux-x86_64.tar.gz /tmp

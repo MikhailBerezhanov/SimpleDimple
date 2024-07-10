@@ -5,11 +5,12 @@
 
 namespace GameEngine
 {
-    class Surface : public ISurface
-    {
+    class Surface : public ISurface {
+
         SDL_Surface *m_surface;
         friend class Renderer;
     public:
+
         Surface(const std::string &image_filename);
         ~Surface();
 
