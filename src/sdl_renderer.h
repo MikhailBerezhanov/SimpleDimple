@@ -26,13 +26,13 @@ namespace GameEngine
 
         /// Draw
         void draw_point(const Pos2D &point) const override;
-        void draw_points(const Pos2D *points) const override;
+        void draw_points(const std::vector<Pos2D> &points) const override;
         void draw_line(const Pos2D &start, const Pos2D &end) const override;
-        void draw_lines(const Pos2D *lines) const override;
+        void draw_lines(const std::vector<Pos2D> &points) const override;
         void draw_rect(const Rect &rect) const override;
-        void draw_rects(const Rect *rects) const override;
+        void draw_rects(const std::vector<Rect> &rects) const override;
         void fill_rect(const Rect &rect) const override;
-        void fill_rects(const Rect *rects) const override;
+        void fill_rects(const std::vector<Rect> &rects) const override;
         /// Nested objects
         /// Texture
         std::shared_ptr<ITexture> create_texture(std::shared_ptr<ISurface> &surface) override;
