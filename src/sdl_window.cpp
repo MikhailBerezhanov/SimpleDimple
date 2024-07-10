@@ -49,11 +49,6 @@ namespace GameEngine
         return std::shared_ptr<IWindow>(new Window(title, size, centered, flags));
     }
 
-    const SDL_Window *Window::get_raw() const
-    {
-        return m_window;
-    }
-
     Size2D Window::get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const
     {
         int w, h;
@@ -142,58 +137,40 @@ namespace GameEngine
         return SDL_GetWindowFlags(m_window);
     }
 
-    IWindow &Window::set_bordered(bool bordered)
-    {
+    void Window::set_bordered(bool bordered) const {
         SDL_SetWindowBordered(m_window, bordered ? SDL_TRUE : SDL_FALSE);
-        return *this;
     }
 
-    IWindow &Window::set_resizable(bool resizable)
-    {
+    void Window::set_resizable(bool resizable) const {
         SDL_SetWindowResizable(m_window, resizable ? SDL_TRUE : SDL_FALSE);
-        return *this;
     }
 
-    IWindow &Window::set_always_on_top(bool on_top)
-    {
+    void Window::set_always_on_top(bool on_top) const {
         SDL_SetWindowAlwaysOnTop(m_window, on_top ? SDL_TRUE : SDL_FALSE);
-        return *this;
     }
 
-    IWindow &Window::show()
-    {
+    void Window::show() const {
         SDL_ShowWindow(m_window);
-        return *this;
     }
 
-    IWindow &Window::hide()
-    {
+    void Window::hide() const {
         SDL_HideWindow(m_window);
-        return *this;
     }
 
-    IWindow &Window::raise()
-    {
+    void Window::raise() const {
         SDL_RaiseWindow(m_window);
-        return *this;
     }
 
-    IWindow &Window::maximize()
-    {
+    void Window::maximize() const {
         SDL_MaximizeWindow(m_window);
-        return *this;
     }
 
-    IWindow &Window::minimize()
-    {
+    void Window::minimize() const {
         SDL_MinimizeWindow(m_window);
-        return *this;
     }
 
-    IWindow &Window::restore()
-    {
+    void Window::restore() const {
         SDL_RestoreWindow(m_window);
-        return *this;
     }
 
     std::shared_ptr<IRenderer> Window::create_renderer(int index, uint32_t flags)

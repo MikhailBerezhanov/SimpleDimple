@@ -88,6 +88,7 @@ int main(int argc, char *args[])
                     }
                 }
             }
+            // Calculate new coordinates for the structure
             // right boundary
             if (dest.x + dest.w > 1000)
                 dest.x = 1000 - dest.w;
@@ -104,9 +105,11 @@ int main(int argc, char *args[])
             if (dest.y < 0)
                 dest.y = 0;
 
-            // clears the screen
+            // clear the screen (removes the texture)
             rend->clear();
+            // copy full texture (from_rect=nullptr) to rectangle dest
             rend->copy(tex, nullptr, &dest);
+            //
             rend->present();
 
             // calculates to 60 fps

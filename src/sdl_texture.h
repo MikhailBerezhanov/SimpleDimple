@@ -15,8 +15,6 @@ namespace GameEngine
         
         ~Texture();
 
-        const SDL_Texture *get_raw() const;
-
         Size2D get_size() const override;
         RGBColor get_color_mode() const override;
         void set_color_mode(const RGBColor &rgb) const override;

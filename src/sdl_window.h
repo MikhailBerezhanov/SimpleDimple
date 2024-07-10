@@ -21,8 +21,7 @@ namespace GameEngine
         static std::shared_ptr<IWindow> create(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags = 0);
         static std::shared_ptr<IWindow> create(const std::string &title, const Size2D &size, bool centered = true, uint32_t flags = 0);
         ~Window();
-        // Get raw pointer
-        const SDL_Window *get_raw() const;
+
         // Title
         void set_title(const std::string &title) const override;
         std::string get_title() const override;
@@ -42,17 +41,17 @@ namespace GameEngine
         // Flags
         uint32_t get_flags() const override;
         // Modifiers
-        IWindow & set_bordered(bool bordered) override;
-        IWindow & set_resizable(bool resizable) override;
-        IWindow & set_always_on_top(bool on_top) override;
-        IWindow & show() override;
-        IWindow & hide() override;
-        IWindow & raise() override; //Raise a window above other windows and set the input focus
-        IWindow & maximize() override;
-        IWindow & minimize() override;
-        IWindow & restore() override; //Restore the size and position of a minimized or maximized window
+        void set_bordered(bool bordered) const override;
+        void set_resizable(bool resizable) const override;
+        void set_always_on_top(bool on_top) const override;
+        void show() const override;
+        void hide() const override;
+        void raise() const override; //Raise a window above other windows and set the input focus
+        void maximize() const override;
+        void minimize() const override;
+        void restore() const override; //Restore the size and position of a minimized or maximized window
         // Nested objects
         // Renderer
-        std::shared_ptr<IRenderer> create_renderer(int index = -1, uint32_t flags = 0) override;
+        std::shared_ptr<IRenderer> create_renderer(int index, uint32_t flags) override;
     };
 };

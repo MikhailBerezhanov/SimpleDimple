@@ -36,11 +36,6 @@ namespace GameEngine
         SDL_DestroyTexture(m_texture);
     }
 
-    const SDL_Texture *Texture::get_raw() const
-    {
-        return m_texture;
-    }
-
     Size2D Texture::get_size() const
     {
         int w, h;
