@@ -89,36 +89,64 @@ namespace GameEngine
 
     void Renderer::draw_point(const Pos2D &point) const {
         if (SDL_RenderDrawPoint(m_renderer, point.x, point.y) < 0) {
-            THROW_ERROR("Error copying");
+            THROW_ERROR("Error drawing point");
         }
     }
 
-    void Renderer::draw_points(const Pos2D *points) const {
-
+    void Renderer::draw_points(const std::vector<Pos2D> &points) const {
+        if (SDL_RenderDrawPoints(m_renderer,
+                                 reinterpret_cast<const SDL_Point*>(points.data()),
+                                 static_cast<int>(points.size())) < 0)
+        {
+            THROW_ERROR("Error drawing points");
+        }
     }
 
     void Renderer::draw_line(const Pos2D &start, const Pos2D &end) const {
-
+        if (SDL_RenderDrawLine(m_renderer, start.x, start.y, end.x, end.y) < 0) {
+            THROW_ERROR("Error drawing line");
+        }
     }
 
-    void Renderer::draw_lines(const Pos2D *lines) const {
-
+    void Renderer::draw_lines(const std::vector<Pos2D> &points) const {
+        if (SDL_RenderDrawLines(m_renderer,
+                                reinterpret_cast<const SDL_Point*>(points.data()),
+                                static_cast<int>(points.size())) < 0)
+        {
+            THROW_ERROR("Error drawing lines");
+        }
     }
 
     void Renderer::draw_rect(const Rect &rect) const {
-
+        if (SDL_RenderDrawRect(m_renderer,
+                               reinterpret_cast<const SDL_Rect *>(&rect)) < 0) {
+            THROW_ERROR("Error drawing rect");
+        }
     }
 
-    void Renderer::draw_rects(const Rect *rects) const {
-
+    void Renderer::draw_rects(const std::vector<Rect> &rects) const {
+        if (SDL_RenderDrawRects(m_renderer,
+                                reinterpret_cast<const SDL_Rect*>(rects.data()),
+                                static_cast<int>(rects.size())) < 0)
+        {
+            THROW_ERROR("Error drawing rects");
+        }
     }
 
     void Renderer::fill_rect(const Rect &rect) const {
-
+        if (SDL_RenderFillRect(m_renderer,
+                               reinterpret_cast<const SDL_Rect*>(&rect)) < 0){
+            THROW_ERROR("Error filling rect");
+        }
     }
 
-    void Renderer::fill_rects(const Rect *rects) const {
-
+    void Renderer::fill_rects(const std::vector<Rect> &rects) const {
+        if (SDL_RenderFillRects(m_renderer,
+                                reinterpret_cast<const SDL_Rect*>(rects.data()),
+                                static_cast<int>(rects.size())) < 0)
+        {
+            THROW_ERROR("Error filling rects");
+        }
     }
 
 } // namespace GameEngine
