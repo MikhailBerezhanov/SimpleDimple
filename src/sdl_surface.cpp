@@ -31,4 +31,4 @@ namespace GameEngine
         SDL_UnlockSurface(m_surface);
     }
 
-}; // namespace GameEngine
+} // namespace GameEngine

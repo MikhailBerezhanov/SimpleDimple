@@ -2,7 +2,6 @@
 
 #include "sdl_texture.h"
 #include "sdl_renderer.h"
-#include "sdl_surface.h"
 
 namespace GameEngine
 {
@@ -62,4 +61,4 @@ namespace GameEngine
     }
 
 
-}; // namespace GameEngine
+} // namespace GameEngine
