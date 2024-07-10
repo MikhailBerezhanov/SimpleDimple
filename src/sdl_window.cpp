@@ -39,6 +39,16 @@ namespace GameEngine
         SDL_DestroyWindow(m_window);
     }
 
+    std::shared_ptr<IWindow>
+    Window::create(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags) {
+        return std::shared_ptr<IWindow>(new Window(title, size, pos, flags));
+    }
+
+    std::shared_ptr<IWindow>
+    Window::create(const std::string &title, const Size2D &size, bool centered, uint32_t flags) {
+        return std::shared_ptr<IWindow>(new Window(title, size, centered, flags));
+    }
+
     const SDL_Window *Window::get_raw() const
     {
         return m_window;
@@ -191,5 +201,6 @@ namespace GameEngine
         auto rend = new Renderer(m_window, index, flags);
         return std::shared_ptr<Renderer>(rend);
     }
+
 
 }; // namespace GameEngine

@@ -7,17 +7,19 @@ namespace GameEngine
 {
     // Implementation Window
     class Window : public IWindow {
-        
+
         SDL_Window *m_window;
         // Private methods
         Size2D get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
         Pos2D get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
         void set_size_generic(void (*sdl_func)(SDL_Window *, int, int), const Size2D &size) const;
         void set_pos_generic(void (*sdl_func)(SDL_Window *, int, int), const Pos2D &pos) const;
-    public:
 
         Window(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags = 0);
         Window(const std::string &title, const Size2D &size, bool centered = true, uint32_t flags = 0);
+    public:
+        static std::shared_ptr<IWindow> create(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags = 0);
+        static std::shared_ptr<IWindow> create(const std::string &title, const Size2D &size, bool centered = true, uint32_t flags = 0);
         ~Window();
         // Get raw pointer
         const SDL_Window *get_raw() const;

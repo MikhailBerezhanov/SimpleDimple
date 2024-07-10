@@ -69,7 +69,7 @@ namespace GameEngine
         virtual IWindow & restore() = 0;
         // Nested objects
         // Renderer
-        virtual std::shared_ptr<IRenderer> create_renderer(int index, uint32_t flags) = 0;
+        virtual std::shared_ptr<IRenderer> create_renderer(int index = -1, uint32_t flags = 0) = 0;
     };
 
     // Interface, handles SDL Renderer
