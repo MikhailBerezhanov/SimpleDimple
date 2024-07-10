@@ -18,7 +18,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(__SDL_DEFINITIONS main=SDL_main)
 else()
     # Unix
-    set(ENABLE_GTESTS TRUE)
     set(__SDL_PREFIX "/opt/sdl/unix")
     set(__ZLIB_PREFIX "/opt/zlib/unix")
     set(__LIBZIP_PREFIX "/opt/libzip/unix")
