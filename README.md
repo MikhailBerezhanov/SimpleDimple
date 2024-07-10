@@ -18,14 +18,14 @@ cd build
 
 Build steps for `Linux` target:
 ```
-cmake .. --preset "SDL for Linux CLang"
+cmake .. --preset linux
 cmake --build Linux/
 cmake --build Linux/ --target install
 ```
 
 Build steps for `Windows` target:
 ```
-cmake .. --preset "SDL for Windows MinGW"
+cmake .. --preset windows
 cmake --build Windows/
 cmake --build Windows/ --target install
 ```
