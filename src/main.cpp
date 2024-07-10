@@ -18,15 +18,15 @@ int main(int argc, char *args[])
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
         }
 
-        GameEngine::Window win("SDL2 Window", GameEngine::Size2D{1000, 1000});
-        auto rend = win.create_renderer();
+        auto win = GameEngine::Window::create("SDL2 Window", GameEngine::Size2D{1000, 1000});
+        auto rend = win->create_renderer();
 
         std::cout << "Created renderer" << std::endl;
 
         std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
         // load bmp as surface
-        std::shared_ptr<GameEngine::ISurface> surface = std::make_shared<GameEngine::Surface>(logo_file);
+        auto surface = GameEngine::Surface::create(logo_file);
         // create texture from surface
         auto tex = rend->create_texture(surface);
 

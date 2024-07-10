@@ -8,10 +8,12 @@ namespace GameEngine
     class Surface : public ISurface {
 
         SDL_Surface *m_surface;
+        Surface(const std::string &image_filename);
         friend class Renderer;
     public:
 
-        Surface(const std::string &image_filename);
+        static std::shared_ptr<ISurface> create(const std::string &image_filename);
+
         ~Surface();
 
         const SDL_Surface *get_raw() const;

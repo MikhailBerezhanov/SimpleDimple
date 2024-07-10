@@ -17,6 +17,10 @@ namespace GameEngine
         SDL_FreeSurface(m_surface);
     }
 
+    std::shared_ptr<ISurface> Surface::create(const std::string &image_filename) {
+        return std::shared_ptr<ISurface>(new Surface(image_filename));
+    }
+
     const SDL_Surface* Surface::get_raw() const
     {
         return m_surface;
@@ -36,4 +40,4 @@ namespace GameEngine
         return *this;
     }
 
-    }; // namespace GameEngine
+}; // namespace GameEngine
