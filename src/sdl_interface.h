@@ -5,6 +5,8 @@
 #include <memory>
 #include <list>
 
+#include "sdl_classes.h"
+
 namespace GameEngine 
 {
     // Forward declarations
@@ -12,29 +14,6 @@ namespace GameEngine
     class IRenderer;
     class ITexture;
     class ISurface;
-
-    // Copy of SDL_Rect
-    struct Rect {
-        int x, y;
-        int w, h;
-    };
-
-    struct RGBColor {
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        uint8_t a = 255; //alpha: 255 - opaque, 0 - transparent
-    };
-
-    struct Pos2D {
-        int x;
-        int y;
-    };
-
-    struct Size2D {
-        size_t w;
-        size_t h;
-    };
 
     // Interface, handles SDL Window
     class IWindow {
@@ -112,4 +91,4 @@ namespace GameEngine
         virtual void lock() const = 0;
         virtual void unlock() const = 0;
     };
-};
+}
