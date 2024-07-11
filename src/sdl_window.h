@@ -1,57 +1,68 @@
 #pragma once
 
-#include "sdl_interface.h"
+#include <unordered_map>
+#include <unordered_set>
+
 #include "sdl.h"
+#include "sdl_interface.h"
+#include "sdl_texture.h"
 
 namespace GameEngine 
 {
     // Implementation Window
     class Window : public IWindow {
-
         SDL_Window *m_window;
+        SDL_Renderer *m_renderer;
+        std::unordered_map<size_t, std::unique_ptr<Texture>> m_textures; // all textures
+        std::unordered_set<Texture*> m_active_textures; // textures to update
+        size_t m_num_textures = 0;
         // Private methods
         Size2D get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
         Pos2D get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
         void set_size_generic(void (*sdl_func)(SDL_Window *, int, int), const Size2D &size) const;
         void set_pos_generic(void (*sdl_func)(SDL_Window *, int, int), const Pos2D &pos) const;
-
-        Window(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags = 0);
-        Window(const std::string &title, const Size2D &size, bool centered = true, uint32_t flags = 0);
     public:
-        static std::shared_ptr<IWindow> create(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags = 0);
-        static std::shared_ptr<IWindow> create(const std::string &title, const Size2D &size, bool centered = true, uint32_t flags = 0);
+        Window(const std::string &title, const Size2D &size, const Pos2D &pos);
+        Window(const std::string &title, const Size2D &size, bool centered = true);
         ~Window();
 
-        // Title
-        void set_title(const std::string &title) const override;
-        std::string get_title() const override;
         // Size
-        void set_size(const Size2D &size) const override;
-        Size2D get_size() const override;
-        Size2D get_size_in_pixels() const override;
-        void set_minimum_size(const Size2D &size) const override;
-        Size2D get_minimum_size() const override;
-        void set_maximum_size(const Size2D &size) const override;
-        Size2D get_maximum_size() const override;
+        void Resize(const Size2D &size) const override;
         // Position
-        void set_position(const Pos2D &pos) const override;
-        Pos2D get_position() const override;
-        // Display index
-        int get_display_index() const override;
-        // Flags
-        uint32_t get_flags() const override;
+        void SetPosition(const Pos2D &pos) const override;
+        // Window actions
+        void Show() const override;
+        void Hide() const override;
+        void Raise() const override; //Raise a window above other windows and set the input focus
+        void Maximize() const override;
+        void Minimize() const override;
+        void Restore() const override; //Restore the size and position of a minimized or maximized window
         // Modifiers
-        void set_bordered(bool bordered) const override;
-        void set_resizable(bool resizable) const override;
-        void set_always_on_top(bool on_top) const override;
-        void show() const override;
-        void hide() const override;
-        void raise() const override; //Raise a window above other windows and set the input focus
-        void maximize() const override;
-        void minimize() const override;
-        void restore() const override; //Restore the size and position of a minimized or maximized window
-        // Nested objects
-        // Renderer
-        std::shared_ptr<IRenderer> create_renderer(int index, uint32_t flags) override;
+        IWindow & SetMinSize(const Size2D &size) override;
+        IWindow & SetMaxSize(const Size2D &size) override;
+        IWindow & SetBordered(bool bordered) override;
+        IWindow & SetResizable(bool resizable) override;
+        IWindow & SetAlwaysOnTop(bool on_top) override;
+        // Renderer functions
+        IWindow &SetDrawColor(const RGBColor &rgba) override;
+        void DrawPoint(const Pos2D &point) const override;
+        void DrawPoints(const std::vector<Pos2D> &points) const override;
+        void DrawLine(const Pos2D &start, const Pos2D &end) const override;
+        void DrawLines(const std::vector<Pos2D> &points) const override;
+        void DrawRect(const Rect &rect) const override;
+        void DrawRects(const std::vector<Rect> &rects) const override;
+        void FillRect(const Rect &rect) const override;
+        void FillRects(const std::vector<Rect> &rects) const override;
+        void Clear() const override;
+        void Refresh() const override;
+        void Present() const override;
+        size_t AppendTexture(const std::string &image) override;
+        size_t AppendTexture(const Size2D &size) override;
+
+        void RemoveTexture(size_t texture_id) override;
+
+        ITexture &GetTexture(size_t texture_id) const override;
+
+        void SetTextureActive(size_t texture_id, bool active) override;
     };
 };

@@ -6,8 +6,10 @@
 namespace GameEngine {
     // Copy of SDL_Rect
     struct Rect {
-        int x, y;
-        int w, h;
+        int x;
+        int y;
+        int w;
+        int h;
     };
 
     // 000000 - black, ffffff - white

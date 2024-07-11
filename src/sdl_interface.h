@@ -19,86 +19,65 @@ namespace GameEngine
     class IWindow {
     public:
         virtual ~IWindow() = default;
-        /// Title
-        virtual void set_title(const std::string &title) const = 0;
-        virtual std::string get_title() const = 0;
         /// Size
-        virtual void set_size(const Size2D &size) const = 0;
-        virtual Size2D get_size() const = 0;
-        virtual Size2D get_size_in_pixels() const = 0;
-        virtual void set_minimum_size(const Size2D &size) const = 0;
-        virtual Size2D get_minimum_size() const = 0;
-        virtual void set_maximum_size(const Size2D &size) const = 0;
-        virtual Size2D get_maximum_size() const = 0;
+        virtual void Resize(const Size2D &size) const = 0;
         /// Position
-        virtual void set_position(const Pos2D &pos) const = 0;
-        virtual Pos2D get_position() const = 0;
-        /// Display index
-        virtual int get_display_index() const = 0;
-        /// Flags
-        virtual uint32_t get_flags() const = 0;
+        virtual void SetPosition(const Pos2D &pos) const = 0;
+        /// Window actions
+        virtual void Show() const = 0;
+        virtual void Hide() const = 0;
+        virtual void Raise() const = 0;
+        virtual void Maximize() const = 0;
+        virtual void Minimize() const = 0;
+        virtual void Restore() const = 0;
         /// Modifiers
-        virtual void set_bordered(bool bordered) const = 0;
-        virtual void set_resizable(bool resizable) const = 0;
-        virtual void set_always_on_top(bool on_top) const = 0;
-        virtual void show() const = 0;
-        virtual void hide() const = 0;
-        virtual void raise() const = 0;
-        virtual void maximize() const = 0;
-        virtual void minimize() const = 0;
-        virtual void restore() const = 0;
-        /// Nested objects
-        /// Renderer
-        virtual std::shared_ptr<IRenderer> create_renderer(int index = -1, uint32_t flags = 0) = 0;
-    };
-
-    // Interface, handles SDL Renderer
-    class IRenderer {
-    public:
-        virtual ~IRenderer() = default;
-        /// Size
-        virtual Size2D get_output_size() const = 0;
-        /// Modifiers
-        // set color used to draw and clear.
-        virtual void set_draw_color(const RGBColor &rgba) const = 0;
-        virtual RGBColor get_draw_color() const = 0;
-        // clears current rendering target with the color set by set_draw_color
-        virtual void clear() const = 0;
-        // works like 'flush' - makes changes appear on the screen
-        virtual void present() const = 0;
-        // from_rect - specify a part of the texture to render
-        // to_rect - where on the rendering target it should be rendered
-        virtual void copy(std::shared_ptr<ITexture> &texture, const Rect *from_rect, const Rect *to_rect) const = 0;
-        /// Draw
-        virtual void draw_point(const Pos2D &point) const = 0;
-        virtual void draw_points(const std::vector<Pos2D> &points) const = 0;
-        virtual void draw_line(const Pos2D &start, const Pos2D &end) const = 0;
+        virtual IWindow & SetMinSize(const Size2D &size) = 0;
+        virtual IWindow & SetMaxSize(const Size2D &size) = 0;
+        virtual IWindow & SetBordered(bool bordered) = 0;
+        virtual IWindow & SetResizable(bool resizable) = 0;
+        virtual IWindow & SetAlwaysOnTop(bool on_top) = 0;
+        /// Renderer functions
+        virtual IWindow & SetDrawColor(const RGBColor &rgba) = 0;
+        virtual void DrawPoint(const Pos2D &point) const = 0;
+        virtual void DrawPoints(const std::vector<Pos2D> &points) const = 0;
+        virtual void DrawLine(const Pos2D &start, const Pos2D &end) const = 0;
         // draw lines connecting a collection of points together
-        virtual void draw_lines(const std::vector<Pos2D> &points) const = 0;
-        virtual void draw_rect(const Rect &rect) const = 0;
-        virtual void draw_rects(const std::vector<Rect> &rects) const = 0;
-        virtual void fill_rect(const Rect &rect) const = 0;
-        virtual void fill_rects(const std::vector<Rect> &rects) const = 0;
-        /// Nested objects
+        virtual void DrawLines(const std::vector<Pos2D> &points) const = 0;
+        virtual void DrawRect(const Rect &rect) const = 0;
+        virtual void DrawRects(const std::vector<Rect> &rects) const = 0;
+        virtual void FillRect(const Rect &rect) const = 0;
+        virtual void FillRects(const std::vector<Rect> &rects) const = 0;
+        virtual void Clear() const = 0; // clear screen
+        virtual void Refresh() const = 0; // refresh textures (coordinates, flip, angle)
+        virtual void Present() const = 0; // update changes made to screen
         /// Texture
-        virtual std::shared_ptr<ITexture> create_texture(std::shared_ptr<ISurface> &surface) = 0;
-        virtual std::shared_ptr<ITexture> create_texture(uint32_t format, int access, const Size2D &size) = 0;
+        virtual size_t AppendTexture(const std::string &image) = 0; // returns texture_id
+        virtual size_t AppendTexture(const Size2D &size) = 0; // returns texture_id
+        virtual void RemoveTexture(size_t texture_id) = 0;
+        virtual ITexture & GetTexture(size_t texture_id) const = 0;
+        virtual void SetTextureActive(size_t texture_id, bool active) = 0;
     };
 
     // Interface, handles SDL Texture
     class ITexture {
     public:
         virtual ~ITexture() = default;
-        virtual Size2D get_size() const = 0;
-        virtual RGBColor get_color_mode() const = 0;
-        virtual void set_color_mode(const RGBColor &rgb) const = 0;
-    };
-
-    // Interface, handles SDL Surface
-    class ISurface {
-    public:
-        virtual ~ISurface() = default;
-        virtual void lock() const = 0;
-        virtual void unlock() const = 0;
+        virtual void SetColorMode(const RGBColor &rgb) const = 0;
+        virtual void SetAlphaMode(uint8_t alpha) const = 0;
+        // todo: BlendMode, ScaleMode
+        // todo: Lock, Unlock
+        virtual void SetPixelData(const std::vector<uint8_t> &pixel_data) const = 0;
+        virtual void SetPosition(const Pos2D &pos) = 0;
+        // todo: SetRect?
+        virtual Pos2D GetPosition() const = 0;
+        virtual Size2D GetSize() const = 0;
+        virtual Rect GetRect() const = 0;
+        virtual void Resize(const Size2D &size) = 0;
+        virtual void Upscale(uint8_t factor) = 0;
+        virtual void Downscale(uint8_t factor) = 0;
+        virtual void Rotate(double angle, const Pos2D &center) = 0;
+        virtual void Rotate(double angle) = 0;
+        virtual void FlipVertically() = 0;
+        virtual void FlipHorizontally() = 0;
     };
 }

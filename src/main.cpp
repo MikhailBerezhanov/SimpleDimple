@@ -6,7 +6,6 @@
 #include "config.h"
 
 #include "sdl_window.h"
-#include "sdl_surface.h"
 
 int main(int argc, char *args[])
 {
@@ -18,36 +17,29 @@ int main(int argc, char *args[])
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
         }
 
-        auto win = GameEngine::Window::create("SDL2 Window", GameEngine::Size2D{1000, 1000});
-        auto rend = win->create_renderer();
-
-        std::cout << "Created renderer" << std::endl;
+        // Create window
+        auto win = GameEngine::Window("SDL2 Window", GameEngine::Size2D{1000, 1000});
 
         std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
-        // load bmp as surface
-        auto surface = GameEngine::Surface::create(logo_file);
-        // create texture from surface
-        auto tex = rend->create_texture(surface);
-
-        // connect texture with dest to control position
-        GameEngine::Rect dest{};
-        auto size = tex->get_size();
-        dest.w = size.w;
-        dest.h = size.h;
-
-        // adjust height and width of image box
-        dest.w /= 6;
-        dest.h /= 6;
-
+        // create texture from bmp
+        auto tex_id = win.AppendTexture(logo_file);
+        // obtain texture
+        auto &tex = win.GetTexture(tex_id);
+        // resize texture
+        tex.Downscale(6);
+        // make texture active
+        win.SetTextureActive(tex_id, true);
+        // obtain texture rect to control its position
+        auto dest = tex.GetRect();
         // sets initial x-position of object
         dest.x = (1000 - dest.w) / 2;
-
         // sets initial y-position of object
         dest.y = (1000 - dest.h) / 2;
 
         // speed of box
         int speed = 300;
+        double angle = 0.0;
 
         SDL_Event event;
         bool quit = false;
@@ -105,15 +97,19 @@ int main(int argc, char *args[])
             if (dest.y < 0)
                 dest.y = 0;
 
-            // clear the screen (removes the texture)
-            rend->clear();
-            // copy full texture (from_rect=nullptr) to rectangle dest
-            rend->copy(tex, nullptr, &dest);
-            //
-            rend->present();
-
+            // clear the screen
+            win.Clear();
+            // set texture position
+            tex.SetPosition(GameEngine::Pos2D{dest.x, dest.y});
+            tex.Rotate(angle);
+            // refresh
+            win.Refresh();
+            // present
+            win.Present();
             // calculates to 60 fps
             SDL_Delay(1000 / 60);
+
+            angle += 0.2;
         }
 
         std::cout << "End of loop!" << std::endl;

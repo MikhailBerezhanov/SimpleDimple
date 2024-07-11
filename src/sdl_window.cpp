@@ -1,11 +1,17 @@
 #include <stdexcept>
 
 #include "sdl_window.h"
-#include "sdl_renderer.h"
+
+#define EXPECT(condition, message) do { \
+    if (!(condition)) { \
+        throw std::runtime_error(std::string(__func__) \
+        + " " + message \
+        + ": " + SDL_GetError()); \
+    }} while(0)
 
 namespace GameEngine 
 {
-    Window::Window(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags)
+    Window::Window(const std::string &title, const Size2D &size, const Pos2D &pos)
         : m_window(
             SDL_CreateWindow(
                 title.c_str(), // title
@@ -13,54 +19,44 @@ namespace GameEngine
                 pos.y, // y pos
                 static_cast<int>(size.w), // width
                 static_cast<int>(size.h), // height
-                flags // window flags
+                0 // window flags
             )
         )
     {
-        if (! m_window) {
-            throw std::runtime_error("Unable to create window " + title + ": " + std::string(SDL_GetError()));
+        EXPECT(m_window, "Unable to create window " + title);
+        m_renderer = SDL_CreateRenderer(m_window, -1, 0);
+        if (! m_renderer){
+            //free window
+            SDL_DestroyWindow(m_window);
+            throw std::runtime_error("Unable to create renderer for " + title + ": " + SDL_GetError());
         }
     }
 
-    Window::Window(const std::string &title, const Size2D &size, bool centered, uint32_t flags)
+    Window::Window(const std::string &title, const Size2D &size, bool centered)
         : Window(
             title,
             size,
             Pos2D{
                     static_cast<int>(centered ? SDL_WINDOWPOS_CENTERED : SDL_WINDOWPOS_UNDEFINED),
                     static_cast<int>(centered ? SDL_WINDOWPOS_CENTERED : SDL_WINDOWPOS_UNDEFINED)
-            },
-            flags)
+            })
     {}
 
-    Window::~Window()
-    {
-        // destroy window
+    Window::~Window() {
+        SDL_DestroyRenderer(m_renderer);
         SDL_DestroyWindow(m_window);
     }
 
-    std::shared_ptr<IWindow>
-    Window::create(const std::string &title, const Size2D &size, const Pos2D &pos, uint32_t flags) {
-        return std::shared_ptr<IWindow>(new Window(title, size, pos, flags));
-    }
-
-    std::shared_ptr<IWindow>
-    Window::create(const std::string &title, const Size2D &size, bool centered, uint32_t flags) {
-        return std::shared_ptr<IWindow>(new Window(title, size, centered, flags));
-    }
-
-    Size2D Window::get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const
-    {
+    Size2D Window::get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const {
         int w, h;
         sdl_func(m_window, &w, &h);
         return Size2D{static_cast<size_t>(w), static_cast<size_t>(h)};
     }
 
-    Pos2D Window::get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const
-    {
-        int x, y;
-        sdl_func(m_window, &x, &y);
-        return Pos2D{x, y};
+    Pos2D Window::get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const {
+        Pos2D pos{};
+        sdl_func(m_window, &pos.x, &pos.y);
+        return pos;
     }
 
     void Window::set_size_generic(void (*sdl_func)(SDL_Window *, int, int), const Size2D &size) const {
@@ -71,112 +67,186 @@ namespace GameEngine
         sdl_func(m_window, pos.x, pos.y);
     }
 
-    void Window::set_title(const std::string &title) const
-    {
-        SDL_SetWindowTitle(m_window, title.c_str());
-    }
-
-    std::string Window::get_title() const
-    {
-        auto title = SDL_GetWindowTitle(m_window);
-        return title ? title : "";
-    }
-
-    void Window::set_size(const Size2D &size) const
-    {
+    void Window::Resize(const Size2D &size) const {
         set_size_generic(SDL_SetWindowSize, size);
     }
 
-    Size2D Window::get_size() const
-    {
-        return get_size_generic(SDL_GetWindowSize);
-    }
-
-    Size2D Window::get_size_in_pixels() const
-    {
-        return get_size_generic(SDL_GetWindowSizeInPixels);
-    }
-
-    void Window::set_minimum_size(const Size2D &size) const
-    {
-        set_size_generic(SDL_SetWindowMinimumSize, size);
-    }
-    
-    Size2D Window::get_minimum_size() const
-    {
-        return get_size_generic(SDL_GetWindowMinimumSize);
-    }
-
-    void Window::set_maximum_size(const Size2D &size) const
-    {
-        set_size_generic(SDL_SetWindowMaximumSize, size);
-    }
-
-    Size2D Window::get_maximum_size() const
-    {
-        return get_size_generic(SDL_GetWindowMaximumSize);
-    }
-
-    void Window::set_position(const Pos2D &pos) const
-    {
+    void Window::SetPosition(const Pos2D &pos) const {
         set_pos_generic(SDL_SetWindowPosition, pos);
     }
 
-    Pos2D Window::get_position() const
-    {
-        return get_pos_generic(SDL_GetWindowPosition);
-    }
-    
-    int Window::get_display_index() const
-    {
-        return SDL_GetWindowDisplayIndex(m_window);
-    }
-
-    uint32_t Window::get_flags() const
-    {
-        return SDL_GetWindowFlags(m_window);
-    }
-
-    void Window::set_bordered(bool bordered) const {
-        SDL_SetWindowBordered(m_window, bordered ? SDL_TRUE : SDL_FALSE);
-    }
-
-    void Window::set_resizable(bool resizable) const {
-        SDL_SetWindowResizable(m_window, resizable ? SDL_TRUE : SDL_FALSE);
-    }
-
-    void Window::set_always_on_top(bool on_top) const {
-        SDL_SetWindowAlwaysOnTop(m_window, on_top ? SDL_TRUE : SDL_FALSE);
-    }
-
-    void Window::show() const {
+    void Window::Show() const {
         SDL_ShowWindow(m_window);
     }
 
-    void Window::hide() const {
+    void Window::Hide() const {
         SDL_HideWindow(m_window);
     }
 
-    void Window::raise() const {
+    void Window::Raise() const {
         SDL_RaiseWindow(m_window);
     }
 
-    void Window::maximize() const {
+    void Window::Maximize() const {
         SDL_MaximizeWindow(m_window);
     }
 
-    void Window::minimize() const {
+    void Window::Minimize() const {
         SDL_MinimizeWindow(m_window);
     }
 
-    void Window::restore() const {
+    void Window::Restore() const {
         SDL_RestoreWindow(m_window);
     }
 
-    std::shared_ptr<IRenderer> Window::create_renderer(int index, uint32_t flags)
-    {
-        auto rend = new Renderer(m_window, index, flags);
-        return std::shared_ptr<Renderer>(rend);
+    IWindow & Window::SetMinSize(const Size2D &size) {
+        set_size_generic(SDL_SetWindowMinimumSize, size);
+        return *this;
+    }
+
+    IWindow & Window::SetMaxSize(const Size2D &size) {
+        set_size_generic(SDL_SetWindowMaximumSize, size);
+        return *this;
+    }
+
+    IWindow & Window::SetBordered(bool bordered) {
+        SDL_SetWindowBordered(m_window, bordered ? SDL_TRUE : SDL_FALSE);
+        return *this;
+    }
+
+    IWindow & Window::SetResizable(bool resizable) {
+        SDL_SetWindowResizable(m_window, resizable ? SDL_TRUE : SDL_FALSE);
+        return *this;
+    }
+
+    IWindow & Window::SetAlwaysOnTop(bool on_top) {
+        SDL_SetWindowAlwaysOnTop(m_window, on_top ? SDL_TRUE : SDL_FALSE);
+        return *this;
+    }
+
+    IWindow &Window::SetDrawColor(const RGBColor &rgba) {
+        EXPECT(SDL_SetRenderDrawColor(m_renderer, rgba.r, rgba.g, rgba.b, rgba.a) == 0,
+                "Error setting renderer color");
+        return *this;
+    }
+
+    void Window::DrawPoint(const Pos2D &point) const {
+        EXPECT(SDL_RenderDrawPoint(m_renderer, point.x, point.y) == 0,
+               "Error drawing point");
+    }
+
+    void Window::DrawPoints(const std::vector<Pos2D> &points) const {
+        EXPECT(SDL_RenderDrawPoints(m_renderer,
+                                    reinterpret_cast<const SDL_Point*>(points.data()),
+                                    static_cast<int>(points.size())) == 0,
+               "Error drawing points");
+    }
+
+    void Window::DrawLine(const Pos2D &start, const Pos2D &end) const {
+        EXPECT(SDL_RenderDrawLine(m_renderer, start.x, start.y, end.x, end.y) == 0,
+               "Error drawing line");
+    }
+
+    void Window::DrawLines(const std::vector<Pos2D> &points) const {
+        EXPECT(SDL_RenderDrawLines(m_renderer,
+                                   reinterpret_cast<const SDL_Point*>(points.data()),
+                                   static_cast<int>(points.size())) == 0,
+               "Error drawing lines");
+    }
+
+    void Window::DrawRect(const Rect &rect) const {
+        EXPECT(SDL_RenderDrawRect(m_renderer,
+                                  reinterpret_cast<const SDL_Rect *>(&rect)) == 0,
+               "Error drawing rect");
+    }
+
+    void Window::DrawRects(const std::vector<Rect> &rects) const {
+        EXPECT(SDL_RenderDrawRects(m_renderer,
+                                   reinterpret_cast<const SDL_Rect*>(rects.data()),
+                                   static_cast<int>(rects.size())) == 0,
+               "Error drawing rects");
+    }
+
+    void Window::FillRect(const Rect &rect) const {
+        EXPECT(SDL_RenderFillRect(m_renderer,
+                                  reinterpret_cast<const SDL_Rect*>(&rect)) == 0,
+               "Error filling rect");
+    }
+
+    void Window::FillRects(const std::vector<Rect> &rects) const {
+        EXPECT(SDL_RenderFillRects(m_renderer,
+                                   reinterpret_cast<const SDL_Rect*>(rects.data()),
+                                   static_cast<int>(rects.size())) == 0,
+               "Error filling rects");
+    }
+
+    void Window::Clear() const {
+        SDL_RenderClear(m_renderer);
+    }
+
+    void Window::Refresh() const {
+        // call SDL_RenderCopy() only for active textures
+        for (auto texture : m_active_textures) {
+            if (texture->m_angle != 0.0 || texture->m_flip != SDL_FLIP_NONE) {
+                // special treatment for flip and rotation
+                EXPECT(SDL_RenderCopyEx(m_renderer, // sdl renderer
+                                        texture->m_texture, // sdl texture
+                                        nullptr, // apply to whole texture
+                                        &texture->m_rect, // texture destination
+                                        texture->get_angle(), // rotation angle
+                                        texture->get_center(), // rotation center (if null, rotate around dstrect.w / 2, dstrect.h / 2)
+                                        texture->get_flip() // flip action
+                ) == 0, "Unable to render-copy texture");
+            }
+            else {
+                // general treatment
+                EXPECT(SDL_RenderCopy(m_renderer, // sdl renderer
+                                      texture->m_texture, // sdl texture
+                                      nullptr, // apply to whole texture
+                                      &texture->m_rect // texture destination
+                ) == 0,
+                       "Unable to render-copy texture");
+            }
+        }
+    }
+
+    void Window::Present() const {
+        SDL_RenderPresent(m_renderer);
+    }
+
+    size_t Window::AppendTexture(const std::string &image) {
+        auto tex = new Texture(m_renderer, image);
+        m_textures.emplace(m_num_textures, std::unique_ptr<Texture>(tex));
+        return m_num_textures++;
+    }
+
+    size_t Window::AppendTexture(const Size2D &size) {
+        auto tex = new Texture(m_renderer, size);
+        m_textures.emplace(m_num_textures, std::unique_ptr<Texture>(tex));
+        return m_num_textures++;
+    }
+
+    void Window::RemoveTexture(size_t texture_id) {
+        auto tex = m_textures.find(texture_id);
+        if (tex != m_textures.end()) {
+            m_active_textures.erase(tex->second.get());
+            m_textures.erase(tex);
+            --m_num_textures;
+        }
+    }
+
+    ITexture &Window::GetTexture(size_t texture_id) const {
+        return *m_textures.at(texture_id);
+    }
+
+    void Window::SetTextureActive(size_t texture_id, bool active) {
+        auto it = m_textures.find(texture_id);
+        EXPECT(it != m_textures.end(), "Texture not found");
+        if (active) {
+            m_active_textures.insert(it->second.get());
+        }else {
+            m_active_textures.erase(it->second.get());
+        }
     }
 
 
