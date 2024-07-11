@@ -5,6 +5,9 @@
 
 #include "config.h"
 
+#include <vector>
+#include <span>
+
 // Screen dimension constants
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 1000;
@@ -13,6 +16,18 @@ int main(int argc, char *args[])
 {
     try
     {
+        // test C++20
+        std::cout << "CPP20 test: (should print `43` 100 times)\n";
+        std::vector<int> vec(100, 43);
+        std::span sp(vec.data(), vec.size());
+        for (const auto i : sp)
+        {
+            std::cout << i << " ";
+        }
+        std::cout << std::endl;
+        // ----
+
+
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
