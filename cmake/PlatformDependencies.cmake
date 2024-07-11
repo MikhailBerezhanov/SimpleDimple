@@ -1,4 +1,7 @@
 
+# SDL version to link against
+set(SDL_USED_VERSION "SDL2")
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(__SDL_PREFIX "/opt/sdl/windows")
     set(__ZLIB_PREFIX "/opt/zlib/windows")
@@ -6,7 +9,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     # From sdl2-config --libs
     # !PUT THESE BEFORE SDL2 LIBS!
     set(__SDL_EXTRA_LIBS "-lmingw32" "-mwindows")
-    set(__SDL_LIB_NAMES "SDL2main" "SDL2.dll" "SDL2_image.dll")
+    set(__SDL_LIB_NAMES "${SDL_USED_VERSION}main" "${SDL_USED_VERSION}.dll" "${SDL_USED_VERSION}_image.dll")
     # need static pthread for mingw-posix
     set(__OTHER_LIBS "-static" "winpthread")
     set(__ZLIB_LIB_NAMES "zlibstatic")
@@ -19,7 +22,7 @@ else()
     set(__SDL_PREFIX "/opt/sdl/linux")
     set(__ZLIB_PREFIX "/opt/zlib/linux")
     set(__LIBZIP_PREFIX "/opt/libzip/linux")
-    set(__SDL_LIB_NAMES "SDL2" "SDL2_image") 
+    set(__SDL_LIB_NAMES "${SDL_USED_VERSION}" "${SDL_USED_VERSION}_image") 
     set(__ZLIB_LIB_NAMES "libz.a")
     set(__LIBZIP_LIB_NAMES "zip")
     # From sdl2-config --cflags
@@ -71,6 +74,7 @@ set(DEPENDENCY_DEFINITIONS
 )
 
 # Exported variables:
+# SDL_USED_VERSION
 # SDL_LIB_DIR
 # SDL_BIN_DIR
 # DEPENDENCY_LIBS
