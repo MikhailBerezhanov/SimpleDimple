@@ -27,7 +27,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # List sources (except for main.cpp)
 set(SOURCES_NO_MAIN 
-    ""
+    ${SOURCE_DIR}/logger.cpp
 )
 # Full list of sources
 set(SOURCES 

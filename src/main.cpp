@@ -5,28 +5,23 @@
 
 #include "config.h"
 
-#include <vector>
-#include <span>
+#include "logger.h"
 
 // Screen dimension constants
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 1000;
 
-int main(int argc, char *args[])
+using namespace GameEngine;
+
+int main(int argc, char *argv[])
 {
+    const LoggerInitializer loggerInitialer(LogLevel::Debug);
+
     try
     {
-        // test C++20
-        std::cout << "CPP20 test: (should print `43` 100 times)\n";
-        std::vector<int> vec(100, 43);
-        std::span sp(vec.data(), vec.size());
-        for (const auto i : sp)
-        {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
-        // ----
+        AddLogHandler(CreateStdoutLogChannel());
 
+        LOG_F_DEBUG("Starting " << argv[0]);
 
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
