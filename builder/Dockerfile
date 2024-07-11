@@ -14,6 +14,7 @@ RUN apt-get update \
     libncurses5-dev \
     mingw-w64 \
     gdb \
+    git \
     libx11-dev \
     xorg-dev \
     libgl1-mesa-glx \
