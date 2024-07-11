@@ -5,13 +5,24 @@
 
 #include "config.h"
 
+
 #include "Window.h"
 
-int main(int argc, char *args[])
+#include "logger.h"
+
+
+using namespace GameEngine;
+
+int main(int argc, char *argv[])
 {
+    const LoggerInitializer loggerInitialer(LogLevel::Debug);
 
     try
     {
+        AddLogHandler(CreateStdoutLogChannel());
+
+        LOG_F_DEBUG("Starting " << argv[0]);
+
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));

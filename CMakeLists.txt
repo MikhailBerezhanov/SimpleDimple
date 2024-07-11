@@ -29,6 +29,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 set(SOURCES_NO_MAIN 
     ${SOURCE_DIR}/Window.cpp
     ${SOURCE_DIR}/Texture.cpp
+    ${SOURCE_DIR}/logger.cpp
 )
 # Full list of sources
 set(SOURCES 
