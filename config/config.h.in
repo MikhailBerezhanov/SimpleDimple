@@ -1,6 +1,5 @@
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 // Logs
 #define LOGS_DIR "@LOGS_DIR@"
@@ -13,5 +12,3 @@
 // Assets
 #define ASSETS_DIR "@ASSETS_DIR@"
 #define ASSETS_IMAGES_DIR "@ASSETS_IMAGES_DIR@"
-
-#endif

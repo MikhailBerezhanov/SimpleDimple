@@ -1,7 +1,6 @@
 // Contains SDL includes (depending on SDL version specified in cmake project)
 // Depends on variable SDL_USED_VERSION
-#ifndef SDL_INCLUDES_H
-#define SDL_INCLUDES_H
+#pragma once
 
 // for initializing and shutdown functions
 #include <@SDL_USED_VERSION@/SDL.h>
@@ -9,9 +8,3 @@
 #include <@SDL_USED_VERSION@/SDL_image.h>
 // for using SDL_Delay() functions
 #include <@SDL_USED_VERSION@/SDL_timer.h>
-
-// for images (IMG_Load, etc)
-#include <@SDL_USED_VERSION@/SDL_image.h>
-
-
-#endif 
