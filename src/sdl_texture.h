@@ -5,14 +5,26 @@
 
 namespace GameEngine
 {
+
     class Texture : public ITexture {
-        SDL_Texture *m_texture;
-        // mods
-        SDL_Point m_center;
-        double m_angle;
-        SDL_RendererFlip m_flip;
-        // texture rect
-        SDL_Rect m_rect{};
+        // intermediate class to isolate SDL properties from direct access for Window
+        class SDLHandle {
+            SDL_Texture *m_texture;
+            // mods
+            SDL_Point m_center{};
+            double m_angle{};
+            SDL_RendererFlip m_flip{};
+            // texture rect
+            SDL_Rect m_rect{};
+            explicit SDLHandle(SDL_Renderer *renderer, const std::string &image);
+            explicit SDLHandle(SDL_Renderer *renderer, const Size2D &size);
+            ~SDLHandle();
+            friend class Texture;
+        };
+
+        SDLHandle m_sdl_handle;
+        SDL_Texture *get_texture() const;
+        const SDL_Rect *get_rect() const;
         const SDL_Point *get_center() const;
         double get_angle() const;
         SDL_RendererFlip get_flip() const;
@@ -40,4 +52,5 @@ namespace GameEngine
         void FlipVertically() override;
         void FlipHorizontally() override;
     };
+
 };
