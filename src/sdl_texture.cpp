@@ -99,13 +99,13 @@ namespace GameEngine
         m_rect.h /= factor;
     }
 
-    void Texture::Rotate(double angle, const Pos2D &center) {
+    void Texture::SetAngle(double angle, const Pos2D &center) {
         m_center.x = center.x;
         m_center.y = center.y;
         m_angle = angle;
     }
 
-    void Texture::Rotate(double angle) {
+    void Texture::SetAngle(double angle) {
         // invalidate center
         m_center = {INVALID_POS, INVALID_POS};
         m_angle = angle;

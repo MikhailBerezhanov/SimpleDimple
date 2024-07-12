@@ -75,8 +75,8 @@ namespace GameEngine
         virtual void Resize(const Size2D &size) = 0;
         virtual void Upscale(uint8_t factor) = 0;
         virtual void Downscale(uint8_t factor) = 0;
-        virtual void Rotate(double angle, const Pos2D &center) = 0;
-        virtual void Rotate(double angle) = 0;
+        virtual void SetAngle(double angle, const Pos2D &center) = 0;
+        virtual void SetAngle(double angle) = 0;
         virtual void FlipVertically() = 0;
         virtual void FlipHorizontally() = 0;
     };

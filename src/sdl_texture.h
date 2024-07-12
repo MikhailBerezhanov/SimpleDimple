@@ -35,8 +35,8 @@ namespace GameEngine
         void Resize(const Size2D &size) override;
         void Upscale(uint8_t factor) override;
         void Downscale(uint8_t factor) override;
-        void Rotate(double angle, const Pos2D &center) override;
-        void Rotate(double angle) override;
+        void SetAngle(double angle, const Pos2D &center) override;
+        void SetAngle(double angle) override;
         void FlipVertically() override;
         void FlipHorizontally() override;
     };

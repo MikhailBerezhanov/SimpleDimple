@@ -24,12 +24,16 @@ int main(int argc, char *args[])
 
         // create texture from bmp
         auto tex_id = win.AppendTexture(logo_file);
+        auto tex_id_2 = win.AppendTexture(logo_file);
         // obtain texture
         auto &tex = win.GetTexture(tex_id);
+        auto &tex2 = win.GetTexture(tex_id_2);
         // resize texture
         tex.Downscale(6);
+        tex2.Downscale(3);
         // make texture active
         win.SetTextureActive(tex_id, true);
+        win.SetTextureActive(tex_id_2, true);
         // obtain texture rect to control its position
         auto dest = tex.GetRect();
         // sets initial x-position of object
@@ -101,7 +105,7 @@ int main(int argc, char *args[])
             win.Clear();
             // set texture position
             tex.SetPosition(GameEngine::Pos2D{dest.x, dest.y});
-            tex.Rotate(angle);
+            tex.SetAngle(angle);
             // refresh
             win.Refresh();
             // present
