@@ -5,7 +5,7 @@
 
 #include "config.h"
 
-#include "sdl_window.h"
+#include "Window.h"
 
 int main(int argc, char *args[])
 {

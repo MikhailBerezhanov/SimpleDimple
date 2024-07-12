@@ -1,11 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 
+#include "IWindow.h"
+#include "Texture.h"
 #include "sdl.h"
-#include "sdl_interface.h"
-#include "sdl_texture.h"
+
 
 namespace GameEngine 
 {
@@ -58,11 +60,8 @@ namespace GameEngine
         void Present() const override;
         size_t AppendTexture(const std::string &image) override;
         size_t AppendTexture(const Size2D &size) override;
-
         void RemoveTexture(size_t texture_id) override;
-
         ITexture &GetTexture(size_t texture_id) const override;
-
         void SetTextureActive(size_t texture_id, bool active) override;
     };
 };

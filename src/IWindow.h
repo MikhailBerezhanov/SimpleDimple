@@ -1,19 +1,12 @@
+
 #pragma once
 
-#include <string>
-#include <tuple>
-#include <memory>
 #include <vector>
 
-#include "sdl_classes.h"
+#include "ITexture.h"
+#include "Types.h"
 
-namespace GameEngine 
-{
-    // Forward declarations
-    class IWindow;
-    class IRenderer;
-    class ITexture;
-    class ISurface;
+namespace GameEngine {
 
     // Interface, handles SDL Window
     class IWindow {
@@ -56,28 +49,5 @@ namespace GameEngine
         virtual void RemoveTexture(size_t texture_id) = 0;
         virtual ITexture & GetTexture(size_t texture_id) const = 0;
         virtual void SetTextureActive(size_t texture_id, bool active) = 0;
-    };
-
-    // Interface, handles SDL Texture
-    class ITexture {
-    public:
-        virtual ~ITexture() = default;
-        virtual void SetColorMode(const RGBColor &rgb) const = 0;
-        virtual void SetAlphaMode(uint8_t alpha) const = 0;
-        // todo: BlendMode, ScaleMode
-        // todo: Lock, Unlock
-        virtual void SetPixelData(const std::vector<uint8_t> &pixel_data) const = 0;
-        virtual void SetPosition(const Pos2D &pos) = 0;
-        // todo: SetRect?
-        virtual Pos2D GetPosition() const = 0;
-        virtual Size2D GetSize() const = 0;
-        virtual Rect GetRect() const = 0;
-        virtual void Resize(const Size2D &size) = 0;
-        virtual void Upscale(uint8_t factor) = 0;
-        virtual void Downscale(uint8_t factor) = 0;
-        virtual void SetAngle(double angle, const Pos2D &center) = 0;
-        virtual void SetAngle(double angle) = 0;
-        virtual void FlipVertically() = 0;
-        virtual void FlipHorizontally() = 0;
     };
 }

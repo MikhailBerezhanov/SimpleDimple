@@ -1,13 +1,13 @@
 #pragma once
 
-#include "sdl_interface.h"
+#include "ITexture.h"
 #include "sdl.h"
 
 namespace GameEngine
 {
 
     class Texture : public ITexture {
-        // intermediate class to isolate SDL properties from direct access for Window
+        // intermediate class to isolate SDL properties from Window's direct access
         class SDLHandle {
             SDL_Texture *m_texture;
             // mods

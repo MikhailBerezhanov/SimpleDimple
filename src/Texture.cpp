@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "sdl_texture.h"
+#include "Texture.h"
 
 #define INVALID_POS INT32_MIN
 
@@ -11,13 +11,14 @@
         + ": " + SDL_GetError()); \
     }} while(0)
 
-namespace GameEngine
-{
+namespace GameEngine {
+
     /// Nested class
     Texture::SDLHandle::SDLHandle(SDL_Renderer *renderer, const std::string &image) {
         auto surface = IMG_Load(image.c_str());
         EXPECT(surface, "Unable to create surface from image");
         m_texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_FreeSurface(surface); // no need for surface anymore
         EXPECT(m_texture, "Unable to create texture");
         // get texture w/h
         EXPECT(SDL_QueryTexture(m_texture, nullptr, nullptr, &m_rect.w, &m_rect.h) == 0, "Unable to query texture");

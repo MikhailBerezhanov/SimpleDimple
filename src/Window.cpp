@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "sdl_window.h"
+#include "Window.h"
 
 #define EXPECT(condition, message) do { \
     if (!(condition)) { \
