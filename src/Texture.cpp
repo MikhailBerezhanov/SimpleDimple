@@ -47,13 +47,13 @@ namespace GameEngine {
 
     /// Texture class
     Texture::Texture(SDL_Renderer *renderer, const std::string &image)
-        : m_sdl_handle(renderer, image)
+        : m_sdlHandle(renderer, image)
     {
         reset_mods();
     }
 
     Texture::Texture(SDL_Renderer *renderer, const Size2D &size)
-        : m_sdl_handle(renderer, size)
+        : m_sdlHandle(renderer, size)
     {
         reset_mods();
     }
@@ -64,110 +64,110 @@ namespace GameEngine {
 
     void Texture::SetColorMode(const RGBColor &rgb) const
     {
-        EXPECT(SDL_SetTextureColorMod(m_sdl_handle.m_texture, rgb.r, rgb.g, rgb.b) == 0,
+        EXPECT(SDL_SetTextureColorMod(m_sdlHandle.m_texture, rgb.r, rgb.g, rgb.b) == 0,
                "Unable to set color mode");
     }
 
     void Texture::SetAlphaMode(uint8_t alpha) const {
-        EXPECT(SDL_SetTextureAlphaMod(m_sdl_handle.m_texture, alpha) == 0,
+        EXPECT(SDL_SetTextureAlphaMod(m_sdlHandle.m_texture, alpha) == 0,
                "Unable to set alpha mode");
     }
 
-    void Texture::SetPixelData(const std::vector<uint8_t> &pixel_data) const {
+    void Texture::SetPixelData(const std::vector<uint8_t> &pixelData) const {
         // todo: parameterize pitch?
-        EXPECT(SDL_UpdateTexture(m_sdl_handle.m_texture,
+        EXPECT(SDL_UpdateTexture(m_sdlHandle.m_texture,
                                  nullptr, // update whole texture
-                                 pixel_data.data(), // pixel data
+                                 pixelData.data(), // pixel data
                                  4 // pitch - the number of bytes in a row of pixel data, including padding (4 for RGBA)
                                  ) == 0,
                "Unable to set pixel data");
     }
 
     void Texture::SetPosition(const Pos2D &pos) {
-        m_sdl_handle.m_rect.x = pos.x;
-        m_sdl_handle.m_rect.y = pos.y;
+        m_sdlHandle.m_rect.x = pos.x;
+        m_sdlHandle.m_rect.y = pos.y;
     }
 
     Pos2D Texture::GetPosition() const {
-        return Pos2D{m_sdl_handle.m_rect.x, m_sdl_handle.m_rect.y};
+        return {m_sdlHandle.m_rect.x, m_sdlHandle.m_rect.y};
     }
 
     Size2D Texture::GetSize() const {
-        return Size2D{static_cast<size_t>(m_sdl_handle.m_rect.w), static_cast<size_t>(m_sdl_handle.m_rect.h)};
+        return {static_cast<size_t>(m_sdlHandle.m_rect.w), static_cast<size_t>(m_sdlHandle.m_rect.h)};
     }
 
     Rect Texture::GetRect() const {
-        return Rect{m_sdl_handle.m_rect.x,
-                    m_sdl_handle.m_rect.y,
-                    m_sdl_handle.m_rect.w,
-                    m_sdl_handle.m_rect.h};
+        return {m_sdlHandle.m_rect.x,
+                m_sdlHandle.m_rect.y,
+                m_sdlHandle.m_rect.w,
+                m_sdlHandle.m_rect.h};
     }
 
     void Texture::Resize(const Size2D &size) {
-        m_sdl_handle.m_rect.w = static_cast<int>(size.w);
-        m_sdl_handle.m_rect.h = static_cast<int>(size.h);
+        m_sdlHandle.m_rect.w = static_cast<int>(size.w);
+        m_sdlHandle.m_rect.h = static_cast<int>(size.h);
     }
 
     void Texture::Upscale(uint8_t factor) {
-        m_sdl_handle.m_rect.w *= factor;
-        m_sdl_handle.m_rect.h *= factor;
+        m_sdlHandle.m_rect.w *= factor;
+        m_sdlHandle.m_rect.h *= factor;
     }
 
     void Texture::Downscale(uint8_t factor) {
-        m_sdl_handle.m_rect.w /= factor;
-        m_sdl_handle.m_rect.h /= factor;
+        m_sdlHandle.m_rect.w /= factor;
+        m_sdlHandle.m_rect.h /= factor;
     }
 
     void Texture::SetAngle(double angle, const Pos2D &center) {
-        m_sdl_handle.m_center.x = center.x;
-        m_sdl_handle.m_center.y = center.y;
-        m_sdl_handle.m_angle = angle;
+        m_sdlHandle.m_center.x = center.x;
+        m_sdlHandle.m_center.y = center.y;
+        m_sdlHandle.m_angle = angle;
     }
 
     void Texture::SetAngle(double angle) {
         // invalidate center
-        m_sdl_handle.m_center = {INVALID_POS, INVALID_POS};
-        m_sdl_handle.m_angle = angle;
+        m_sdlHandle.m_center = {INVALID_POS, INVALID_POS};
+        m_sdlHandle.m_angle = angle;
     }
 
     void Texture::FlipVertically() {
-        m_sdl_handle.m_flip = SDL_FLIP_VERTICAL;
+        m_sdlHandle.m_flip = SDL_FLIP_VERTICAL;
     }
 
     void Texture::FlipHorizontally() {
-        m_sdl_handle.m_flip = SDL_FLIP_HORIZONTAL;
+        m_sdlHandle.m_flip = SDL_FLIP_HORIZONTAL;
     }
 
     /// Mods
 
     SDL_Texture *Texture::get_texture() const {
-        return m_sdl_handle.m_texture;
+        return m_sdlHandle.m_texture;
     }
 
     const SDL_Point *Texture::get_center() const {
-        if (m_sdl_handle.m_center.x != INVALID_POS && m_sdl_handle.m_center.y != INVALID_POS){
-            return &m_sdl_handle.m_center;
+        if (m_sdlHandle.m_center.x != INVALID_POS && m_sdlHandle.m_center.y != INVALID_POS){
+            return &m_sdlHandle.m_center;
         }else{
             return nullptr;
         }
     }
 
     const SDL_Rect *Texture::get_rect() const {
-        return &m_sdl_handle.m_rect;
+        return &m_sdlHandle.m_rect;
     }
 
     double Texture::get_angle() const {
-        return m_sdl_handle.m_angle;
+        return m_sdlHandle.m_angle;
     }
 
     SDL_RendererFlip Texture::get_flip() const {
-        return m_sdl_handle.m_flip;
+        return m_sdlHandle.m_flip;
     }
 
     void Texture::reset_mods() {
-        m_sdl_handle.m_center = {INVALID_POS, INVALID_POS};
-        m_sdl_handle.m_angle = 0.0;
-        m_sdl_handle.m_flip = SDL_FLIP_NONE;
+        m_sdlHandle.m_center = {INVALID_POS, INVALID_POS};
+        m_sdlHandle.m_angle = 0.0;
+        m_sdlHandle.m_flip = SDL_FLIP_NONE;
     }
 
 } // namespace GameEngine

@@ -181,7 +181,7 @@ namespace GameEngine
     }
 
     void Window::Clear() const {
-        SDL_RenderClear(m_renderer);
+        EXPECT(SDL_RenderClear(m_renderer) == 0, "Unable to clear window");
     }
 
     void Window::Refresh() const {
@@ -215,19 +215,19 @@ namespace GameEngine
         SDL_RenderPresent(m_renderer);
     }
 
-    size_t Window::AppendTexture(const std::string &image) {
+    TextureId Window::AppendTexture(const std::string &image) {
         auto tex = new Texture(m_renderer, image);
         m_textures.emplace(m_num_textures, std::unique_ptr<Texture>(tex));
         return m_num_textures++;
     }
 
-    size_t Window::AppendTexture(const Size2D &size) {
-        auto tex = new Texture(m_renderer, size);
-        m_textures.emplace(m_num_textures, std::unique_ptr<Texture>(tex));
+    TextureId Window::AppendTexture(const Size2D &size) {
+        auto tex = std::unique_ptr<Texture>(new Texture(m_renderer, size));
+        m_textures.emplace(m_num_textures, std::move(tex));
         return m_num_textures++;
     }
 
-    void Window::RemoveTexture(size_t texture_id) {
+    void Window::RemoveTexture(TextureId texture_id) {
         auto tex = m_textures.find(texture_id);
         if (tex != m_textures.end()) {
             m_active_textures.erase(tex->second.get());
@@ -236,13 +236,13 @@ namespace GameEngine
         }
     }
 
-    ITexture &Window::GetTexture(size_t texture_id) const {
+    ITexture &Window::GetTexture(TextureId texture_id) const {
         return *m_textures.at(texture_id);
     }
 
-    void Window::SetTextureActive(size_t texture_id, bool active) {
+    void Window::SetTextureActive(TextureId texture_id, bool active) {
         auto it = m_textures.find(texture_id);
-        EXPECT(it != m_textures.end(), "Texture not found");
+        EXPECT(it != m_textures.end(), "Texture " + std::to_string(texture_id) + " not found");
         if (active) {
             m_active_textures.insert(it->second.get());
         }else {

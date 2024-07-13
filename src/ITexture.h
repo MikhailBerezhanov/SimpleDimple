@@ -7,14 +7,13 @@
 
 namespace GameEngine {
     // Interface, handles SDL Texture
-    class ITexture {
-    public:
+    struct ITexture {
         virtual ~ITexture() = default;
         virtual void SetColorMode(const RGBColor &rgb) const = 0;
         virtual void SetAlphaMode(uint8_t alpha) const = 0;
         // todo: BlendMode, ScaleMode
         // todo: Lock, Unlock
-        virtual void SetPixelData(const std::vector<uint8_t> &pixel_data) const = 0;
+        virtual void SetPixelData(const std::vector<uint8_t> &pixelData) const = 0;
         virtual void SetPosition(const Pos2D &pos) = 0;
         // todo: SetRect?
         virtual Pos2D GetPosition() const = 0;

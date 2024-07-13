@@ -9,10 +9,10 @@ namespace GameEngine
     class Texture : public ITexture {
         // intermediate class to isolate SDL properties from Window's direct access
         class SDLHandle {
-            SDL_Texture *m_texture;
+            SDL_Texture *m_texture = nullptr;
             // mods
             SDL_Point m_center{};
-            double m_angle{};
+            double m_angle = 0.0;
             SDL_RendererFlip m_flip{};
             // texture rect
             SDL_Rect m_rect{};
@@ -22,7 +22,7 @@ namespace GameEngine
             friend class Texture;
         };
 
-        SDLHandle m_sdl_handle;
+        SDLHandle m_sdlHandle;
         SDL_Texture *get_texture() const;
         const SDL_Rect *get_rect() const;
         const SDL_Point *get_center() const;
@@ -39,7 +39,7 @@ namespace GameEngine
 
         void SetColorMode(const RGBColor &rgb) const override;
         void SetAlphaMode(uint8_t alpha) const override;
-        void SetPixelData(const std::vector<uint8_t> &pixel_data) const override;
+        void SetPixelData(const std::vector<uint8_t> &pixelData) const override;
         void SetPosition(const Pos2D &pos) override;
         Pos2D GetPosition() const override;
         Size2D GetSize() const override;

@@ -58,10 +58,10 @@ namespace GameEngine
         void Clear() const override;
         void Refresh() const override;
         void Present() const override;
-        size_t AppendTexture(const std::string &image) override;
-        size_t AppendTexture(const Size2D &size) override;
-        void RemoveTexture(size_t texture_id) override;
-        ITexture &GetTexture(size_t texture_id) const override;
-        void SetTextureActive(size_t texture_id, bool active) override;
+        TextureId AppendTexture(const std::string &image) override;
+        TextureId AppendTexture(const Size2D &size) override;
+        void RemoveTexture(TextureId texture_id) override;
+        ITexture &GetTexture(TextureId texture_id) const override;
+        void SetTextureActive(TextureId texture_id, bool active) override;
     };
 };

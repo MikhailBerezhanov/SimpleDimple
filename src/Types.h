@@ -6,10 +6,10 @@
 namespace GameEngine {
     // Copy of SDL_Rect
     struct Rect {
-        int x;
-        int y;
-        int w;
-        int h;
+        int x = 0;
+        int y = 0;
+        int w = 0;
+        int h = 0;
     };
 
     // 000000 - black, ffffff - white
@@ -21,13 +21,15 @@ namespace GameEngine {
     };
 
     struct Pos2D {
-        int x;
-        int y;
+        int x = 0;
+        int y = 0;
     };
 
     struct Size2D {
-        size_t w;
-        size_t h;
+        size_t w = 0;
+        size_t h = 0;
     };
+
+    using TextureId = size_t;
 }
 

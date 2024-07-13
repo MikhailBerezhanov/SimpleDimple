@@ -23,8 +23,8 @@ int main(int argc, char *args[])
         std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
         // create texture from bmp
-        auto tex_id = win.AppendTexture(logo_file);
-        auto tex_id_2 = win.AppendTexture(logo_file);
+        const auto tex_id = win.AppendTexture(logo_file);
+        const auto tex_id_2 = win.AppendTexture(logo_file);
         // obtain texture
         auto &tex = win.GetTexture(tex_id);
         auto &tex2 = win.GetTexture(tex_id_2);

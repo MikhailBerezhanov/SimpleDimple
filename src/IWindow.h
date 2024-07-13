@@ -8,9 +8,7 @@
 
 namespace GameEngine {
 
-    // Interface, handles SDL Window
-    class IWindow {
-    public:
+    struct IWindow {
         virtual ~IWindow() = default;
         /// Size
         virtual void Resize(const Size2D &size) const = 0;
@@ -44,10 +42,10 @@ namespace GameEngine {
         virtual void Refresh() const = 0; // refresh textures (coordinates, flip, angle)
         virtual void Present() const = 0; // update changes made to screen
         /// Texture
-        virtual size_t AppendTexture(const std::string &image) = 0; // returns texture_id
-        virtual size_t AppendTexture(const Size2D &size) = 0; // returns texture_id
-        virtual void RemoveTexture(size_t texture_id) = 0;
-        virtual ITexture & GetTexture(size_t texture_id) const = 0;
-        virtual void SetTextureActive(size_t texture_id, bool active) = 0;
+        virtual TextureId AppendTexture(const std::string &image) = 0; // returns texture_id
+        virtual TextureId AppendTexture(const Size2D &size) = 0; // returns texture_id
+        virtual void RemoveTexture(TextureId texture_id) = 0;
+        virtual ITexture & GetTexture(TextureId texture_id) const = 0;
+        virtual void SetTextureActive(TextureId texture_id, bool active) = 0;
     };
 }
