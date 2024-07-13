@@ -5,73 +5,45 @@
 
 #include "config.h"
 
-#include <vector>
-#include <span>
-
-// Screen dimension constants
-const int SCREEN_WIDTH = 1000;
-const int SCREEN_HEIGHT = 1000;
+#include "Window.h"
 
 int main(int argc, char *args[])
 {
+
     try
     {
-        // test C++20
-        std::cout << "CPP20 test: (should print `43` 100 times)\n";
-        std::vector<int> vec(100, 43);
-        std::span sp(vec.data(), vec.size());
-        for (const auto i : sp)
-        {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
-        // ----
-
-
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
         }
-        auto window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-        if (!window)
-        {
-            throw std::runtime_error("SDL_CreateWindow error! SDL_Error: " + std::string(SDL_GetError()));
-        }
 
-        auto rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-        if (!rend)
-        {
-            throw std::runtime_error("SDL_CreateRenderer error! SDL_Error: " + std::string(SDL_GetError()));
-        }
-
-        std::cout << "Created renderer" << std::endl;
+        // Create window
+        auto win = GameEngine::Window("SDL2 Window", GameEngine::Size2D{1000, 1000});
 
         std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
-        // load bmp
-        auto logo_surface = IMG_Load(logo_file.c_str());
 
-        // convert bmp to display format
-        auto tex = SDL_CreateTextureFromSurface(rend, logo_surface);
-
-        // clear mem
-        SDL_FreeSurface(logo_surface);
-
-        // connect texture with dest to control position
-        SDL_Rect dest;
-        SDL_QueryTexture(tex, nullptr, nullptr, &dest.w, &dest.h);
-
-        // adjust height and width of image box
-        dest.w /= 6;
-        dest.h /= 6;
-
+        // create texture from bmp
+        const auto tex_id = win.AppendTexture(logo_file);
+        const auto tex_id_2 = win.AppendTexture(logo_file);
+        // obtain texture
+        auto &tex = win.GetTexture(tex_id);
+        auto &tex2 = win.GetTexture(tex_id_2);
+        // resize texture
+        tex.Downscale(6);
+        tex2.Downscale(3);
+        // make texture active
+        win.SetTextureActive(tex_id, true);
+        win.SetTextureActive(tex_id_2, true);
+        // obtain texture rect to control its position
+        auto dest = tex.GetRect();
         // sets initial x-position of object
         dest.x = (1000 - dest.w) / 2;
-
         // sets initial y-position of object
         dest.y = (1000 - dest.h) / 2;
 
         // speed of box
         int speed = 300;
+        double angle = 0.0;
 
         SDL_Event event;
         bool quit = false;
@@ -112,6 +84,7 @@ int main(int argc, char *args[])
                     }
                 }
             }
+            // Calculate new coordinates for the structure
             // right boundary
             if (dest.x + dest.w > 1000)
                 dest.x = 1000 - dest.w;
@@ -128,28 +101,22 @@ int main(int argc, char *args[])
             if (dest.y < 0)
                 dest.y = 0;
 
-            // clears the screen
-            SDL_RenderClear(rend);
-            SDL_RenderCopy(rend, tex, NULL, &dest);
-
-            // triggers the double buffers
-            // for multiple rendering
-            SDL_RenderPresent(rend);
-
+            // clear the screen
+            win.Clear();
+            // set texture position
+            tex.SetPosition(GameEngine::Pos2D{dest.x, dest.y});
+            tex.SetAngle(angle);
+            // refresh
+            win.Refresh();
+            // present
+            win.Present();
             // calculates to 60 fps
             SDL_Delay(1000 / 60);
+
+            angle += 0.2;
         }
 
         std::cout << "End of loop!" << std::endl;
-
-        // destroy texture
-        SDL_DestroyTexture(tex);
-
-        // destroy renderer
-        SDL_DestroyRenderer(rend);
-
-        // Destroy window
-        SDL_DestroyWindow(window);
 
         // Quit SDL subsystems
         SDL_Quit();
