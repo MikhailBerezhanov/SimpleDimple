@@ -81,4 +81,8 @@ namespace GameEngine {
         // do nothing
     }
 
+    void TextureComponent::OnUpdate() {
+
+    }
+
 } // namespace GameEngine
