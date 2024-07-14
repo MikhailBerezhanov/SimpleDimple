@@ -9,17 +9,26 @@
 #include <sstream>
 #include <filesystem>
 
+
+#define _LOG_LEVELS_    \
+    LOG_X(ERROR)        \
+    LOG_X(WARNING)      \
+    LOG_X(INFO)         \
+    LOG_X(DEBUG)        \
+    LOG_X(VERBOSE)      \
+    LOG_X(TRACE)        \
+
+
 namespace GameEngine
 {
     namespace fs = std::filesystem;
 
-    enum class LogLevel
+#define LOG_X(name) name,
+    enum class LogLevel : unsigned int
     {
-        Error = 0,
-        Warning,
-        Info,
-        Debug
+        _LOG_LEVELS_
     };
+#undef LOG_X
 
     struct ILogger
     {
@@ -34,7 +43,7 @@ namespace GameEngine
     struct ILogChannel
     {
         virtual ~ILogChannel() = default;
-        virtual void Log(std::chrono::system_clock::time_point timestamp, const std::string_view threadId, LogLevel level, const std::string_view message) noexcept = 0;
+        virtual void Log(std::chrono::system_clock::time_point timestamp, LogLevel level, const std::string_view message) noexcept = 0;
     };
 
     void InitLogger(LogLevel level);
@@ -100,12 +109,9 @@ namespace GameEngine
 
 const std::shared_ptr<GameEngine::ILogger>& GetLogger() noexcept;
 
-#define LOG_DEBUG(message) GetLogger()->Log(GameEngine::LogLevel::Debug, message)
-#define LOG_INFO(message) GetLogger()->Log(GameEngine::LogLevel::Info, message)
-#define LOG_WARNING(message) GetLogger()->Log(GameEngine::LogLevel::Warning, message)
-#define LOG_ERROR(message) GetLogger()->Log(GameEngine::LogLevel::Error, message)
-
-#define LOG_F_DEBUG(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::Debug, *GetLogger()); t << message; } while (false);
-#define LOG_F_INFO(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::Info, *GetLogger()); t << message; } while (false);
-#define LOG_F_WARNING(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::Warning, *GetLogger()); t << message; } while (false);
-#define LOG_F_ERROR(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::Error, *GetLogger()); t << message; } while (false);
+#define LOG_TRACE(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::TRACE, *GetLogger()); t << '[' << __func__ << "():" << __LINE__ << "] " << message; } while (false);
+#define LOG_VERBOSE(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::VERBOSE, *GetLogger()); t << message; } while (false);
+#define LOG_DEBUG(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::DEBUG, *GetLogger()); t << message; } while (false);
+#define LOG_INFO(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::INFO, *GetLogger()); t << message; } while (false);
+#define LOG_WARNING(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::WARNING, *GetLogger()); t << message; } while (false);
+#define LOG_ERROR(message) do { GameEngine::LogStreamHelper t(GameEngine::LogLevel::ERROR, *GetLogger()); t << message; } while (false);

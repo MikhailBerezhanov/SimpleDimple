@@ -1,4 +1,4 @@
-#include "logger.h"
+#include "Logger.h"
 
 #include <array>
 #include <vector>
@@ -15,6 +15,10 @@ namespace fs = std::filesystem;
 
 namespace
 {
+#define LOG_X(name) #name,
+    constexpr const char* LogLevelTags[] = {_LOG_LEVELS_};
+#undef LOG_X
+
     class DummyLogger : public GameEngine::ILogger
     {
         void Log(GameEngine::LogLevel, const char*) noexcept override {}
@@ -25,7 +29,7 @@ namespace
 
     std::vector<std::unique_ptr<GameEngine::ILogChannel>> g_channels;
     std::shared_ptr<GameEngine::ILogger> g_globalLogger = std::make_shared<DummyLogger>();
-    GameEngine::LogLevel g_LogLevel = GameEngine::LogLevel::Debug;
+    GameEngine::LogLevel g_logLevel = GameEngine::LogLevel::DEBUG;
     std::recursive_mutex g_logLock;
 
     void Log(GameEngine::LogLevel level, const std::string_view message) noexcept
@@ -33,31 +37,28 @@ namespace
         try
         {
             const auto timestamp = std::chrono::system_clock::now();
-            
-            std::stringstream threadIdStream;
-            threadIdStream << std::setw(8) << std::hex << std::uppercase << std::this_thread::get_id();
-            const std::string threadIdString = std::move(threadIdStream).str();
 
             const std::scoped_lock lock(g_logLock);
-            if (g_LogLevel < level)
+            if (g_logLevel < level)
             {
                 return;
             }
 
             for (auto& channel : g_channels)
             {
-                channel->Log(timestamp, threadIdString, level, message);
+                channel->Log(timestamp, level, message);
             }
         }
         catch (...)
         {
+            std::cerr << "Log failed" << std::endl; 
         }
     }
 } // namespace
 
 namespace GameEngine
 {
-    static void LogToStream(std::ostream& stream, std::chrono::system_clock::time_point timestamp, const std::string_view threadId, LogLevel level, const std::string_view message)
+    static void LogToStream(std::ostream& stream, std::chrono::system_clock::time_point timestamp, LogLevel level, const std::string_view message)
     {
         std::time_t t = std::chrono::system_clock::to_time_t(timestamp);
         std::tm tm;
@@ -70,7 +71,7 @@ namespace GameEngine
         stream
             << std::put_time<char>(&tm, "%m%d-%H:%M:%S") << '.' << std::setw(3) << std::setfill('0')
             << (std::chrono::time_point_cast<std::chrono::milliseconds>(timestamp).time_since_epoch()).count() % 1000
-            << ' ' << threadId << ' ' << "EWID"[static_cast<int>(level)] << ' ' << message;
+            << " [" << ::LogLevelTags[static_cast<int>(level)] << "] " << message;
 
         if (message.back() == '\n' || message.back() == '\r')
         {
@@ -101,12 +102,13 @@ namespace GameEngine
             }
         }
 
-        void Log(std::chrono::system_clock::time_point timestamp, const std::string_view threadId, LogLevel level, const std::string_view message) noexcept override
+        void Log(std::chrono::system_clock::time_point timestamp, LogLevel level, const std::string_view message) noexcept override
         {
             try
             {
                 if (!m_file.is_open() && !Initialize())
                 {
+                    std::cerr << "FileLogChannel '" << m_filePath << "' open failed" << std::endl;
                     return;
                 }
 
@@ -116,7 +118,7 @@ namespace GameEngine
                     m_file.clear();
                 }
 
-                LogToStream(m_file, timestamp, threadId, level, message);
+                LogToStream(m_file, timestamp, level, message);
 
                 if (m_file.tellp() > m_maxLogFileBytes)
                 {
@@ -124,7 +126,8 @@ namespace GameEngine
                 }
             }
             catch (...)
-            {
+            {  
+                std::cerr << "FileLogChannel::Log failed" << std::endl;
             }
         }
 
@@ -146,14 +149,15 @@ namespace GameEngine
     class StdoutLogChannel final : public ILogChannel
     {
     public:
-        void Log(std::chrono::system_clock::time_point timestamp, const std::string_view threadId, LogLevel level, const std::string_view message) noexcept override
+        void Log(std::chrono::system_clock::time_point timestamp, LogLevel level, const std::string_view message) noexcept override
         {
             try
             {
-                LogToStream(std::cout, timestamp, threadId, level, message);
+                LogToStream(std::cout, timestamp, level, message);
             }
             catch (...)
             {
+                std::cerr << "StdoutLogChannel::LogToStream failed" << std::endl;
             }
         }
     };
@@ -181,6 +185,7 @@ namespace GameEngine
             }
             catch (...)
             {
+                std::cerr << "GlobalLogger::Log failed" << std::endl;
             }
         }
     };
@@ -208,7 +213,7 @@ namespace GameEngine
         }
         void Log(LogLevel level, const std::string_view LogMessage) noexcept override
         {
-            m_baseLogger->Log(level, (m_prefix + '\t').append(LogMessage));
+            m_baseLogger->Log(level, (m_prefix + ' ').append(LogMessage));
         }
         void Log(LogLevel level, const std::stringstream& stream) noexcept override
         {
@@ -218,6 +223,7 @@ namespace GameEngine
             }
             catch (...)
             {
+                std::cerr << "PrefixLogger::Log failed" << std::endl;
             }
         }
     private:
@@ -269,29 +275,34 @@ namespace GameEngine
         const std::scoped_lock lock(g_logLock);
         g_globalLogger = std::make_shared<GlobalLogger>();
         g_channels.clear();
-        g_LogLevel = level;
+        g_logLevel = level;
     }
 
     void SetLogLevel(LogLevel level)
     {
         const std::scoped_lock lock(g_logLock);
-        g_LogLevel = level;
+        g_logLevel = level;
     }
 
     void FinishLogger()
     {
         const std::scoped_lock lock(g_logLock);
 
-        Log(LogLevel::Info, "Log finished.");
+        Log(LogLevel::INFO, "Log finished.");
         g_channels.clear();
         g_globalLogger = std::make_shared<DummyLogger>();
     }
 
     void AddLogHandler(std::unique_ptr<ILogChannel> writer)
     {
-        // EXPECT(writer);
+        if (!writer)
+        {
+            throw std::runtime_error("AddLogHandler expects writer");
+        }
+
         const std::scoped_lock lock(g_logLock);
         g_channels.push_back(std::move(writer));
+        Log(LogLevel::INFO, "Log started.");
     }
 
     std::unique_ptr<ILogChannel> CreateFileLogChannel(const fs::path& fileName, size_t maxLogFileBytes)

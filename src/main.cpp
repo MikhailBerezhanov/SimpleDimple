@@ -5,23 +5,35 @@
 
 #include "config.h"
 
-
+#include "Logger.h"
 #include "Window.h"
-
-#include "logger.h"
-
 
 using namespace GameEngine;
 
+struct MyClassWithLog : private Logable
+{
+    MyClassWithLog() 
+        : Logable("MyClass") 
+    {}
+
+    void Method()
+    {
+        LOG_TRACE("Hello from method");
+    }
+};
+
 int main(int argc, char *argv[])
 {
-    const LoggerInitializer loggerInitialer(LogLevel::Debug);
+    const LoggerInitializer loggerInitialer(LogLevel::DEBUG);
 
     try
     {
         AddLogHandler(CreateStdoutLogChannel());
+        SetLogLevel(LogLevel::TRACE);
 
-        LOG_F_DEBUG("Starting " << argv[0]);
+        LOG_TRACE("Starting " << argv[0]);
+        MyClassWithLog cls;
+        cls.Method();
 
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
