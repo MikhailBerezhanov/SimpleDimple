@@ -14,10 +14,14 @@ FetchContent_Declare(
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE # suppress warning
 )
 
-FetchContent_MakeAvailable(googletest)  
+FetchContent_MakeAvailable(googletest)
+
+set(GTEST_SOURCES
+        utests.cpp
+)
 
 # Add test exec
-add_executable(${TEST_EXE} ${GTEST_SOURCES} utests.cpp)
+add_executable(${TEST_EXE}  ${GTEST_SOURCES})
 
 # Include .h files location
 target_include_directories(${TEST_EXE} PRIVATE ${GTEST_INCLUDE_DIR})
