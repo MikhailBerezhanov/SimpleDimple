@@ -60,6 +60,8 @@ namespace GameEngine {
 
         void OnUpdate() override;
 
+        void OnUpdate() override;
+
     };
 
 } // GameEngine
