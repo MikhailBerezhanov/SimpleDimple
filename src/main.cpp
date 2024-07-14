@@ -5,13 +5,36 @@
 
 #include "config.h"
 
+#include "Logger.h"
 #include "Window.h"
 
-int main(int argc, char *args[])
+using namespace GameEngine;
+
+struct MyClassWithLog : private Logable
 {
+    MyClassWithLog() 
+        : Logable("MyClass") 
+    {}
+
+    void Method()
+    {
+        LOG_TRACE("Hello from method");
+    }
+};
+
+int main(int argc, char *argv[])
+{
+    const LoggerInitializer loggerInitialer(LogLevel::DEBUG);
 
     try
     {
+        AddLogHandler(CreateStdoutLogChannel());
+        SetLogLevel(LogLevel::TRACE);
+
+        LOG_TRACE("Starting " << argv[0]);
+        MyClassWithLog cls;
+        cls.Method();
+
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
             throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
