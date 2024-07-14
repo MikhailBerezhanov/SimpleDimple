@@ -43,6 +43,8 @@ namespace GameEngine {
         void FlipVertically();
         void FlipHorizontally();
 
+        void OnUpdate() override;
+
     };
 
 } // GameEngine

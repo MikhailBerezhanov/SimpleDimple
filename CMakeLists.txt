@@ -35,6 +35,7 @@ set(UNITS_SOURCES
     ${SOURCE_DIR}/TextureComponent.cpp
     ${SOURCE_DIR}/RendererComponent.cpp
     ${SOURCE_DIR}/TransformComponent.cpp
+    ${SOURCE_DIR}/GameObject.cpp
 )
 
 # Build unit modules as static lib

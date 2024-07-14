@@ -159,6 +159,10 @@ namespace GameEngine
         SDL_RenderPresent(m_renderer);
     }
 
+    RenderContext Window::GetRenderContext() const {
+        return RenderContext(m_renderer);
+    }
+
 //    TextureId Window::AppendTexture(const std::string &image) {
 //        auto tex = new Texture(m_renderer, image);
 //        m_textures.emplace(m_num_textures, std::unique_ptr<Texture>(tex));

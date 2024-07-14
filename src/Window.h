@@ -6,6 +6,7 @@
 
 #include "IWindow.h"
 #include "TextureComponent.h"
+#include "RenderContext.h"
 #include "sdl.h"
 
 
@@ -48,6 +49,7 @@ namespace GameEngine
         void Clear() const override;
         void Refresh() const override;
         void Present() const override;
+        RenderContext GetRenderContext() const;
 //        TextureId AppendTexture(const std::string &image) override;
 //        TextureId AppendTexture(const Size2D &size) override;
 //        void RemoveTexture(TextureId texture_id) override;

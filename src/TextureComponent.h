@@ -27,12 +27,14 @@ namespace GameEngine
     public:
         TextureComponent(const TextureComponent &) = delete;
         TextureComponent& operator=(const TextureComponent&) = delete;
-        ~TextureComponent();
+        ~TextureComponent() = default;
 
         Size2D GetOrigSize() const;
         void SetColorMode(const RGBColor &rgb) const;
         void SetAlphaMode(uint8_t alpha) const;
         void SetPixelData(const std::vector<uint8_t> &pixelData) const;
+
+        void OnUpdate() override;
     };
 
 };

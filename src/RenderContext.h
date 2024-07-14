@@ -13,6 +13,7 @@ namespace GameEngine {
         SDL_Renderer *renderer;
         explicit RenderContext(SDL_Renderer* rend) : renderer(rend){}
         ~RenderContext() = default;
+        friend class Window;
         friend class RendererComponent;
         friend class TextureComponent;
     };

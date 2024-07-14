@@ -46,10 +46,6 @@ namespace GameEngine {
         : m_sdlHandle(render_context.renderer, size)
     {}
 
-    TextureComponent::~TextureComponent() {
-
-    }
-
     void TextureComponent::SetColorMode(const RGBColor &rgb) const
     {
         EXPECT(SDL_SetTextureColorMod(m_sdlHandle.m_texture, rgb.r, rgb.g, rgb.b) == 0,
@@ -82,6 +78,10 @@ namespace GameEngine {
                                 &h) == 0,
                "Unable to query texture");
         return {static_cast<size_t>(w), static_cast<size_t>(h)};
+    }
+
+    void TextureComponent::OnUpdate() {
+
     }
 
 } // namespace GameEngine

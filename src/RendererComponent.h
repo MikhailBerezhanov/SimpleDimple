@@ -40,7 +40,9 @@ namespace GameEngine {
         void DrawRects(const std::vector<Rect> &rects) const;
         void FillRect(const Rect &rect) const;
         void FillRects(const std::vector<Rect> &rects) const;
+        RenderContext GetRenderContext() const;
 
+        void OnUpdate() override;
     };
 
 } // GameEngine

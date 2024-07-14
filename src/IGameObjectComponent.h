@@ -9,6 +9,7 @@
 namespace GameEngine {
     class IGameObjectComponent {
     public:
+        virtual ~IGameObjectComponent() = default;
         virtual void OnUpdate() = 0;
     };
 }

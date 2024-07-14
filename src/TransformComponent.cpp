@@ -82,4 +82,8 @@ namespace GameEngine {
         m_sdlHandle.m_angle = 0.0;
         m_sdlHandle.m_flip = SDL_FLIP_NONE;
     }
+
+    void TransformComponent::OnUpdate() {
+
+    }
 } // GameEngine

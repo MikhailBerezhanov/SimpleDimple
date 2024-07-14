@@ -79,4 +79,12 @@ namespace GameEngine {
                "Error filling rects");
     }
 
+    RenderContext RendererComponent::GetRenderContext() const {
+        return RenderContext(m_sdlHandle.m_renderer);
+    }
+
+    void RendererComponent::OnUpdate() {
+
+    }
+
 } // GameEngine
