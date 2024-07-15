@@ -1,6 +1,7 @@
 # These vars need to be provided for tests:
 # GTEST_INCLUDE_DIR
 # GTEST_SOURCES
+# GTEST_LINK_LIBS
 
 # set utest exe name
 set(TEST_EXE "utest")
@@ -14,10 +15,10 @@ FetchContent_Declare(
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE # suppress warning
 )
 
-FetchContent_MakeAvailable(googletest)  
+FetchContent_MakeAvailable(googletest)
 
-# Add test exec
-add_executable(${TEST_EXE} ${GTEST_SOURCES} utests.cpp)
+# Add test sources
+add_executable(${TEST_EXE} ${GTEST_SOURCES} test_main.cpp)
 
 # Include .h files location
 target_include_directories(${TEST_EXE} PRIVATE ${GTEST_INCLUDE_DIR})
@@ -29,8 +30,5 @@ target_link_libraries(${TEST_EXE} ${GTEST_LINK_LIBS})
 target_link_libraries(
     ${TEST_EXE}
     GTest::gtest_main
+    GTest::gmock_main
 )
-
-# discover test within test exe
-include(GoogleTest)
-gtest_discover_tests(${TEST_EXE})

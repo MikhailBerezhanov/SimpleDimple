@@ -6,21 +6,10 @@
 #include "config.h"
 
 #include "Logger.h"
+#include "ErrorHandling.h"
 #include "Window.h"
 
 using namespace GameEngine;
-
-struct MyClassWithLog : private Logable
-{
-    MyClassWithLog() 
-        : Logable("MyClass") 
-    {}
-
-    void Method()
-    {
-        LOG_TRACE("Hello from method");
-    }
-};
 
 int main(int argc, char *argv[])
 {
@@ -32,8 +21,6 @@ int main(int argc, char *argv[])
         SetLogLevel(LogLevel::TRACE);
 
         LOG_TRACE("Starting " << argv[0]);
-        MyClassWithLog cls;
-        cls.Method();
 
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
@@ -144,9 +131,13 @@ int main(int argc, char *argv[])
         // Quit SDL subsystems
         SDL_Quit();
     }
-    catch (std::exception &e)
+    catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        HandleException(*GetLogger());
+    }
+    catch (...)
+    {
+        std::cerr << "unexpected exception occured" << std::endl;
     }
 
     return 0;
