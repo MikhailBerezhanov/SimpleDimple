@@ -81,8 +81,12 @@ namespace GameEngine {
         // do nothing
     }
 
-    void TextureComponent::OnUpdate() {
+    SDL_Texture *TextureComponent::get_texture() const {
+        return m_sdlHandle.m_texture;
+    }
 
+    void TextureComponent::OnUpdate() {
+        // do nothing
     }
 
 } // namespace GameEngine
