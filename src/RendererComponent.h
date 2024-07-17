@@ -24,10 +24,35 @@ namespace GameEngine {
             ~SDLHandle() = default;
             friend class RendererComponent;
         };
-        SDLHandle m_sdlHandle;
+        class TextureHandle {
+        private:
+            TextureHandle() = default;
+            ~TextureHandle() = default;
+            std::queue<const TextureComponent *> m_textures_q{};
+            size_t m_texture_lines = 1;
+
+            size_t m_tex_per_line_min = 0;
+            size_t m_tex_per_line_max = 0;
+            int m_tex_width_min = 0;
+            int m_tex_width_max = 0;
+            int m_tex_height = 0;
+
+            size_t m_long_lines = 0;
+            int m_long_line_wide_textures = 0;
+            int m_short_line_wide_textures = 0;
+            int m_tall_textures = 0;
+
+            void add_texture(const TextureComponent *tex);
+            void adjust_lines_num();
+            std::queue<const TextureComponent *> *get_textures_queue();
+            void calculate_texture_traits(const SDL_Rect *main_rect);
+            SDL_Rect calculate_texture_in_line(const SDL_Rect *main_rect, int line_idx, int tex_in_line_idx, size_t *tex_in_this_line);
+            friend class RendererComponent;
+        };
+        SDLHandle m_sdlHdl;
+        TextureHandle m_textureHdl;
         const TransformComponent *m_transform;
-        std::queue<const TextureComponent *> m_textures_q{};
-        size_t m_texture_lines = 1;
+
     public:
         RendererComponent(const RenderContext &context, const TransformComponent *transform);
         ~RendererComponent() = default;

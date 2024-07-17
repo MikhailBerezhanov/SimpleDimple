@@ -20,18 +20,18 @@ namespace GameEngine {
         {}
 
     RendererComponent::RendererComponent(const RenderContext &context, const TransformComponent *transform)
-        : m_sdlHandle(context.renderer),
-        m_transform(transform)
+        : m_sdlHdl(context.renderer),
+          m_transform(transform)
         {}
 
     void RendererComponent::SetDrawColor(const RGBColor &rgba) {
-        EXPECT(SDL_SetRenderDrawColor(m_sdlHandle.m_renderer, rgba.r, rgba.g, rgba.b, rgba.a) == 0,
+        EXPECT(SDL_SetRenderDrawColor(m_sdlHdl.m_renderer, rgba.r, rgba.g, rgba.b, rgba.a) == 0,
                "Error setting renderer color");
     }
 
     void RendererComponent::DrawPoint(const Pos2D &point) const {
         const auto main_pos = m_transform->GetPosition();
-        EXPECT(SDL_RenderDrawPoint(m_sdlHandle.m_renderer,
+        EXPECT(SDL_RenderDrawPoint(m_sdlHdl.m_renderer,
                                    main_pos.x + point.x,
                                    main_pos.y + point.y
                                    ) == 0,
@@ -45,7 +45,7 @@ namespace GameEngine {
         for (const auto &p : points) {
             sdl_points.emplace_back(main_pos.x + p.x, main_pos.y + p.y);
         }
-        EXPECT(SDL_RenderDrawPoints(m_sdlHandle.m_renderer,
+        EXPECT(SDL_RenderDrawPoints(m_sdlHdl.m_renderer,
                                     sdl_points.data(),
                                     static_cast<int>(sdl_points.size())
                                     ) == 0, "Error drawing points");
@@ -53,7 +53,7 @@ namespace GameEngine {
 
     void RendererComponent::DrawLine(const Pos2D &start, const Pos2D &end) const {
         const auto main_pos = m_transform->GetPosition();
-        EXPECT(SDL_RenderDrawLine(m_sdlHandle.m_renderer,
+        EXPECT(SDL_RenderDrawLine(m_sdlHdl.m_renderer,
                                   main_pos.x + start.x,
                                   main_pos.y + start.y,
                                   main_pos.x + end.x,
@@ -68,7 +68,7 @@ namespace GameEngine {
         for (const auto &p : points) {
             sdl_points.emplace_back(main_pos.x + p.x, main_pos.y + p.y);
         }
-        EXPECT(SDL_RenderDrawLines(m_sdlHandle.m_renderer,
+        EXPECT(SDL_RenderDrawLines(m_sdlHdl.m_renderer,
                                    sdl_points.data(),
                                    static_cast<int>(points.size())
                                    ) == 0, "Error drawing lines");
@@ -82,7 +82,7 @@ namespace GameEngine {
             rect.w,
             rect.h
         };
-        EXPECT(SDL_RenderDrawRect(m_sdlHandle.m_renderer,
+        EXPECT(SDL_RenderDrawRect(m_sdlHdl.m_renderer,
                                   &sdl_rect) == 0, "Error drawing rect");
     }
 
@@ -97,7 +97,7 @@ namespace GameEngine {
                     r.w,
                     r.h);
         }
-        EXPECT(SDL_RenderDrawRects(m_sdlHandle.m_renderer,
+        EXPECT(SDL_RenderDrawRects(m_sdlHdl.m_renderer,
                                    sdl_rects.data(),
                                    static_cast<int>(rects.size())
                                    ) == 0, "Error drawing rects");
@@ -111,7 +111,7 @@ namespace GameEngine {
                 rect.w,
                 rect.h
         };
-        EXPECT(SDL_RenderFillRect(m_sdlHandle.m_renderer,
+        EXPECT(SDL_RenderFillRect(m_sdlHdl.m_renderer,
                                   &sdl_rect
                                   ) == 0, "Error filling rect");
     }
@@ -127,22 +127,37 @@ namespace GameEngine {
                     r.w,
                     r.h);
         }
-        EXPECT(SDL_RenderFillRects(m_sdlHandle.m_renderer,
+        EXPECT(SDL_RenderFillRects(m_sdlHdl.m_renderer,
                                    sdl_rects.data(),
                                    static_cast<int>(rects.size())
                                    ) == 0, "Error filling rects");
     }
 
     RenderContext RendererComponent::GetRenderContext() const {
-        return RenderContext(m_sdlHandle.m_renderer);
+        return RenderContext(m_sdlHdl.m_renderer);
     }
 
     void RendererComponent::AddTexture(const TextureComponent *tex) {
+        m_textureHdl.add_texture(tex);
+    }
+
+    void RendererComponent::TextureHandle::add_texture(const TextureComponent *tex) {
         m_textures_q.push(tex);
     }
 
-    void RendererComponent::OnUpdate() {
+    void RendererComponent::TextureHandle::adjust_lines_num() {
+        /// if too many lines, adjust them
+        if (m_texture_lines > m_textures_q.size()) {
+            m_texture_lines = m_textures_q.size();
+        }
+    }
 
+    std::queue<const TextureComponent *> *
+            RendererComponent::TextureHandle::get_textures_queue() {
+        return &m_textures_q;
+    }
+
+    void RendererComponent::TextureHandle::calculate_texture_traits(const SDL_Rect *main_rect) {
         /// dstrect is calculated according to
         /// the size of transform rect and the number of textures
         /// We have a number of lines and a collection of textures to fit into larger rectangle
@@ -150,58 +165,81 @@ namespace GameEngine {
         /// number of textures in line (max) TEX_PER_LINE = NUM_TEX / LINES + NUM_TEX % LINES
         /// each texture's width (min) = W / TEX_PER_LINE
         /// in case where we cannot distribute textures evenly by the lines, the last line's textures are widened
+        m_tex_per_line_min = m_textures_q.size() / m_texture_lines;
+        m_tex_per_line_max =
+                m_tex_per_line_min +
+                m_textures_q.size() % m_texture_lines ? 1 : 0;
+        m_tex_width_min = static_cast<int>(main_rect->w / m_tex_per_line_max);
+        m_tex_width_max = static_cast<int>(main_rect->w / m_tex_per_line_min);
+        m_tex_height = static_cast<int>(main_rect->h / m_texture_lines);
+        ///Padding
+        m_long_lines = m_textures_q.size() % m_texture_lines;
+        m_long_line_wide_textures = static_cast<int>(main_rect->w % m_tex_per_line_max);
+        m_short_line_wide_textures = static_cast<int>(main_rect->w % m_tex_per_line_min);
+        m_tall_textures = static_cast<int>(main_rect->h % m_texture_lines);
+    }
 
-        /// if too many lines, adjust them
-        if (m_texture_lines > m_textures_q.size()) {
-            m_texture_lines = m_textures_q.size();
+    SDL_Rect RendererComponent::TextureHandle::calculate_texture_in_line(const SDL_Rect *main_rect,
+                                                                         int line_idx,
+                                                                         int tex_in_line_idx,
+                                                                         size_t *tex_in_this_line
+                                                                         ) {
+        // first tex_per_line_remainder lines get additional texture
+        const bool is_long_line = line_idx < m_long_lines;
+
+        *tex_in_this_line = is_long_line ?
+                           m_tex_per_line_max :
+                           m_tex_per_line_min;
+
+        // first tex_height_remainder lines are 1 pixel taller
+        const auto tex_height_in_this_line = m_tex_height +
+                (line_idx < m_tall_textures ? 1 : 0);
+        // calculate current tex's width
+        int tex_width_in_this_line;
+        if (is_long_line) {
+            tex_width_in_this_line = m_tex_width_min +
+                    // first remainder textures get additional pixel
+                    (tex_in_line_idx < m_long_line_wide_textures ? 1 : 0);
+        }else {
+            tex_width_in_this_line = m_tex_width_max +
+                    // first remainder textures get additional pixel
+                    (tex_in_line_idx < m_short_line_wide_textures ? 1 : 0);
         }
 
-        const auto main_rect = m_transform->get_rect();
-        const auto tex_per_line_min = m_textures_q.size() / m_texture_lines;
-        const auto tex_per_line_max =
-                tex_per_line_min +
-                m_textures_q.size() % m_texture_lines ? 1 : 0;
-        const auto tex_width_min = static_cast<int>(main_rect->w / tex_per_line_max);
-        const auto tex_width_max = static_cast<int>(main_rect->w / tex_per_line_min);
-        const auto tex_height = static_cast<int>(main_rect->h / m_texture_lines);
+        /// Recalculate rect
+        return {
+                main_rect->x + tex_in_line_idx * tex_width_in_this_line,
+                main_rect->y + line_idx * tex_height_in_this_line,
+                tex_width_in_this_line,
+                tex_height_in_this_line
+        };
+    }
 
-        ///Remainders
-        auto tex_per_line_remainder = m_textures_q.size() % m_texture_lines;
-        auto tex_width_min_remainder = static_cast<int>(main_rect->w % tex_per_line_max);
-        auto tex_width_max_remainder = static_cast<int>(main_rect->w % tex_per_line_min);
-        auto tex_height_remainder = static_cast<int>(main_rect->h % m_texture_lines);
+    void RendererComponent::OnUpdate() {
+
+        /// if too many lines, adjust them
+        m_textureHdl.adjust_lines_num();
+
+        const auto main_rect = m_transform->get_rect();
+        /// calculate coordinates from rect
+        m_textureHdl.calculate_texture_traits(main_rect);
 
         int line_idx = 0;
         int tex_in_line_idx = 0;
+        auto textures_q = m_textureHdl.get_textures_queue();
 
-        while(! m_textures_q.empty()) {
-            const auto tex = m_textures_q.front();
-            m_textures_q.pop();
+        while(! textures_q->empty()) {
 
-            // first tex_per_line_remainder lines get additional texture
-            const bool is_long_line = (line_idx < tex_per_line_remainder);
-            const auto tex_in_this_line = is_long_line ? tex_per_line_max : tex_per_line_min;
-            // first tex_height_remainder lines are 1 pixel taller
-            const auto tex_height_in_this_line = tex_height + (line_idx < tex_height_remainder ? 1 : 0);
-            // calculate current tex's width
-            int tex_width_in_this_line;
-            if (is_long_line) {
-                tex_width_in_this_line = tex_width_min +
-                        // first remainder textures get additional pixel
-                        (tex_in_line_idx < tex_width_min_remainder ? 1 : 0);
-            }else {
-                tex_width_in_this_line = tex_width_max +
-                        // first remainder textures get additional pixel
-                        (tex_in_line_idx < tex_width_max_remainder ? 1 : 0);
-            }
+            const auto tex = textures_q->front();
+            textures_q->pop();
 
-            /// Recalculate rect
-            const SDL_Rect dstrect {
-                    main_rect->x + tex_in_line_idx * tex_width_in_this_line,
-                    main_rect->y + line_idx * tex_height_in_this_line,
-                    tex_width_in_this_line,
-                    tex_height_in_this_line
-            };
+            size_t tex_in_this_line;
+            const auto dstrect = m_textureHdl
+                    .calculate_texture_in_line(
+                            main_rect,
+                            line_idx,
+                            tex_in_line_idx,
+                            &tex_in_this_line);
 
             if(++tex_in_line_idx >= tex_in_this_line) {
                 tex_in_line_idx = 0;
@@ -210,24 +248,24 @@ namespace GameEngine {
 
             if (m_transform->get_angle() != 0.0 || m_transform->get_flip() != SDL_FLIP_NONE) {
                 // special treatment for flip and rotation
-                EXPECT(SDL_RenderCopyEx(m_sdlHandle.m_renderer, // sdl renderer
+                EXPECT(SDL_RenderCopyEx(m_sdlHdl.m_renderer, // sdl renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
                                       &dstrect, // texture destination
                                       m_transform->get_angle(), // rotation angle
                                       m_transform->get_center(), // rotation center (if null, rotate around dstrect.w / 2, dstrect.h / 2)
-                                      m_transform->get_flip()) // flip action
-                                      == 0, "Unable to render-copy texture");
+                                      m_transform->get_flip() // flip action
+                                      )== 0, "Unable to render-copy texture");
             }
             else {
-                EXPECT(SDL_RenderCopy(m_sdlHandle.m_renderer, // sdl renderer
+                EXPECT(SDL_RenderCopy(m_sdlHdl.m_renderer, // sdl renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
                                       m_transform->get_rect() // texture destination
                                       ) == 0, "Unable to render-copy texture");
             }
-
         }
     }
+
 
 } // GameEngine
