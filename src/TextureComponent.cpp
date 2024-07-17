@@ -68,7 +68,7 @@ namespace GameEngine {
     }
 
 
-    Size2D TextureComponent::GetOrigSize() const {
+    Size2D TextureComponent::GetSize() const {
         // get texture w/h
         int w, h;
         EXPECT(SDL_QueryTexture(m_sdlHandle.m_texture,
@@ -80,8 +80,12 @@ namespace GameEngine {
         return {static_cast<size_t>(w), static_cast<size_t>(h)};
     }
 
-    void TextureComponent::OnUpdate() {
+    SDL_Texture *TextureComponent::get_texture() const {
+        return m_sdlHandle.m_texture;
+    }
 
+    void TextureComponent::OnUpdate() {
+        // do nothing
     }
 
 } // namespace GameEngine

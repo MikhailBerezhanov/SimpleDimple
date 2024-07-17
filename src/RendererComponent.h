@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <queue>
 #include "sdl.h"
 
 #include "IGameObjectComponent.h"
@@ -25,7 +26,8 @@ namespace GameEngine {
         };
         SDLHandle m_sdlHandle;
         const TransformComponent *m_transform;
-        std::vector<TextureComponent *> m_textures{};
+        std::queue<const TextureComponent *> m_textures_q{};
+        size_t m_texture_lines = 1;
     public:
         RendererComponent(const RenderContext &context, const TransformComponent *transform);
         ~RendererComponent() = default;
@@ -41,6 +43,7 @@ namespace GameEngine {
         void FillRect(const Rect &rect) const;
         void FillRects(const std::vector<Rect> &rects) const;
         RenderContext GetRenderContext() const;
+        void AddTexture(const TextureComponent *tex);
 
         void OnUpdate() override;
     };

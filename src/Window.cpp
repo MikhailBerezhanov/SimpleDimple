@@ -129,30 +129,7 @@ namespace GameEngine
     }
 
     void Window::Refresh() const {
-        // call SDL_RenderCopy() only for active textures
-//        for (auto texture : m_active_textures) {
-//
-//            if (texture->get_angle() != 0.0 || texture->get_flip() != SDL_FLIP_NONE) {
-//                // special treatment for flip and rotation
-//                EXPECT(SDL_RenderCopyEx(m_renderer, // sdl renderer
-//                                        texture->get_texture(), // sdl texture
-//                                        nullptr, // apply to whole texture
-//                                        texture->get_rect(), // texture destination
-//                                        texture->get_angle(), // rotation angle
-//                                        texture->get_center(), // rotation center (if null, rotate around dstrect.w / 2, dstrect.h / 2)
-//                                        texture->get_flip() // flip action
-//                ) == 0, "Unable to render-copy texture");
-//            }
-//            else {
-//                // general treatment
-//                EXPECT(SDL_RenderCopy(m_renderer, // sdl renderer
-//                                      texture->get_texture(), // sdl texture
-//                                      nullptr, // apply to whole texture
-//                                      texture->get_rect() // texture destination
-//                ) == 0,
-//                       "Unable to render-copy texture");
-//            }
-//        }
+
     }
 
     void Window::Present() const {

@@ -4,13 +4,20 @@
 
 #include "TransformComponent.h"
 
-#define INVALID_POS INT32_MIN
+//#define INVALID_POS INT32_MIN
 
 namespace GameEngine {
 
-    TransformComponent::TransformComponent()
-        : m_sdlHandle()
-        {}
+    TransformComponent::SDLHandle::SDLHandle(const Size2D &size) {
+        m_rect.w = static_cast<int>(size.w);
+        m_rect.h = static_cast<int>(size.h);
+    }
+
+    TransformComponent::TransformComponent(const Size2D &size)
+        : m_sdlHandle(size)
+        {
+            reset();
+        }
 
     void TransformComponent::SetPosition(const Pos2D &pos) {
         m_sdlHandle.m_rect.x = pos.x;
@@ -44,8 +51,11 @@ namespace GameEngine {
     }
 
     void TransformComponent::SetAngle(double angle) {
-        // invalidate center
-        m_sdlHandle.m_center = {INVALID_POS, INVALID_POS};
+        // set default center
+        m_sdlHandle.m_center = {
+                m_sdlHandle.m_rect.x + m_sdlHandle.m_rect.w/2,
+                m_sdlHandle.m_rect.y + m_sdlHandle.m_rect.h/2
+        };
         m_sdlHandle.m_angle = angle;
     }
 
@@ -58,11 +68,7 @@ namespace GameEngine {
     }
 
     const SDL_Point *TransformComponent::get_center() const {
-        if (m_sdlHandle.m_center.x != INVALID_POS && m_sdlHandle.m_center.y != INVALID_POS){
-            return &m_sdlHandle.m_center;
-        }else{
-            return nullptr;
-        }
+        return &m_sdlHandle.m_center;
     }
 
     const SDL_Rect *TransformComponent::get_rect() const {
@@ -78,7 +84,10 @@ namespace GameEngine {
     }
 
     void TransformComponent::reset() {
-        m_sdlHandle.m_center = {INVALID_POS, INVALID_POS};
+        m_sdlHandle.m_center = {
+                m_sdlHandle.m_rect.x + m_sdlHandle.m_rect.w/2,
+                m_sdlHandle.m_rect.y + m_sdlHandle.m_rect.h/2
+        };
         m_sdlHandle.m_angle = 0.0;
         m_sdlHandle.m_flip = SDL_FLIP_NONE;
     }
@@ -86,4 +95,6 @@ namespace GameEngine {
     void TransformComponent::OnUpdate() {
 
     }
+
+
 } // GameEngine

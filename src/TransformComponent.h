@@ -17,7 +17,7 @@ namespace GameEngine {
             double m_angle = 0.0;
             SDL_RendererFlip m_flip{};
             SDL_Rect m_rect{};
-            SDLHandle() = default;
+            SDLHandle(const Size2D &size);
             ~SDLHandle() = default;
             friend class TransformComponent;
         };
@@ -29,8 +29,9 @@ namespace GameEngine {
         double get_angle() const;
         SDL_RendererFlip get_flip() const;
         void reset();
+        friend class RendererComponent;
     public:
-        TransformComponent();
+        explicit TransformComponent(const Size2D &size = {});
         ~TransformComponent() = default;
 
         void SetPosition(const Pos2D &pos);

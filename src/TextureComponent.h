@@ -23,13 +23,14 @@ namespace GameEngine
         SDLHandle m_sdlHandle;
         TextureComponent(const RenderContext &render_context, const std::string &image);
         TextureComponent(const RenderContext &render_context, const Size2D &size);
+        SDL_Texture *get_texture() const;
         friend class RendererComponent;
     public:
         TextureComponent(const TextureComponent &) = delete;
         TextureComponent& operator=(const TextureComponent&) = delete;
         ~TextureComponent() = default;
 
-        Size2D GetOrigSize() const;
+        Size2D GetSize() const;
         void SetColorMode(const RGBColor &rgb) const;
         void SetAlphaMode(uint8_t alpha) const;
         void SetPixelData(const std::vector<uint8_t> &pixelData) const;
