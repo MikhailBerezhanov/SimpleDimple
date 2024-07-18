@@ -30,7 +30,7 @@ namespace GameEngine {
         virtual void Clear() const = 0; // clear screen
         virtual void Refresh() const = 0; // refresh textures (coordinates, flip, angle)
         virtual void Present() const = 0; // update changes made to screen
-        /// Texture
+        /// GameObject
 //        virtual TextureId AppendTexture(const std::string &image) = 0; // returns texture_id
 //        virtual TextureId AppendTexture(const Size2D &size) = 0; // returns texture_id
 //        virtual void RemoveTexture(TextureId texture_id) = 0;

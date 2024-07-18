@@ -30,6 +30,6 @@ namespace GameEngine {
         size_t h = 0;
     };
 
-    using TextureId = size_t;
+    using GameObjectId = size_t;
 }
 

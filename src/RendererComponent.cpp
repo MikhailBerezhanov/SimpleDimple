@@ -19,6 +19,79 @@ namespace GameEngine {
         : m_renderer(rend)
         {}
 
+    void RendererComponent::TextureHandle::add_texture(const TextureComponent *tex) {
+        m_textures_q.push(tex);
+    }
+
+    void RendererComponent::TextureHandle::adjust_lines_num() {
+        /// if too many lines, adjust them
+        if (m_texture_lines > m_textures_q.size()) {
+            m_texture_lines = m_textures_q.size();
+        }
+    }
+
+    std::queue<const TextureComponent *> *
+    RendererComponent::TextureHandle::get_textures_queue() {
+        return &m_textures_q;
+    }
+
+    void RendererComponent::TextureHandle::calculate_texture_traits(const SDL_Rect *main_rect) {
+        /// dstrect is calculated according to
+        /// the size of transform rect and the number of textures
+        /// We have a number of lines and a collection of textures to fit into larger rectangle
+        /// each texture's height TEX_H = H / LINES
+        /// number of textures in line (max) TEX_PER_LINE = NUM_TEX / LINES + NUM_TEX % LINES
+        /// each texture's width (min) = W / TEX_PER_LINE
+        /// in case where we cannot distribute textures evenly by the lines, the last line's textures are widened
+        m_tex_per_line_min = m_textures_q.size() / m_texture_lines;
+        m_tex_per_line_max = m_tex_per_line_min +
+                             m_textures_q.size() % m_texture_lines ? 1 : 0;
+        m_tex_width_min = main_rect->w / m_tex_per_line_max;
+        m_tex_width_max = main_rect->w / m_tex_per_line_min;
+        m_tex_height = main_rect->h / m_texture_lines;
+        ///Padding
+        m_long_lines = m_textures_q.size() % m_texture_lines;
+        m_long_line_wide_textures = main_rect->w % m_tex_per_line_max;
+        m_short_line_wide_textures = main_rect->w % m_tex_per_line_min;
+        m_tall_textures = main_rect->h % m_texture_lines;
+    }
+
+    SDL_Rect RendererComponent::TextureHandle::calculate_texture_in_line(const SDL_Rect *main_rect,
+                                                                         unsigned int line_idx,
+                                                                         unsigned int tex_in_line_idx,
+                                                                         unsigned int *tex_in_this_line
+                                                                        ) {
+        // first tex_per_line_remainder lines get additional texture
+        const bool is_long_line = line_idx < m_long_lines;
+
+        *tex_in_this_line = is_long_line ?
+                            m_tex_per_line_max :
+                            m_tex_per_line_min;
+
+        // first tex_height_remainder lines are 1 pixel taller
+        const auto tex_height_in_this_line = m_tex_height +
+                                             (line_idx < m_tall_textures ? 1 : 0);
+        // calculate current tex's width
+        unsigned int tex_width_in_this_line;
+        if (is_long_line) {
+            tex_width_in_this_line = m_tex_width_min +
+                                     // first remainder textures get additional pixel
+                                     (tex_in_line_idx < m_long_line_wide_textures ? 1 : 0);
+        }else {
+            tex_width_in_this_line = m_tex_width_max +
+                                     // first remainder textures get additional pixel
+                                     (tex_in_line_idx < m_short_line_wide_textures ? 1 : 0);
+        }
+
+        /// Recalculate rect
+        return {
+                static_cast<int>(main_rect->x + tex_in_line_idx * tex_width_in_this_line),
+                static_cast<int>(main_rect->y + line_idx * tex_height_in_this_line),
+                static_cast<int>(tex_width_in_this_line),
+                static_cast<int>(tex_height_in_this_line)
+        };
+    }
+
     RendererComponent::RendererComponent(const RenderContext &context, const TransformComponent *transform)
         : m_sdlHdl(context.renderer),
           m_transform(transform)
@@ -141,80 +214,6 @@ namespace GameEngine {
         m_textureHdl.add_texture(tex);
     }
 
-    void RendererComponent::TextureHandle::add_texture(const TextureComponent *tex) {
-        m_textures_q.push(tex);
-    }
-
-    void RendererComponent::TextureHandle::adjust_lines_num() {
-        /// if too many lines, adjust them
-        if (m_texture_lines > m_textures_q.size()) {
-            m_texture_lines = m_textures_q.size();
-        }
-    }
-
-    std::queue<const TextureComponent *> *
-            RendererComponent::TextureHandle::get_textures_queue() {
-        return &m_textures_q;
-    }
-
-    void RendererComponent::TextureHandle::calculate_texture_traits(const SDL_Rect *main_rect) {
-        /// dstrect is calculated according to
-        /// the size of transform rect and the number of textures
-        /// We have a number of lines and a collection of textures to fit into larger rectangle
-        /// each texture's height TEX_H = H / LINES
-        /// number of textures in line (max) TEX_PER_LINE = NUM_TEX / LINES + NUM_TEX % LINES
-        /// each texture's width (min) = W / TEX_PER_LINE
-        /// in case where we cannot distribute textures evenly by the lines, the last line's textures are widened
-        m_tex_per_line_min = m_textures_q.size() / m_texture_lines;
-        m_tex_per_line_max =
-                m_tex_per_line_min +
-                m_textures_q.size() % m_texture_lines ? 1 : 0;
-        m_tex_width_min = static_cast<int>(main_rect->w / m_tex_per_line_max);
-        m_tex_width_max = static_cast<int>(main_rect->w / m_tex_per_line_min);
-        m_tex_height = static_cast<int>(main_rect->h / m_texture_lines);
-        ///Padding
-        m_long_lines = m_textures_q.size() % m_texture_lines;
-        m_long_line_wide_textures = static_cast<int>(main_rect->w % m_tex_per_line_max);
-        m_short_line_wide_textures = static_cast<int>(main_rect->w % m_tex_per_line_min);
-        m_tall_textures = static_cast<int>(main_rect->h % m_texture_lines);
-    }
-
-    SDL_Rect RendererComponent::TextureHandle::calculate_texture_in_line(const SDL_Rect *main_rect,
-                                                                         int line_idx,
-                                                                         int tex_in_line_idx,
-                                                                         size_t *tex_in_this_line
-                                                                         ) {
-        // first tex_per_line_remainder lines get additional texture
-        const bool is_long_line = line_idx < m_long_lines;
-
-        *tex_in_this_line = is_long_line ?
-                           m_tex_per_line_max :
-                           m_tex_per_line_min;
-
-        // first tex_height_remainder lines are 1 pixel taller
-        const auto tex_height_in_this_line = m_tex_height +
-                (line_idx < m_tall_textures ? 1 : 0);
-        // calculate current tex's width
-        int tex_width_in_this_line;
-        if (is_long_line) {
-            tex_width_in_this_line = m_tex_width_min +
-                    // first remainder textures get additional pixel
-                    (tex_in_line_idx < m_long_line_wide_textures ? 1 : 0);
-        }else {
-            tex_width_in_this_line = m_tex_width_max +
-                    // first remainder textures get additional pixel
-                    (tex_in_line_idx < m_short_line_wide_textures ? 1 : 0);
-        }
-
-        /// Recalculate rect
-        return {
-                main_rect->x + tex_in_line_idx * tex_width_in_this_line,
-                main_rect->y + line_idx * tex_height_in_this_line,
-                tex_width_in_this_line,
-                tex_height_in_this_line
-        };
-    }
-
     void RendererComponent::OnUpdate() {
 
         /// if too many lines, adjust them
@@ -224,8 +223,8 @@ namespace GameEngine {
         /// calculate coordinates from rect
         m_textureHdl.calculate_texture_traits(main_rect);
 
-        int line_idx = 0;
-        int tex_in_line_idx = 0;
+        unsigned int line_idx = 0;
+        unsigned int tex_in_line_idx = 0;
         auto textures_q = m_textureHdl.get_textures_queue();
 
         while(! textures_q->empty()) {
@@ -233,7 +232,7 @@ namespace GameEngine {
             const auto tex = textures_q->front();
             textures_q->pop();
 
-            size_t tex_in_this_line;
+            unsigned int tex_in_this_line;
             const auto dstrect = m_textureHdl
                     .calculate_texture_in_line(
                             main_rect,
