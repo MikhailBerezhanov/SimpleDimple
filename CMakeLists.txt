@@ -70,8 +70,8 @@ include_directories(${DEPENDENCY_INCLUDE_DIRS} ${INCLUDE_DIR})
 
 # Link libs (ZLIB after LIBZIP)
 target_link_libraries(${EXEC_NAME} 
-    ${DEPENDENCY_LIBS} 
     ${UNITS_LIB_NAME}
+    ${DEPENDENCY_LIBS}
 )
 
 # set rpath for executable relative to $ORIGIN (the executable location)

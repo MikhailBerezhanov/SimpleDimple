@@ -1,6 +1,5 @@
 # These vars need to be provided for tests:
 # GTEST_INCLUDE_DIR
-# GTEST_SOURCES
 # GTEST_LINK_LIBS
 
 # set utest exe name
@@ -17,7 +16,13 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 
-# Add test sources
+# Specify sources for tests
+set(GTEST_SOURCES
+    TestLogger.cpp
+    TestErrorHandling.cpp
+)
+
+# Add test sources to executable
 add_executable(${TEST_EXE} ${GTEST_SOURCES} test_main.cpp)
 
 # Include .h files location

@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     }
     catch (const std::exception &e)
     {
-        HandleException(*GetLogger());
+        HANDLE_EXCEPTION();
     }
     catch (...)
     {

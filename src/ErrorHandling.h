@@ -22,6 +22,8 @@ namespace GameEngine
     void HandleException(ILogger& logger, const std::string& message = {});
 } // namespace GameEngine
 
+#define HANDLE_EXCEPTION() HandleException(*GetLogger())
+
 #define CHECK_EX(condition, exType, ...) do { if (!(condition)) throw exType(__VA_ARGS__); } while (false);
 
 #define CHECK_MSG(condition, message) CHECK_EX(condition, \
