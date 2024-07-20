@@ -84,11 +84,6 @@ set_target_properties(${EXEC_NAME} PROPERTIES
 if (ENABLE_GTESTS)
     # Enable tests
     enable_testing()
-    # Specify sources for tests
-    set(GTEST_SOURCES
-        TestLogger.cpp
-        TestErrorHandling.cpp
-    )
     # Specify include path for tests
     set(GTEST_INCLUDE_DIR 
         ${DEPENDENCY_INCLUDE_DIRS} 
