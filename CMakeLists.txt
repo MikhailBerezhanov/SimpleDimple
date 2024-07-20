@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Executable name
 set(EXEC_NAME ${CMAKE_PROJECT_NAME})
+# Lib name of built units
+set(UNITS_LIB_NAME ${EXEC_NAME}_lib)
 # Config header location
 set(CONFIG_DIR ${CMAKE_SOURCE_DIR}/config)
 # CMake modules location
@@ -25,17 +27,16 @@ set(ASSETS_TO_INSTALL_DIR ${CMAKE_SOURCE_DIR}/assets)
 # Static linkage for stdlib to reduce dependencies
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
-# List sources (except for main.cpp)
-set(SOURCES_NO_MAIN 
+# Units' sources list (except for main.cpp)
+set(UNITS_SOURCES 
     ${SOURCE_DIR}/Logger.cpp
+    ${SOURCE_DIR}/ErrorHandling.cpp
     ${SOURCE_DIR}/Window.cpp
     ${SOURCE_DIR}/Texture.cpp
 )
-# Full list of sources
-set(SOURCES 
-    ${SOURCES_NO_MAIN}
-    ${SOURCE_DIR}/main.cpp
-)
+
+# Build unit modules as static lib
+add_library(${UNITS_LIB_NAME} STATIC ${UNITS_SOURCES})
 
 # Include runtime configs (LOGS_DIR, ASSETS_DIR,...)
 include(${MODULES_DIR}/RuntimeConfigs.cmake)
@@ -52,7 +53,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 endif()
 
 # Add executable
-add_executable(${EXEC_NAME} ${SOURCES})
+add_executable(${EXEC_NAME} ${SOURCE_DIR}/main.cpp)
 
 # Generate config.h from config.h.in
 configure_file(${CONFIG_DIR}/config.h.in ${INCLUDE_DIR}/config.h @ONLY)
@@ -65,13 +66,12 @@ target_compile_definitions(${EXEC_NAME} PRIVATE
 )
 
 # Add include dirs
-target_include_directories(${EXEC_NAME} PRIVATE 
-    ${DEPENDENCY_INCLUDE_DIRS}
-    ${INCLUDE_DIR}
-)
+include_directories(${DEPENDENCY_INCLUDE_DIRS} ${INCLUDE_DIR})
+
 # Link libs (ZLIB after LIBZIP)
 target_link_libraries(${EXEC_NAME} 
-    ${DEPENDENCY_LIBS} 
+    ${UNITS_LIB_NAME}
+    ${DEPENDENCY_LIBS}
 )
 
 # set rpath for executable relative to $ORIGIN (the executable location)
@@ -89,11 +89,11 @@ if (ENABLE_GTESTS)
         ${DEPENDENCY_INCLUDE_DIRS} 
         ${INCLUDE_DIR}
     )
-    # Specify link libs
-    set(GTEST_LINK_LIBS ${DEPENDENCY_LIBS})
+    # Specify libs to link with
+    set(GTEST_LINK_LIBS ${DEPENDENCY_LIBS} ${UNITS_LIB_NAME})
     # Do not automatically install gtest
     set(INSTALL_GTEST OFF)
-    # Add subdir with tests
+    # Add subdir with tests and pass above variables
     add_subdirectory(${TESTS_DIR}/utest)
 endif()
 
