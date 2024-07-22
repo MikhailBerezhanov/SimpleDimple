@@ -8,6 +8,7 @@
 #include "TextureComponent.h"
 
 namespace GameEngine {
+
     GameObject::GameObject(std::string name)
         :m_name(std::move(name))
         {}
@@ -76,7 +77,13 @@ namespace GameEngine {
     }
 
     void GameObject::Update() {
-
+        // call OnUpdate()
+        this->OnUpdate();
+        // call OnUpdate for all components
+        for(const auto &[key, val] : m_components) {
+            val->OnUpdate();
+        }
+        //todo: children?
     }
 
 } // GameEngine
