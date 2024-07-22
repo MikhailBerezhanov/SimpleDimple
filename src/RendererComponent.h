@@ -60,6 +60,7 @@ namespace GameEngine {
     protected:
         RendererComponent(const RenderContext &context, std::shared_ptr<const TransformComponent> transform);
     public:
+        //todo: Clone()
         RendererComponent(const RendererComponent &) = delete;
         RendererComponent &operator=(const RendererComponent &) = delete;
         ~RendererComponent() = default;

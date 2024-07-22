@@ -21,6 +21,7 @@ namespace GameEngine {
         virtual void Update() = 0;
         //todo: OnKeyDown()
         //todo: OnKeyUp()
+        virtual std::unique_ptr<IGameObject> Clone() const = 0;
     };
 
 } // GameEngine

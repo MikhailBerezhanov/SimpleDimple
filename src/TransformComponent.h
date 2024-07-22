@@ -34,9 +34,10 @@ namespace GameEngine {
     protected:
         explicit TransformComponent(const Size2D &size = {});
     public:
-
+        TransformComponent(const TransformComponent &) = delete;
+        TransformComponent &operator=(const TransformComponent &) = delete;
         ~TransformComponent() = default;
-
+        //todo: Clone()
         void SetPosition(const Pos2D &pos);
         Pos2D GetPosition() const;
         Size2D GetSize() const;
