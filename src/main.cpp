@@ -33,19 +33,20 @@ int main(int argc, char *argv[])
         std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
         // create texture from bmp
-        const auto tex_id = win.AppendTexture(logo_file);
-        const auto tex_id_2 = win.AppendTexture(logo_file);
-        // obtain texture
-        auto &tex = win.GetTexture(tex_id);
-        auto &tex2 = win.GetTexture(tex_id_2);
-        // resize texture
-        tex.Downscale(6);
-        tex2.Downscale(3);
-        // make texture active
-        win.SetTextureActive(tex_id, true);
-        win.SetTextureActive(tex_id_2, true);
+//        const auto tex_id = win.AppendTexture(logo_file);
+//        const auto tex_id_2 = win.AppendTexture(logo_file);
+//        // obtain texture
+//        auto &tex = win.GetTexture(tex_id);
+//        auto &tex2 = win.GetTexture(tex_id_2);
+//        // resize texture
+//        tex.Downscale(6);
+//        tex2.Downscale(3);
+//        // make texture active
+//        win.SetTextureActive(tex_id, true);
+//        win.SetTextureActive(tex_id_2, true);
         // obtain texture rect to control its position
-        auto dest = tex.GetRect();
+        Rect dest{};
+//        auto dest = tex.GetRect();
         // sets initial x-position of object
         dest.x = (1000 - dest.w) / 2;
         // sets initial y-position of object
@@ -114,8 +115,8 @@ int main(int argc, char *argv[])
             // clear the screen
             win.Clear();
             // set texture position
-            tex.SetPosition(GameEngine::Pos2D{dest.x, dest.y});
-            tex.SetAngle(angle);
+//            tex.SetPosition(GameEngine::Pos2D{dest.x, dest.y});
+//            tex.SetAngle(angle);
             // refresh
             win.Update();
             // present

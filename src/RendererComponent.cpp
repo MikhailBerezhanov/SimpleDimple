@@ -116,7 +116,7 @@ namespace GameEngine {
         std::vector<SDL_Point> sdl_points{};
         sdl_points.reserve(points.size());
         for (const auto &p : points) {
-            sdl_points.emplace_back(main_pos.x + p.x, main_pos.y + p.y);
+            sdl_points.emplace_back(SDL_Point{main_pos.x + p.x, main_pos.y + p.y});
         }
         EXPECT(SDL_RenderDrawPoints(m_sdlHdl.m_renderer,
                                     sdl_points.data(),
@@ -139,7 +139,7 @@ namespace GameEngine {
         std::vector<SDL_Point> sdl_points{};
         sdl_points.reserve(points.size());
         for (const auto &p : points) {
-            sdl_points.emplace_back(main_pos.x + p.x, main_pos.y + p.y);
+            sdl_points.emplace_back(SDL_Point{main_pos.x + p.x, main_pos.y + p.y});
         }
         EXPECT(SDL_RenderDrawLines(m_sdlHdl.m_renderer,
                                    sdl_points.data(),
@@ -164,11 +164,11 @@ namespace GameEngine {
         std::vector<SDL_Rect> sdl_rects{};
         sdl_rects.reserve(rects.size());
         for(const auto &r : rects) {
-            sdl_rects.emplace_back(
+            sdl_rects.emplace_back(SDL_Rect{
                     main_pos.x + r.x,
                     main_pos.y + r.y,
                     r.w,
-                    r.h);
+                    r.h});
         }
         EXPECT(SDL_RenderDrawRects(m_sdlHdl.m_renderer,
                                    sdl_rects.data(),
@@ -194,11 +194,11 @@ namespace GameEngine {
         std::vector<SDL_Rect> sdl_rects{};
         sdl_rects.reserve(rects.size());
         for(const auto &r : rects) {
-            sdl_rects.emplace_back(
+            sdl_rects.emplace_back(SDL_Rect{
                     main_pos.x + r.x,
                     main_pos.y + r.y,
                     r.w,
-                    r.h);
+                    r.h});
         }
         EXPECT(SDL_RenderFillRects(m_sdlHdl.m_renderer,
                                    sdl_rects.data(),
