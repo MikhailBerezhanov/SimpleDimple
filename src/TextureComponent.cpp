@@ -1,23 +1,19 @@
 #include <stdexcept>
-
+#include "ErrorHandling.h"
 #include "TextureComponent.h"
 
-#define EXPECT(condition, message) do { \
-    if (!(condition)) { \
-        throw std::runtime_error(std::string(__func__) \
-        + " " + message \
-        + ": " + SDL_GetError()); \
-    }} while(0)
+#define EXPECT_SDL(condition, message) \
+    EXPECT_MSG(condition, std::string(message) + ": " + SDL_GetError())
 
 namespace GameEngine {
 
     /// Nested class
     TextureComponent::SDLHandle::SDLHandle(SDL_Renderer *renderer, const std::string &image) {
         auto surface = IMG_Load(image.c_str());
-        EXPECT(surface, "Unable to create surface from image");
+        EXPECT_SDL(surface, "Unable to create surface from image");
         m_texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface); // no need for surface anymore
-        EXPECT(m_texture, "Unable to create texture");
+        EXPECT_SDL(m_texture, "Unable to create texture");
     }
 
     TextureComponent::SDLHandle::SDLHandle(SDL_Renderer *renderer, const GameEngine::Size2D &size)
@@ -30,7 +26,7 @@ namespace GameEngine {
                     static_cast<int>(size.h)
             ))
     {
-        EXPECT(m_texture, "Unable to create texture");
+        EXPECT_SDL(m_texture, "Unable to create texture");
     }
 
     TextureComponent::SDLHandle::~SDLHandle() {
@@ -48,18 +44,18 @@ namespace GameEngine {
 
     void TextureComponent::SetColorMode(const RGBColor &rgb) const
     {
-        EXPECT(SDL_SetTextureColorMod(m_sdlHandle.m_texture, rgb.r, rgb.g, rgb.b) == 0,
+        EXPECT_SDL(SDL_SetTextureColorMod(m_sdlHandle.m_texture, rgb.r, rgb.g, rgb.b) == 0,
                "Unable to set color mode");
     }
 
     void TextureComponent::SetAlphaMode(uint8_t alpha) const {
-        EXPECT(SDL_SetTextureAlphaMod(m_sdlHandle.m_texture, alpha) == 0,
+        EXPECT_SDL(SDL_SetTextureAlphaMod(m_sdlHandle.m_texture, alpha) == 0,
                "Unable to set alpha mode");
     }
 
     void TextureComponent::SetPixelData(const std::vector<uint8_t> &pixelData) const {
         // todo: parameterize pitch?
-        EXPECT(SDL_UpdateTexture(m_sdlHandle.m_texture,
+        EXPECT_SDL(SDL_UpdateTexture(m_sdlHandle.m_texture,
                                  nullptr, // update whole texture
                                  pixelData.data(), // pixel data
                                  4 // pitch - the number of bytes in a row of pixel data, including padding (4 for RGBA)
@@ -71,7 +67,7 @@ namespace GameEngine {
     Size2D TextureComponent::GetSize() const {
         // get texture w/h
         int w, h;
-        EXPECT(SDL_QueryTexture(m_sdlHandle.m_texture,
+        EXPECT_SDL(SDL_QueryTexture(m_sdlHandle.m_texture,
                                 nullptr,
                                 nullptr,
                                 &w,

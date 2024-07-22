@@ -4,14 +4,11 @@
 
 #include <stdexcept>
 
+#include "ErrorHandling.h"
 #include "RendererComponent.h"
 
-#define EXPECT(condition, message) do { \
-    if (!(condition)) { \
-        throw std::runtime_error(std::string(__func__) \
-        + " " + message \
-        + ": " + SDL_GetError()); \
-    }} while(0)
+#define EXPECT_SDL(condition, message) \
+    EXPECT_MSG(condition, std::string(message) + ": " + SDL_GetError())
 
 namespace GameEngine {
 
@@ -98,13 +95,13 @@ namespace GameEngine {
         {}
 
     void RendererComponent::SetDrawColor(const RGBColor &rgba) {
-        EXPECT(SDL_SetRenderDrawColor(m_sdlHdl.m_renderer, rgba.r, rgba.g, rgba.b, rgba.a) == 0,
+        EXPECT_SDL(SDL_SetRenderDrawColor(m_sdlHdl.m_renderer, rgba.r, rgba.g, rgba.b, rgba.a) == 0,
                "Error setting renderer color");
     }
 
     void RendererComponent::DrawPoint(const Pos2D &point) const {
         const auto main_pos = m_transform->GetPosition();
-        EXPECT(SDL_RenderDrawPoint(m_sdlHdl.m_renderer,
+        EXPECT_SDL(SDL_RenderDrawPoint(m_sdlHdl.m_renderer,
                                    main_pos.x + point.x,
                                    main_pos.y + point.y
                                    ) == 0,
@@ -118,7 +115,7 @@ namespace GameEngine {
         for (const auto &p : points) {
             sdl_points.emplace_back(SDL_Point{main_pos.x + p.x, main_pos.y + p.y});
         }
-        EXPECT(SDL_RenderDrawPoints(m_sdlHdl.m_renderer,
+        EXPECT_SDL(SDL_RenderDrawPoints(m_sdlHdl.m_renderer,
                                     sdl_points.data(),
                                     static_cast<int>(sdl_points.size())
                                     ) == 0, "Error drawing points");
@@ -126,7 +123,7 @@ namespace GameEngine {
 
     void RendererComponent::DrawLine(const Pos2D &start, const Pos2D &end) const {
         const auto main_pos = m_transform->GetPosition();
-        EXPECT(SDL_RenderDrawLine(m_sdlHdl.m_renderer,
+        EXPECT_SDL(SDL_RenderDrawLine(m_sdlHdl.m_renderer,
                                   main_pos.x + start.x,
                                   main_pos.y + start.y,
                                   main_pos.x + end.x,
@@ -141,7 +138,7 @@ namespace GameEngine {
         for (const auto &p : points) {
             sdl_points.emplace_back(SDL_Point{main_pos.x + p.x, main_pos.y + p.y});
         }
-        EXPECT(SDL_RenderDrawLines(m_sdlHdl.m_renderer,
+        EXPECT_SDL(SDL_RenderDrawLines(m_sdlHdl.m_renderer,
                                    sdl_points.data(),
                                    static_cast<int>(points.size())
                                    ) == 0, "Error drawing lines");
@@ -155,7 +152,7 @@ namespace GameEngine {
             rect.w,
             rect.h
         };
-        EXPECT(SDL_RenderDrawRect(m_sdlHdl.m_renderer,
+        EXPECT_SDL(SDL_RenderDrawRect(m_sdlHdl.m_renderer,
                                   &sdl_rect) == 0, "Error drawing rect");
     }
 
@@ -170,7 +167,7 @@ namespace GameEngine {
                     r.w,
                     r.h});
         }
-        EXPECT(SDL_RenderDrawRects(m_sdlHdl.m_renderer,
+        EXPECT_SDL(SDL_RenderDrawRects(m_sdlHdl.m_renderer,
                                    sdl_rects.data(),
                                    static_cast<int>(rects.size())
                                    ) == 0, "Error drawing rects");
@@ -184,7 +181,7 @@ namespace GameEngine {
                 rect.w,
                 rect.h
         };
-        EXPECT(SDL_RenderFillRect(m_sdlHdl.m_renderer,
+        EXPECT_SDL(SDL_RenderFillRect(m_sdlHdl.m_renderer,
                                   &sdl_rect
                                   ) == 0, "Error filling rect");
     }
@@ -200,7 +197,7 @@ namespace GameEngine {
                     r.w,
                     r.h});
         }
-        EXPECT(SDL_RenderFillRects(m_sdlHdl.m_renderer,
+        EXPECT_SDL(SDL_RenderFillRects(m_sdlHdl.m_renderer,
                                    sdl_rects.data(),
                                    static_cast<int>(rects.size())
                                    ) == 0, "Error filling rects");
@@ -247,7 +244,7 @@ namespace GameEngine {
 
             if (m_transform->get_angle() != 0.0 || m_transform->get_flip() != SDL_FLIP_NONE) {
                 // special treatment for flip and rotation
-                EXPECT(SDL_RenderCopyEx(m_sdlHdl.m_renderer, // sdl renderer
+                EXPECT_SDL(SDL_RenderCopyEx(m_sdlHdl.m_renderer, // sdl renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
                                       &dstrect, // texture destination
@@ -257,7 +254,7 @@ namespace GameEngine {
                                       )== 0, "Unable to render-copy texture");
             }
             else {
-                EXPECT(SDL_RenderCopy(m_sdlHdl.m_renderer, // sdl renderer
+                EXPECT_SDL(SDL_RenderCopy(m_sdlHdl.m_renderer, // sdl renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
                                       m_transform->get_rect() // texture destination

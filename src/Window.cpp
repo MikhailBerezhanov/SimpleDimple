@@ -1,13 +1,10 @@
 #include <stdexcept>
 
+#include "ErrorHandling.h"
 #include "Window.h"
 
-#define EXPECT(condition, message) do { \
-    if (!(condition)) { \
-        throw std::runtime_error(std::string(__func__) \
-        + " " + message \
-        + ": " + SDL_GetError()); \
-    }} while(0)
+#define EXPECT_SDL(condition, message) \
+    EXPECT_MSG(condition, std::string(message) + ": " + SDL_GetError())
 
 namespace GameEngine 
 {
@@ -23,7 +20,7 @@ namespace GameEngine
             )
         )
     {
-        EXPECT(m_window, "Unable to create window " + title);
+        EXPECT_SDL(m_window, "Unable to create window " + title);
         m_renderer = SDL_CreateRenderer(m_window, -1, 0);
         if (! m_renderer){
             //free window
@@ -125,7 +122,7 @@ namespace GameEngine
     }
 
     void Window::Clear() const {
-        EXPECT(SDL_RenderClear(m_renderer) == 0, "Unable to clear window");
+        EXPECT_SDL(SDL_RenderClear(m_renderer) == 0, "Unable to clear window");
     }
 
     void Window::Update() const {
@@ -162,7 +159,7 @@ namespace GameEngine
 
     void Window::SetObjectActive(GameObjectId id, bool active) {
         auto it = m_gameObjects.find(id);
-        EXPECT(it != m_gameObjects.end(), "Game Object " + std::to_string(id) + " not found");
+        EXPECT_SDL(it != m_gameObjects.end(), "Game Object " + std::to_string(id) + " not found");
         if (active) {
             m_activeObjects.insert(it->second.get());
         }else{

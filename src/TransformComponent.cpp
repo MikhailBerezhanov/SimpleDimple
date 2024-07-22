@@ -4,8 +4,6 @@
 
 #include "TransformComponent.h"
 
-//#define INVALID_POS INT32_MIN
-
 namespace GameEngine {
 
     TransformComponent::SDLHandle::SDLHandle(const Size2D &size) {
@@ -93,7 +91,7 @@ namespace GameEngine {
     }
 
     void TransformComponent::OnUpdate() {
-
+        // do nothing
     }
 
 
