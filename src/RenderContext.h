@@ -15,6 +15,8 @@ namespace GameEngine {
         friend class Window;
         friend class RendererComponent;
         friend class TextureComponent;
+    protected:
+        RenderContext() : renderer(nullptr) {} // for testing purposes
     public:
         ~RenderContext() = default;
     };

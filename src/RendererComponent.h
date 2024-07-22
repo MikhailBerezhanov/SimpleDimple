@@ -56,8 +56,9 @@ namespace GameEngine {
         SDLHandle m_sdlHdl;
         TextureHandle m_textureHdl;
         const TransformComponent *m_transform;
-        RendererComponent(const RenderContext &context, const TransformComponent *transform);
         friend class GameObject;
+    protected:
+        RendererComponent(const RenderContext &context, const TransformComponent *transform);
     public:
         RendererComponent(const RendererComponent &) = delete;
         RendererComponent &operator=(const RendererComponent &) = delete;

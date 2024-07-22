@@ -29,9 +29,10 @@ namespace GameEngine {
         double get_angle() const;
         SDL_RendererFlip get_flip() const;
         void reset();
-        explicit TransformComponent(const Size2D &size = {});
         friend class RendererComponent;
         friend class GameObject;
+    protected:
+        explicit TransformComponent(const Size2D &size = {});
     public:
 
         ~TransformComponent() = default;

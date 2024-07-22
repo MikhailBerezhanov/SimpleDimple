@@ -21,7 +21,8 @@ FetchContent_MakeAvailable(googletest)
 set(GTEST_SOURCES
     TestLogger.cpp
     TestErrorHandling.cpp
-        TestGameObject.cpp
+    TestGameObject.cpp
+    TestTransformComponent.cpp
 )
 
 # Add test sources to executable
