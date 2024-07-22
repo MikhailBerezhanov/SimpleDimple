@@ -7,6 +7,7 @@
 #include "Types.h"
 
 namespace GameEngine {
+
     class IGameObjectComponent {
     public:
         virtual ~IGameObjectComponent() = default;

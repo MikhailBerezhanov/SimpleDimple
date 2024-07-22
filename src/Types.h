@@ -4,6 +4,26 @@
 #include <cstddef>
 
 namespace GameEngine {
+
+/// These types correspond to components' priority
+/// and the order in which they're processed
+#define _GOC_TYPES_ \
+    GOC_X(TRANSFORM) \
+    GOC_X(RENDERER) \
+    GOC_X(TEXTURE)
+
+#define GOC_X(name) name,
+    enum class GameObjectComponentType : unsigned int {
+        _GOC_TYPES_
+    };
+#undef GOC_X
+#define GOC_X(name) #name,
+    constexpr const char* GameObjectComponentNames[] = {
+            _GOC_TYPES_
+    };
+#undef GOC_X
+#undef _GOC_TYPES_
+
     // Copy of SDL_Rect
     struct Rect {
         int x = 0;
@@ -31,5 +51,8 @@ namespace GameEngine {
     };
 
     using GameObjectId = size_t;
+
+    class None{};
+
 }
 

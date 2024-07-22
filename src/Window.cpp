@@ -128,8 +128,10 @@ namespace GameEngine
         EXPECT(SDL_RenderClear(m_renderer) == 0, "Unable to clear window");
     }
 
-    void Window::Refresh() const {
-
+    void Window::Update() const {
+        for (const auto o : m_activeObjects) {
+            o->Update();
+        }
     }
 
     void Window::Present() const {
@@ -140,40 +142,33 @@ namespace GameEngine
         return RenderContext(m_renderer);
     }
 
-//    TextureId Window::AppendTexture(const std::string &image) {
-//        auto tex = new Texture(m_renderer, image);
-//        m_textures.emplace(m_num_textures, std::unique_ptr<Texture>(tex));
-//        return m_num_textures++;
-//    }
-//
-//    TextureId Window::AppendTexture(const Size2D &size) {
-//        auto tex = std::unique_ptr<Texture>(new Texture(m_renderer, size));
-//        m_textures.emplace(m_num_textures, std::move(tex));
-//        return m_num_textures++;
-//    }
-//
-//    void Window::RemoveTexture(TextureId texture_id) {
-//        auto tex = m_textures.find(texture_id);
-//        if (tex != m_textures.end()) {
-//            m_active_textures.erase(tex->second.get());
-//            m_textures.erase(tex);
-//            --m_num_textures;
-//        }
-//    }
-//
-//    ITexture &Window::GetTexture(TextureId texture_id) const {
-//        return *m_textures.at(texture_id);
-//    }
-//
-//    void Window::SetTextureActive(TextureId texture_id, bool active) {
-//        auto it = m_textures.find(texture_id);
-//        EXPECT(it != m_textures.end(), "Texture " + std::to_string(texture_id) + " not found");
-//        if (active) {
-//            m_active_textures.insert(it->second.get());
-//        }else {
-//            m_active_textures.erase(it->second.get());
-//        }
-//    }
+    GameObjectId Window::AppendObject(std::unique_ptr<IGameObject> obj) {
+        m_gameObjects.emplace(m_objectsNum, std::move(obj));
+        return m_objectsNum++;
+    }
+
+    void Window::RemoveObject(GameObjectId id) {
+        const auto &obj = m_gameObjects.find(id);
+        if (obj != m_gameObjects.end()) {
+           m_activeObjects.erase(obj->second.get());
+           m_gameObjects.erase(obj);
+           --m_objectsNum;
+        }
+    }
+
+    IGameObject *Window::GetObject(GameObjectId id) const {
+        return m_gameObjects.at(id).get();
+    }
+
+    void Window::SetObjectActive(GameObjectId id, bool active) {
+        auto it = m_gameObjects.find(id);
+        EXPECT(it != m_gameObjects.end(), "Game Object " + std::to_string(id) + " not found");
+        if (active) {
+            m_activeObjects.insert(it->second.get());
+        }else{
+            m_activeObjects.erase(it->second.get());
+        }
+    }
 
 
 } // namespace GameEngine

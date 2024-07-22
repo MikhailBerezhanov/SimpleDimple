@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <memory>
 #include <vector>
 #include <queue>
 #include "sdl.h"
@@ -28,7 +29,7 @@ namespace GameEngine {
         private:
             TextureHandle() = default;
             ~TextureHandle() = default;
-            std::queue<const TextureComponent *> m_textures_q{};
+            std::queue<std::shared_ptr<TextureComponent>> m_textures_q{};
             size_t m_texture_lines = 1;
 
             unsigned int m_tex_per_line_min = 0;
@@ -42,9 +43,9 @@ namespace GameEngine {
             unsigned int m_short_line_wide_textures = 0;
             unsigned int m_tall_textures = 0;
 
-            void add_texture(const TextureComponent *tex);
+            void add_texture(std::shared_ptr<TextureComponent> &&tex);
             void adjust_lines_num();
-            std::queue<const TextureComponent *> *get_textures_queue();
+            std::queue<std::shared_ptr<TextureComponent>> *get_textures_queue();
             void calculate_texture_traits(const SDL_Rect *main_rect);
             SDL_Rect calculate_texture_in_line(const SDL_Rect *main_rect,
                                                unsigned int line_idx,
@@ -55,9 +56,11 @@ namespace GameEngine {
         SDLHandle m_sdlHdl;
         TextureHandle m_textureHdl;
         const TransformComponent *m_transform;
-
-    public:
         RendererComponent(const RenderContext &context, const TransformComponent *transform);
+        friend class GameObject;
+    public:
+        RendererComponent(const RendererComponent &) = delete;
+        RendererComponent &operator=(const RendererComponent &) = delete;
         ~RendererComponent() = default;
         /// Renderer draw functions
         void SetDrawColor(const RGBColor &rgba);
@@ -71,7 +74,7 @@ namespace GameEngine {
         void FillRect(const Rect &rect) const;
         void FillRects(const std::vector<Rect> &rects) const;
         RenderContext GetRenderContext() const;
-        void AddTexture(const TextureComponent *tex);
+        void AddTexture(std::shared_ptr<TextureComponent> tex);
 
         void OnUpdate() override;
     };

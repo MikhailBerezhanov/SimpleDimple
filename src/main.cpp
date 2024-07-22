@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
             tex.SetPosition(GameEngine::Pos2D{dest.x, dest.y});
             tex.SetAngle(angle);
             // refresh
-            win.Refresh();
+            win.Update();
             // present
             win.Present();
             // calculates to 60 fps

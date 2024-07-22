@@ -19,8 +19,8 @@ namespace GameEngine {
         : m_renderer(rend)
         {}
 
-    void RendererComponent::TextureHandle::add_texture(const TextureComponent *tex) {
-        m_textures_q.push(tex);
+    void RendererComponent::TextureHandle::add_texture(std::shared_ptr<TextureComponent> &&tex) {
+        m_textures_q.emplace(std::move(tex));
     }
 
     void RendererComponent::TextureHandle::adjust_lines_num() {
@@ -30,7 +30,7 @@ namespace GameEngine {
         }
     }
 
-    std::queue<const TextureComponent *> *
+    std::queue<std::shared_ptr<TextureComponent>> *
     RendererComponent::TextureHandle::get_textures_queue() {
         return &m_textures_q;
     }
@@ -210,8 +210,8 @@ namespace GameEngine {
         return RenderContext(m_sdlHdl.m_renderer);
     }
 
-    void RendererComponent::AddTexture(const TextureComponent *tex) {
-        m_textureHdl.add_texture(tex);
+    void RendererComponent::AddTexture(std::shared_ptr<TextureComponent> tex) {
+        m_textureHdl.add_texture(std::move(tex));
     }
 
     void RendererComponent::OnUpdate() {

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Types.h"
+#include "IGameObject.h"
 
 namespace GameEngine {
 
@@ -28,13 +29,12 @@ namespace GameEngine {
         virtual IWindow & SetAlwaysOnTop(bool on_top) = 0;
 
         virtual void Clear() const = 0; // clear screen
-        virtual void Refresh() const = 0; // refresh textures (coordinates, flip, angle)
+        virtual void Update() const = 0; // refresh textures (coordinates, flip, angle)
         virtual void Present() const = 0; // update changes made to screen
         /// GameObject
-//        virtual TextureId AppendTexture(const std::string &image) = 0; // returns texture_id
-//        virtual TextureId AppendTexture(const Size2D &size) = 0; // returns texture_id
-//        virtual void RemoveTexture(TextureId texture_id) = 0;
-//        virtual ITexture & GetTexture(TextureId texture_id) const = 0;
-//        virtual void SetTextureActive(TextureId texture_id, bool active) = 0;
+        virtual GameObjectId AppendObject(std::unique_ptr<IGameObject> obj) = 0;
+        virtual void RemoveObject(GameObjectId id) = 0;
+        virtual IGameObject *GetObject(GameObjectId id) const = 0;
+        virtual void SetObjectActive(GameObjectId id, bool active) = 0;
     };
 }

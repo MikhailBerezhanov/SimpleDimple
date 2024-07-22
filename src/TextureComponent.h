@@ -25,6 +25,7 @@ namespace GameEngine
         TextureComponent(const RenderContext &render_context, const Size2D &size);
         SDL_Texture *get_texture() const;
         friend class RendererComponent;
+        friend class GameObject;
     public:
         TextureComponent(const TextureComponent &) = delete;
         TextureComponent& operator=(const TextureComponent&) = delete;

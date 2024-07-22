@@ -7,8 +7,8 @@
 #include "IWindow.h"
 #include "TextureComponent.h"
 #include "RenderContext.h"
+#include "GameObject.h"
 #include "sdl.h"
-
 
 namespace GameEngine 
 {
@@ -16,9 +16,9 @@ namespace GameEngine
     class Window : public IWindow {
         SDL_Window *m_window;
         SDL_Renderer *m_renderer;
-//        std::unordered_map<size_t, std::unique_ptr<Texture>> m_textures; // all textures
-//        std::unordered_set<Texture*> m_active_textures; // textures to update
-        size_t m_num_textures = 0;
+        std::unordered_map<GameObjectId, std::unique_ptr<IGameObject>> m_gameObjects; // all objects
+        std::unordered_set<IGameObject*> m_activeObjects; // objects to update
+        GameObjectId m_objectsNum = 0;
         // Private methods
         Size2D get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
         Pos2D get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
@@ -47,13 +47,13 @@ namespace GameEngine
         IWindow & SetResizable(bool resizable) override;
         IWindow & SetAlwaysOnTop(bool on_top) override;
         void Clear() const override;
-        void Refresh() const override;
+        void Update() const override;
         void Present() const override;
         RenderContext GetRenderContext() const;
-//        TextureId AppendTexture(const std::string &image) override;
-//        TextureId AppendTexture(const Size2D &size) override;
-//        void RemoveTexture(TextureId texture_id) override;
-//        ITexture &GetTexture(TextureId texture_id) const override;
-//        void SetTextureActive(TextureId texture_id, bool active) override;
+        // Objects
+        GameObjectId AppendObject(std::unique_ptr<IGameObject> obj) override;
+        void RemoveObject(GameObjectId id) override;
+        IGameObject *GetObject(GameObjectId id) const override;
+        void SetObjectActive(GameObjectId id, bool active) override;
     };
 };
