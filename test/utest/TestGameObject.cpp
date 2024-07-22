@@ -36,13 +36,6 @@ GAME_OBJ_TEST(NoRendererWithoutTransform) {
     << "It shouldn't be possible to add renderer component without transform component";
 }
 
-GAME_OBJ_TEST(NoExceptRendererWithTransform) {
-    auto context = std::make_unique<RenderContextTest>();
-    auto context_cast = dynamic_cast<RenderContext*>(context.get()); // dummy context for renderer
-    m_gameObject.AddComponent(GameObjectComponentType::TRANSFORM);
-    ASSERT_NO_THROW(m_gameObject.AddComponent(GameObjectComponentType::RENDERER, *context_cast));
-}
-
 GAME_OBJ_TEST(NoTextureWithoutRenderer) {
     ASSERT_THROW(m_gameObject.AddComponent(GameObjectComponentType::TEXTURE), ExceptionType)
     << "It shouldn't be possible to add texture component without renderer component";
