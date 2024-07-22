@@ -40,4 +40,4 @@ target_link_libraries(
     GTest::gmock_main
 )
 
-add_test(NAME ${TEST_NAME} COMMAND ${TEST_EXE})
+add_test(NAME ${TEST_NAME} COMMAND ${TEST_EXE} --gtest_color=yes)
