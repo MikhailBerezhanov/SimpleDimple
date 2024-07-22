@@ -92,9 +92,9 @@ namespace GameEngine {
         };
     }
 
-    RendererComponent::RendererComponent(const RenderContext &context, const TransformComponent *transform)
+    RendererComponent::RendererComponent(const RenderContext &context, std::shared_ptr<const TransformComponent> transform)
         : m_sdlHdl(context.renderer),
-          m_transform(transform)
+          m_transform(std::move(transform))
         {}
 
     void RendererComponent::SetDrawColor(const RGBColor &rgba) {

@@ -44,7 +44,7 @@ namespace GameEngine {
                     throw std::runtime_error("Renderer requires Transform component");
                 }
                 const auto context = std::any_cast<RenderContext>(arg);
-                const auto transform = dynamic_cast<TransformComponent*>(transform_it->second.get());
+                const auto transform = std::dynamic_pointer_cast<const TransformComponent>(transform_it->second);
                 m_components[type] = std::shared_ptr<RendererComponent>(new RendererComponent(context, transform));
                 break;
             }
@@ -55,7 +55,7 @@ namespace GameEngine {
                     throw std::runtime_error("Texture requires Renderer component");
                 }
                 std::shared_ptr<TextureComponent> new_texture;
-                const auto renderer = dynamic_cast<RendererComponent*>(renderer_it->second.get());
+                const auto renderer = std::dynamic_pointer_cast<const RendererComponent>(renderer_it->second);
                 const auto context = renderer->GetRenderContext();
                 if (arg.type() == typeid(std::string)) {
                     const auto name = std::any_cast<std::string>(arg);

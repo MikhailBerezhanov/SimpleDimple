@@ -55,10 +55,10 @@ namespace GameEngine {
         };
         SDLHandle m_sdlHdl;
         TextureHandle m_textureHdl;
-        const TransformComponent *m_transform;
+        const std::shared_ptr<const TransformComponent> m_transform;
         friend class GameObject;
     protected:
-        RendererComponent(const RenderContext &context, const TransformComponent *transform);
+        RendererComponent(const RenderContext &context, std::shared_ptr<const TransformComponent> transform);
     public:
         RendererComponent(const RendererComponent &) = delete;
         RendererComponent &operator=(const RendererComponent &) = delete;
