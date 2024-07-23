@@ -47,13 +47,13 @@ namespace GameEngine
     Size2D Window::get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const {
         int w, h;
         sdl_func(m_window, &w, &h);
-        return Size2D{static_cast<size_t>(w), static_cast<size_t>(h)};
+        return {static_cast<size_t>(w), static_cast<size_t>(h)};
     }
 
     Pos2D Window::get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const {
-        Pos2D pos{};
-        sdl_func(m_window, &pos.x, &pos.y);
-        return pos;
+        int x, y;
+        sdl_func(m_window, &x, &y);
+        return {x, y};
     }
 
     void Window::set_size_generic(void (*sdl_func)(SDL_Window *, int, int), const Size2D &size) const {

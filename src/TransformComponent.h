@@ -48,8 +48,8 @@ namespace GameEngine {
         void Downscale(unsigned int factor);
         void Upscale(unsigned int factor);
         void SetCenter(const Pos2D &center);
-        void SetAngle(double angle); // set angle and reset center to default
-        void Rotate(double angle); // similar to SetAngle() but angle os relative to current. (doesn't modify center)
+        void SetAngle(double angle); // set angle (absolute)
+        void Rotate(double angle); // similar to SetAngle() but angle is relative to the current one
         double GetAngle() const;
         Pos2D GetCenter() const;
         void FlipVertically();
