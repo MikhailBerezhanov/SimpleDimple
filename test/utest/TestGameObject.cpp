@@ -38,7 +38,7 @@ GAME_OBJ_TEST(NoRendererWithoutTransform) {
 
 GAME_OBJ_TEST(NoTextureWithoutRenderer) {
     ASSERT_THROW(m_gameObject.AddComponent(GameObjectComponentType::TEXTURE), ExceptionType)
-    << "It shouldn't be possible to add renderer component without transform component";
+    << "It shouldn't be possible to add texture component without renderer component";
 }
 
 GAME_OBJ_TEST(NoDuplicates) {

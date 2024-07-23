@@ -91,7 +91,7 @@ TRANSFORM_TEST(CheckAngleOverflow) {
 }
 
 TRANSFORM_TEST(CheckCenter) {
-    m_transform.SetAngle(90, Pos2D{10, 0});
+    m_transform.SetCenter(Pos2D{10, 0});
     const auto center = m_transform.GetCenter();
     ASSERT_TRUE(center.x == 10 && center.y == 0);
 }

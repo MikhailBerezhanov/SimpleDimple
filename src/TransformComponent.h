@@ -47,7 +47,7 @@ namespace GameEngine {
         void Resize(const Size2D &size);
         void Downscale(unsigned int factor);
         void Upscale(unsigned int factor);
-        void SetAngle(double angle, const Pos2D &center);
+        void SetCenter(const Pos2D &center);
         void SetAngle(double angle); // set angle and reset center to default
         void Rotate(double angle); // similar to SetAngle() but angle os relative to current. (doesn't modify center)
         double GetAngle() const;

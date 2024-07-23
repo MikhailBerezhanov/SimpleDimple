@@ -74,15 +74,12 @@ namespace GameEngine {
         m_sdlHandle.reset_center();
     }
 
-    void TransformComponent::SetAngle(double angle, const Pos2D &center) {
+    void TransformComponent::SetCenter(const Pos2D &center) {
         m_sdlHandle.m_center.x = center.x;
         m_sdlHandle.m_center.y = center.y;
-        m_sdlHandle.m_angle = std::fmod(angle, 360.0);
     }
 
     void TransformComponent::SetAngle(double angle) {
-        // set default center
-        m_sdlHandle.reset_center();
         m_sdlHandle.m_angle = std::fmod(angle, 360.0);
     }
 
