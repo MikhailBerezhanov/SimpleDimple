@@ -12,6 +12,6 @@ namespace GameEngine {
     public:
         virtual ~IGameObjectComponent() = default;
         virtual void OnUpdate() = 0;
-        virtual std::unique_ptr<IGameObjectComponent> Clone() const = 0;
+//        virtual std::unique_ptr<IGameObjectComponent> Clone() const = 0;
     };
 }
