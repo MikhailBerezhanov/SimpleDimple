@@ -69,13 +69,21 @@ namespace GameEngine {
     void TransformComponent::SetAngle(double angle, const Pos2D &center) {
         m_sdlHandle.m_center.x = center.x;
         m_sdlHandle.m_center.y = center.y;
-        m_sdlHandle.m_angle = angle;
+        m_sdlHandle.m_angle = std::fmod(angle, 360.0);
     }
 
     void TransformComponent::SetAngle(double angle) {
         // set default center
         m_sdlHandle.reset_center();
-        m_sdlHandle.m_angle = angle;
+        m_sdlHandle.m_angle = std::fmod(angle, 360.0);
+    }
+
+    double TransformComponent::GetAngle() const {
+        return m_sdlHandle.m_angle;
+    }
+
+    Pos2D TransformComponent::GetCenter() const {
+        return {m_sdlHandle.m_center.x, m_sdlHandle.m_center.y};
     }
 
     void TransformComponent::FlipVertically() {
@@ -111,8 +119,6 @@ namespace GameEngine {
     void TransformComponent::OnUpdate() {
         // do nothing
     }
-
-
 
 
 } // GameEngine

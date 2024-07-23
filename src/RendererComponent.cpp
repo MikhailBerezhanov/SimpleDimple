@@ -216,7 +216,6 @@ namespace GameEngine {
 
         /// if too many lines, adjust them
         m_textureHdl.adjust_lines_num();
-        LOG_TRACE("Num lines " << m_textureHdl.m_texture_lines);
 
         const auto main_rect = m_transform->get_rect();
         /// calculate coordinates from rect
@@ -239,9 +238,6 @@ namespace GameEngine {
                             tex_in_line_idx,
                             &tex_in_this_line);
 
-            LOG_TRACE("Rect: " << dstrect.x << "," << dstrect.y << " " << dstrect.w << "," << dstrect.h);
-            LOG_TRACE("Tex in this line " << tex_in_this_line);
-
             if(++tex_in_line_idx >= tex_in_this_line) {
                 tex_in_line_idx = 0;
                 ++line_idx;
@@ -249,7 +245,6 @@ namespace GameEngine {
 
             if (m_transform->get_angle() != 0.0 || m_transform->get_flip() != SDL_FLIP_NONE) {
                 // special treatment for flip and rotation
-                LOG_TRACE("Angle/Flip detected");
                 EXPECT_SDL(SDL_RenderCopyEx(m_sdlHdl.m_renderer, // sdl renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
@@ -260,7 +255,6 @@ namespace GameEngine {
                                       )== 0, "Unable to render-copy texture");
             }
             else {
-                LOG_TRACE("No angle/flip detected");
                 EXPECT_SDL(SDL_RenderCopy(m_sdlHdl.m_renderer, // sdl renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture

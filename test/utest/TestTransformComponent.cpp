@@ -59,4 +59,20 @@ TRANSFORM_TEST(ResizeByNegative) {
     );
 }
 
+TRANSFORM_TEST(CheckAngle) {
+    m_transform.SetAngle(123);
+    ASSERT_TRUE(m_transform.GetAngle() == 123.0);
+}
+
+TRANSFORM_TEST(CheckAngleOverflow) {
+    m_transform.SetAngle(450);
+    ASSERT_TRUE(m_transform.GetAngle() == 90.0);
+}
+
+TRANSFORM_TEST(CheckCenter) {
+    m_transform.SetAngle(90, Pos2D{10, 0});
+    const auto center = m_transform.GetCenter();
+    ASSERT_TRUE(center.x == 10 && center.y == 0);
+}
+
 

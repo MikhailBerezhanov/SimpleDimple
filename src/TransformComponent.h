@@ -48,6 +48,8 @@ namespace GameEngine {
         void Upscale(unsigned int factor);
         void SetAngle(double angle, const Pos2D &center);
         void SetAngle(double angle);
+        double GetAngle() const;
+        Pos2D GetCenter() const;
         void FlipVertically();
         void FlipHorizontally();
 
