@@ -3,12 +3,20 @@
 //
 
 #include "TransformComponent.h"
+#include "ErrorHandling.h"
 
 namespace GameEngine {
 
     TransformComponent::SDLHandle::SDLHandle(const Size2D &size) {
         m_rect.w = static_cast<int>(size.w);
         m_rect.h = static_cast<int>(size.h);
+    }
+
+    void TransformComponent::SDLHandle::reset_center() {
+        m_center = {
+                m_rect.w/2,
+                m_rect.h/2
+        };
     }
 
     TransformComponent::TransformComponent(const Size2D &size)
@@ -38,8 +46,24 @@ namespace GameEngine {
     }
 
     void TransformComponent::Resize(const Size2D &size) {
+        EXPECT_MSG(static_cast<int>(size.w) >= 0 && static_cast<int>(size.h) >= 0,
+                   "Resize impossible: invalid dimensions");
         m_sdlHandle.m_rect.w = static_cast<int>(size.w);
         m_sdlHandle.m_rect.h = static_cast<int>(size.h);
+    }
+
+    void TransformComponent::Downscale(unsigned int factor) {
+        int fac = static_cast<int>(factor);
+        EXPECT_MSG(fac > 0, "Downscale impossible: invalid factor");
+        m_sdlHandle.m_rect.w /= fac;
+        m_sdlHandle.m_rect.h /= fac;
+    }
+
+    void TransformComponent::Upscale(unsigned int factor) {
+        int fac = static_cast<int>(factor);
+        EXPECT_MSG(fac >= 0, "Upscale impossible: invalid factor");
+        m_sdlHandle.m_rect.w *= fac;
+        m_sdlHandle.m_rect.h *= fac;
     }
 
     void TransformComponent::SetAngle(double angle, const Pos2D &center) {
@@ -50,10 +74,7 @@ namespace GameEngine {
 
     void TransformComponent::SetAngle(double angle) {
         // set default center
-        m_sdlHandle.m_center = {
-                m_sdlHandle.m_rect.x + m_sdlHandle.m_rect.w/2,
-                m_sdlHandle.m_rect.y + m_sdlHandle.m_rect.h/2
-        };
+        m_sdlHandle.reset_center();
         m_sdlHandle.m_angle = angle;
     }
 
@@ -82,10 +103,7 @@ namespace GameEngine {
     }
 
     void TransformComponent::reset() {
-        m_sdlHandle.m_center = {
-                m_sdlHandle.m_rect.x + m_sdlHandle.m_rect.w/2,
-                m_sdlHandle.m_rect.y + m_sdlHandle.m_rect.h/2
-        };
+        m_sdlHandle.reset_center();
         m_sdlHandle.m_angle = 0.0;
         m_sdlHandle.m_flip = SDL_FLIP_NONE;
     }
@@ -93,6 +111,8 @@ namespace GameEngine {
     void TransformComponent::OnUpdate() {
         // do nothing
     }
+
+
 
 
 } // GameEngine

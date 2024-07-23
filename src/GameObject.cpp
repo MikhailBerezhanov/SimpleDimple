@@ -72,6 +72,10 @@ namespace GameEngine {
         }
     }
 
+    std::shared_ptr<IGameObjectComponent> GameObject::GetComponent(GameObjectComponentType type) const {
+        return m_components.at(type);
+    }
+
     void GameObject::OnUpdate() {
         // do nothing, should be overridden in derived classes
     }
@@ -85,5 +89,7 @@ namespace GameEngine {
         }
         //todo: children?
     }
+
+
 
 } // GameEngine

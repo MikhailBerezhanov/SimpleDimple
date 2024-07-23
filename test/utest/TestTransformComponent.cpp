@@ -39,3 +39,24 @@ TRANSFORM_TEST(CheckRect) {
     const auto rect = m_transform.GetRect();
     ASSERT_TRUE(rect.x == -12 && rect.y == 12 && rect.w == 10 && rect.h == 10);
 }
+
+TRANSFORM_TEST(DownscaleByZero) {
+    ASSERT_ANY_THROW(m_transform.Downscale(0));
+}
+
+TRANSFORM_TEST(DownscaleByNegative) {
+    ASSERT_ANY_THROW(m_transform.Downscale(static_cast<unsigned int>(-1)));
+}
+
+TRANSFORM_TEST(UpscaleByNegative) {
+    ASSERT_ANY_THROW(m_transform.Downscale(static_cast<unsigned int>(-1)));
+}
+
+TRANSFORM_TEST(ResizeByNegative) {
+    ASSERT_ANY_THROW(m_transform.Resize(
+            Size2D{static_cast<unsigned int>(-1), static_cast<unsigned int>(-1)}
+            )
+    );
+}
+
+

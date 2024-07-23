@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include "ErrorHandling.h"
+#include "Logger.h"
 #include "RendererComponent.h"
 
 #define EXPECT_SDL(condition, message) \
@@ -22,7 +23,7 @@ namespace GameEngine {
 
     void RendererComponent::TextureHandle::adjust_lines_num() {
         /// if too many lines, adjust them
-        if (m_texture_lines > m_textures_q.size()) {
+        if (!m_textures_q.empty() && m_texture_lines > m_textures_q.size()) {
             m_texture_lines = m_textures_q.size();
         }
     }
@@ -40,17 +41,17 @@ namespace GameEngine {
         /// number of textures in line (max) TEX_PER_LINE = NUM_TEX / LINES + NUM_TEX % LINES
         /// each texture's width (min) = W / TEX_PER_LINE
         /// in case where we cannot distribute textures evenly by the lines, the last line's textures are widened
-        m_tex_per_line_min = m_textures_q.size() / m_texture_lines;
-        m_tex_per_line_max = m_tex_per_line_min +
-                             m_textures_q.size() % m_texture_lines ? 1 : 0;
-        m_tex_width_min = main_rect->w / m_tex_per_line_max;
-        m_tex_width_max = main_rect->w / m_tex_per_line_min;
-        m_tex_height = main_rect->h / m_texture_lines;
+        const auto rem = m_texture_lines ? m_textures_q.size() % m_texture_lines : 0;
+        m_tex_per_line_min = m_texture_lines ? m_textures_q.size() / m_texture_lines : 0;
+        m_tex_per_line_max = m_tex_per_line_min + rem ? 1 : 0;
+        m_tex_width_min = m_tex_per_line_max ? main_rect->w / m_tex_per_line_max : 0;
+        m_tex_width_max = m_tex_per_line_min ? main_rect->w / m_tex_per_line_min : 0;
+        m_tex_height = m_texture_lines ? main_rect->h / m_texture_lines : 0;
         ///Padding
-        m_long_lines = m_textures_q.size() % m_texture_lines;
-        m_long_line_wide_textures = main_rect->w % m_tex_per_line_max;
-        m_short_line_wide_textures = main_rect->w % m_tex_per_line_min;
-        m_tall_textures = main_rect->h % m_texture_lines;
+        m_long_lines = m_texture_lines ? m_textures_q.size() % m_texture_lines : 0;
+        m_long_line_wide_textures = m_tex_per_line_max ? main_rect->w % m_tex_per_line_max : 0;
+        m_short_line_wide_textures = m_tex_per_line_min ? main_rect->w % m_tex_per_line_min : 0;
+        m_tall_textures = m_texture_lines ? main_rect->h % m_texture_lines : 0;
     }
 
     SDL_Rect RendererComponent::TextureHandle::calculate_texture_in_line(const SDL_Rect *main_rect,
@@ -215,6 +216,7 @@ namespace GameEngine {
 
         /// if too many lines, adjust them
         m_textureHdl.adjust_lines_num();
+        LOG_TRACE("Num lines " << m_textureHdl.m_texture_lines);
 
         const auto main_rect = m_transform->get_rect();
         /// calculate coordinates from rect
@@ -237,6 +239,9 @@ namespace GameEngine {
                             tex_in_line_idx,
                             &tex_in_this_line);
 
+            LOG_TRACE("Rect: " << dstrect.x << "," << dstrect.y << " " << dstrect.w << "," << dstrect.h);
+            LOG_TRACE("Tex in this line " << tex_in_this_line);
+
             if(++tex_in_line_idx >= tex_in_this_line) {
                 tex_in_line_idx = 0;
                 ++line_idx;
@@ -244,6 +249,7 @@ namespace GameEngine {
 
             if (m_transform->get_angle() != 0.0 || m_transform->get_flip() != SDL_FLIP_NONE) {
                 // special treatment for flip and rotation
+                LOG_TRACE("Angle/Flip detected");
                 EXPECT_SDL(SDL_RenderCopyEx(m_sdlHdl.m_renderer, // sdl renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
@@ -254,10 +260,11 @@ namespace GameEngine {
                                       )== 0, "Unable to render-copy texture");
             }
             else {
+                LOG_TRACE("No angle/flip detected");
                 EXPECT_SDL(SDL_RenderCopy(m_sdlHdl.m_renderer, // sdl renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
-                                      m_transform->get_rect() // texture destination
+                                      &dstrect // texture destination
                                       ) == 0, "Unable to render-copy texture");
             }
         }

@@ -27,6 +27,8 @@ namespace GameEngine {
         // todo: Clone()
         void AddComponent(GameObjectComponentType type) final; // cannot be overridden
         void AddComponent(GameObjectComponentType type, std::any arg) final; // cannot be overridden
+        std::shared_ptr<IGameObjectComponent> GetComponent(GameObjectComponentType type) const override;
+
         void Update() final; // cannot be overridden
     };
 
