@@ -30,6 +30,11 @@ namespace GameEngine {
         m_sdlHandle.m_rect.y = pos.y;
     }
 
+    void TransformComponent::Move(const Pos2D &pos) {
+        m_sdlHandle.m_rect.x += pos.x;
+        m_sdlHandle.m_rect.y += pos.y;
+    }
+
     Pos2D TransformComponent::GetPosition() const {
         return {m_sdlHandle.m_rect.x, m_sdlHandle.m_rect.y};
     }
@@ -50,6 +55,7 @@ namespace GameEngine {
                    "Resize impossible: invalid dimensions");
         m_sdlHandle.m_rect.w = static_cast<int>(size.w);
         m_sdlHandle.m_rect.h = static_cast<int>(size.h);
+        m_sdlHandle.reset_center();
     }
 
     void TransformComponent::Downscale(unsigned int factor) {
@@ -57,6 +63,7 @@ namespace GameEngine {
         EXPECT_MSG(fac > 0, "Downscale impossible: invalid factor");
         m_sdlHandle.m_rect.w /= fac;
         m_sdlHandle.m_rect.h /= fac;
+        m_sdlHandle.reset_center();
     }
 
     void TransformComponent::Upscale(unsigned int factor) {
@@ -64,6 +71,7 @@ namespace GameEngine {
         EXPECT_MSG(fac >= 0, "Upscale impossible: invalid factor");
         m_sdlHandle.m_rect.w *= fac;
         m_sdlHandle.m_rect.h *= fac;
+        m_sdlHandle.reset_center();
     }
 
     void TransformComponent::SetAngle(double angle, const Pos2D &center) {
@@ -76,6 +84,10 @@ namespace GameEngine {
         // set default center
         m_sdlHandle.reset_center();
         m_sdlHandle.m_angle = std::fmod(angle, 360.0);
+    }
+
+    void TransformComponent::Rotate(double angle) {
+        m_sdlHandle.m_angle = std::fmod(m_sdlHandle.m_angle + angle, 360.0);
     }
 
     double TransformComponent::GetAngle() const {

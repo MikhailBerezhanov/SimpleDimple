@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
 
         // speed of box
         int speed = 300;
-        double angle = 0.0;
 
         SDL_Event event;
         bool quit = false;
@@ -131,7 +130,8 @@ int main(int argc, char *argv[])
             //todo: these should be set inside GameObject's OnUpdate()
 
             transform->SetPosition(Pos2D{dest.x, dest.y}); // set object position (absolute)
-            transform->SetAngle(angle); // set object rotation angle (absolute)
+            //transform->SetAngle(angle); // set object rotation angle (absolute)
+            transform->Rotate(0.2); // set object rotation angle (relative)
             renderer->AddTexture(texture); // set renderer active texture
 
             // update (calls go->renderer->OnUpdate())
@@ -140,8 +140,6 @@ int main(int argc, char *argv[])
             win.Present();
             // calculates to 60 fps
             SDL_Delay(1000 / 60);
-
-            angle += 0.2;
         }
 
         std::cout << "End of loop!" << std::endl;

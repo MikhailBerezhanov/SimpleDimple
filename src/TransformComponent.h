@@ -40,6 +40,7 @@ namespace GameEngine {
         ~TransformComponent() = default;
         //todo: Clone()
         void SetPosition(const Pos2D &pos);
+        void Move(const Pos2D &pos); // similar to SetPosition() but with relative coordinates
         Pos2D GetPosition() const;
         Size2D GetSize() const;
         Rect GetRect() const;
@@ -47,7 +48,8 @@ namespace GameEngine {
         void Downscale(unsigned int factor);
         void Upscale(unsigned int factor);
         void SetAngle(double angle, const Pos2D &center);
-        void SetAngle(double angle);
+        void SetAngle(double angle); // set angle and reset center to default
+        void Rotate(double angle); // similar to SetAngle() but angle os relative to current. (doesn't modify center)
         double GetAngle() const;
         Pos2D GetCenter() const;
         void FlipVertically();

@@ -59,6 +59,27 @@ TRANSFORM_TEST(ResizeByNegative) {
     );
 }
 
+TRANSFORM_TEST(CheckDownscale) {
+    m_transform.Resize(Size2D{10,20});
+    m_transform.Downscale(2);
+    const auto size = m_transform.GetSize();
+    ASSERT_TRUE(size.w == 5 && size.h == 10);
+}
+
+TRANSFORM_TEST(CheckDownscaleImperfect) {
+    m_transform.Resize(Size2D{11,21});
+    m_transform.Downscale(2);
+    const auto size = m_transform.GetSize();
+    ASSERT_TRUE(size.w == 5 && size.h == 10);
+}
+
+TRANSFORM_TEST(CheckUpscale) {
+    m_transform.Resize(Size2D{10,20});
+    m_transform.Upscale(2);
+    const auto size = m_transform.GetSize();
+    ASSERT_TRUE(size.w == 20 && size.h == 40);
+}
+
 TRANSFORM_TEST(CheckAngle) {
     m_transform.SetAngle(123);
     ASSERT_TRUE(m_transform.GetAngle() == 123.0);
@@ -74,5 +95,40 @@ TRANSFORM_TEST(CheckCenter) {
     const auto center = m_transform.GetCenter();
     ASSERT_TRUE(center.x == 10 && center.y == 0);
 }
+
+TRANSFORM_TEST(CheckCenterAfterResize) {
+    m_transform.Resize(Size2D{10,10});
+    const auto center = m_transform.GetCenter();
+    // should be w/2 h/2
+    ASSERT_TRUE(center.x == 5 && center.y == 5);
+}
+
+TRANSFORM_TEST(CheckCenterAfterDownscale) {
+    m_transform.Resize(Size2D{10,10});
+    m_transform.Downscale(2);
+    const auto center = m_transform.GetCenter();
+    ASSERT_TRUE(center.x == 2 && center.y == 2);
+}
+
+TRANSFORM_TEST(CheckCenterAfterUpscale) {
+    m_transform.Resize(Size2D{10,10});
+    m_transform.Upscale(2);
+    const auto center = m_transform.GetCenter();
+    ASSERT_TRUE(center.x == 10 && center.y == 10);
+}
+
+TRANSFORM_TEST(CheckMove) {
+    m_transform.SetPosition(Pos2D{10,10});
+    m_transform.Move(Pos2D{13, 57});
+    const auto pos = m_transform.GetPosition();
+    ASSERT_TRUE(pos.x == 23 && pos.y == 67);
+}
+
+TRANSFORM_TEST(CheckRotate) {
+    m_transform.SetAngle(10);
+    m_transform.Rotate(5);
+    ASSERT_TRUE(m_transform.GetAngle() == 15.0);
+}
+
 
 
