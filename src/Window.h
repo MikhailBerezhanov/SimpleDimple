@@ -52,6 +52,9 @@ namespace GameEngine
         RenderContext GetRenderContext() const;
         // Objects
         GameObjectId AppendObject(std::unique_ptr<IGameObject> obj) override;
+
+        GameObjectId AppendObject(std::unique_ptr<IGameObject> obj, bool active) override;
+
         void RemoveObject(GameObjectId id) override;
         IGameObject *GetObject(GameObjectId id) const override;
         void SetObjectActive(GameObjectId id, bool active) override;

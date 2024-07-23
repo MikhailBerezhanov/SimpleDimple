@@ -55,8 +55,7 @@ int main(int argc, char *argv[])
         transform->Downscale(6);
 
         // add object to window and make active
-        auto go_id = win.AppendObject(std::move(go));
-        win.SetObjectActive(go_id, true);
+        auto go_id = win.AppendObject(std::move(go), true);
 
         // get transform rectangle
         auto dest = transform->GetRect();
