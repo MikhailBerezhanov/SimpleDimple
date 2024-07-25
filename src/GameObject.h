@@ -7,6 +7,9 @@
 #include <memory>
 
 #include "IGameObject.h"
+#include "TransformComponent.h"
+#include "RendererComponent.h"
+#include "TextureComponent.h"
 
 namespace GameEngine {
 
@@ -29,6 +32,10 @@ namespace GameEngine {
         void AddComponent(GameObjectComponentType type) final; // cannot be overridden
         void AddComponent(GameObjectComponentType type, std::any arg) final; // cannot be overridden
         std::shared_ptr<IGameObjectComponent> GetComponent(GameObjectComponentType type) const override;
+
+        std::shared_ptr<TransformComponent> GetTransform() const;
+        std::shared_ptr<RendererComponent> GetRenderer() const;
+        std::shared_ptr<TextureComponent> GetTexture() const;
 
     };
 

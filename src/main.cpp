@@ -43,11 +43,11 @@ int main(int argc, char *argv[])
         go->AddComponent(GameObjectComponentType::TEXTURE, logo_file);
 
         // get renderer
-        auto renderer = std::dynamic_pointer_cast<RendererComponent>(go->GetComponent(GameObjectComponentType::RENDERER));
+        auto renderer = go->GetRenderer();
         // get texture
-        auto texture = std::dynamic_pointer_cast<TextureComponent>(go->GetComponent(GameObjectComponentType::TEXTURE));
+        auto texture = go->GetTexture();
         // get transform
-        auto transform = std::dynamic_pointer_cast<TransformComponent>(go->GetComponent(GameObjectComponentType::TRANSFORM));
+        auto transform = go->GetTransform();
 
         // set transform size according to texture's initial size
         transform->Resize(texture->GetSize());
