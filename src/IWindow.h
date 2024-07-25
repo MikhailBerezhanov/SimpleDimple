@@ -22,11 +22,11 @@ namespace GameEngine {
         virtual void Minimize() const = 0;
         virtual void Restore() const = 0;
         /// Modifiers
-        virtual IWindow & SetMinSize(const Size2D &size) = 0;
-        virtual IWindow & SetMaxSize(const Size2D &size) = 0;
-        virtual IWindow & SetBordered(bool bordered) = 0;
-        virtual IWindow & SetResizable(bool resizable) = 0;
-        virtual IWindow & SetAlwaysOnTop(bool on_top) = 0;
+        virtual void SetMinSize(const Size2D &size) = 0;
+        virtual void SetMaxSize(const Size2D &size) = 0;
+        virtual void SetBordered(bool bordered) = 0;
+        virtual void SetResizable(bool resizable) = 0;
+        virtual void SetAlwaysOnTop(bool on_top) = 0;
 
         virtual void Clear() const = 0; // clear screen
         virtual void Update() const = 0; // refresh textures (coordinates, flip, angle)

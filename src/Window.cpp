@@ -96,29 +96,24 @@ namespace GameEngine
         SDL_RestoreWindow(m_window);
     }
 
-    IWindow & Window::SetMinSize(const Size2D &size) {
+    void Window::SetMinSize(const Size2D &size) {
         set_size_generic(SDL_SetWindowMinimumSize, size);
-        return *this;
     }
 
-    IWindow & Window::SetMaxSize(const Size2D &size) {
+    void Window::SetMaxSize(const Size2D &size) {
         set_size_generic(SDL_SetWindowMaximumSize, size);
-        return *this;
     }
 
-    IWindow & Window::SetBordered(bool bordered) {
+    void Window::SetBordered(bool bordered) {
         SDL_SetWindowBordered(m_window, bordered ? SDL_TRUE : SDL_FALSE);
-        return *this;
     }
 
-    IWindow & Window::SetResizable(bool resizable) {
+    void Window::SetResizable(bool resizable) {
         SDL_SetWindowResizable(m_window, resizable ? SDL_TRUE : SDL_FALSE);
-        return *this;
     }
 
-    IWindow & Window::SetAlwaysOnTop(bool on_top) {
+    void Window::SetAlwaysOnTop(bool on_top) {
         SDL_SetWindowAlwaysOnTop(m_window, on_top ? SDL_TRUE : SDL_FALSE);
-        return *this;
     }
 
     void Window::Clear() const {

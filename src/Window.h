@@ -45,11 +45,11 @@ namespace GameEngine
         void Minimize() const override;
         void Restore() const override; //Restore the size and position of a minimized or maximized window
         // Modifiers
-        IWindow & SetMinSize(const Size2D &size) override;
-        IWindow & SetMaxSize(const Size2D &size) override;
-        IWindow & SetBordered(bool bordered) override;
-        IWindow & SetResizable(bool resizable) override;
-        IWindow & SetAlwaysOnTop(bool on_top) override;
+        void SetMinSize(const Size2D &size) override;
+        void SetMaxSize(const Size2D &size) override;
+        void SetBordered(bool bordered) override;
+        void SetResizable(bool resizable) override;
+        void SetAlwaysOnTop(bool on_top) override;
         void Clear() const override;
         void Update() const override;
         void Present() const override;
