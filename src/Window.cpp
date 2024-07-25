@@ -4,7 +4,7 @@
 #include "Window.h"
 
 #define EXPECT_SDL(condition, message) \
-    EXPECT_MSG(condition, std::string(message) + ": " + SDL_GetError())
+    EXPECT_MSG(condition, message << ": " << SDL_GetError())
 
 namespace GameEngine 
 {

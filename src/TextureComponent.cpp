@@ -3,7 +3,7 @@
 #include "TextureComponent.h"
 
 #define EXPECT_SDL(condition, message) \
-    EXPECT_MSG(condition, std::string(message) + ": " + SDL_GetError())
+    EXPECT_MSG(condition, message << ": " << SDL_GetError())
 
 namespace GameEngine {
 
@@ -35,11 +35,11 @@ namespace GameEngine {
 
     /// Texture class
     TextureComponent::TextureComponent(const RenderContext &render_context, const std::string &image)
-        : m_sdlHandle(render_context.renderer, image)
+        : m_sdlHandle(render_context.m_renderer, image)
     {}
 
     TextureComponent::TextureComponent(const RenderContext &render_context, const Size2D &size)
-        : m_sdlHandle(render_context.renderer, size)
+        : m_sdlHandle(render_context.m_renderer, size)
     {}
 
     void TextureComponent::SetColorMode(const RGBColor &rgb) const

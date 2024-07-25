@@ -6,7 +6,7 @@
 #include "RendererComponent.h"
 
 #define EXPECT_SDL(condition, message) \
-    EXPECT_MSG(condition, std::string(message) + ": " + SDL_GetError())
+    EXPECT_MSG(condition, message << ": " << SDL_GetError())
 
 namespace GameEngine {
 
@@ -88,7 +88,7 @@ namespace GameEngine {
     }
 
     RendererComponent::RendererComponent(const RenderContext &context, std::shared_ptr<const TransformComponent> transform)
-        : m_sdlHdl(context.renderer),
+        : m_sdlHdl(context.m_renderer),
           m_transform(std::move(transform))
         {}
 
@@ -242,7 +242,7 @@ namespace GameEngine {
 
             if (m_transform->get_angle() != 0.0 || m_transform->get_flip() != SDL_FLIP_NONE) {
                 // special treatment for flip and rotation
-                EXPECT_SDL(SDL_RenderCopyEx(m_sdlHdl.m_renderer, // sdl renderer
+                EXPECT_SDL(SDL_RenderCopyEx(m_sdlHdl.m_renderer, // sdl m_renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
                                       &dstrect, // texture destination
@@ -252,7 +252,7 @@ namespace GameEngine {
                                       )== 0, "Unable to render-copy texture");
             }
             else {
-                EXPECT_SDL(SDL_RenderCopy(m_sdlHdl.m_renderer, // sdl renderer
+                EXPECT_SDL(SDL_RenderCopy(m_sdlHdl.m_renderer, // sdl m_renderer
                                       tex->get_texture(), // sdl texture
                                       nullptr, // apply to whole texture
                                       &dstrect // texture destination
