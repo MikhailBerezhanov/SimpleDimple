@@ -20,6 +20,7 @@ FetchContent_MakeAvailable(googletest)
 set(GTEST_SOURCES
     TestLogger.cpp
     TestErrorHandling.cpp
+    TestInputEvent.cpp
 )
 
 # Add test sources to executable
