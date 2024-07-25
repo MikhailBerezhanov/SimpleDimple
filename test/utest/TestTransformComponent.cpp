@@ -45,16 +45,16 @@ TRANSFORM_TEST(DownscaleByZero) {
 }
 
 TRANSFORM_TEST(DownscaleByNegative) {
-    ASSERT_ANY_THROW(m_transform.Downscale(static_cast<unsigned int>(-1)));
+    ASSERT_ANY_THROW(m_transform.Downscale(-1));
 }
 
 TRANSFORM_TEST(UpscaleByNegative) {
-    ASSERT_ANY_THROW(m_transform.Downscale(static_cast<unsigned int>(-1)));
+    ASSERT_ANY_THROW(m_transform.Downscale(-1));
 }
 
 TRANSFORM_TEST(ResizeByNegative) {
     ASSERT_ANY_THROW(m_transform.Resize(
-            Size2D{static_cast<unsigned int>(-1), static_cast<unsigned int>(-1)}
+            Size2D{-1, -1}
             )
     );
 }

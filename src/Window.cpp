@@ -14,8 +14,8 @@ namespace GameEngine
                 title.c_str(), // title
                 pos.x, // x pos
                 pos.y, // y pos
-                static_cast<int>(size.w), // width
-                static_cast<int>(size.h), // height
+                size.w, // width
+                size.h, // height
                 0 // window flags
             )
         )
@@ -47,7 +47,7 @@ namespace GameEngine
     Size2D Window::get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const {
         int w, h;
         sdl_func(m_window, &w, &h);
-        return {static_cast<size_t>(w), static_cast<size_t>(h)};
+        return {w, h};
     }
 
     Pos2D Window::get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const {
@@ -57,7 +57,7 @@ namespace GameEngine
     }
 
     void Window::set_size_generic(void (*sdl_func)(SDL_Window *, int, int), const Size2D &size) const {
-        sdl_func(m_window, static_cast<int>(size.w), static_cast<int>(size.h));
+        sdl_func(m_window, size.w, size.h);
     }
 
     void Window::set_pos_generic(void (*sdl_func)(SDL_Window *, int, int), const Pos2D &pos) const {

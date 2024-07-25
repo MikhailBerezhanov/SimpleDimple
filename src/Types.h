@@ -7,6 +7,7 @@ namespace GameEngine {
 
 /// These types correspond to components' priority
 /// and the order in which they're processed
+/// GOC - GameObjectComponent
 #define _GOC_TYPES_ \
     GOC_X(TRANSFORM) \
     GOC_X(RENDERER) \
@@ -46,8 +47,8 @@ namespace GameEngine {
     };
 
     struct Size2D {
-        size_t w = 0;
-        size_t h = 0;
+        int w = 0;
+        int h = 0;
     };
 
     using GameObjectId = size_t;

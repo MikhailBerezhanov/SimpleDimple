@@ -5,14 +5,14 @@
 namespace GameEngine {
 
     TransformComponent::SDLHandle::SDLHandle(const Size2D &size) {
-        m_rect.w = static_cast<int>(size.w);
-        m_rect.h = static_cast<int>(size.h);
+        m_rect.w = size.w;
+        m_rect.h = size.h;
     }
 
     void TransformComponent::SDLHandle::reset_center() {
         m_center = {
-                m_rect.w/2,
-                m_rect.h/2
+                m_rect.w / 2,
+                m_rect.h / 2
         };
     }
 
@@ -37,7 +37,7 @@ namespace GameEngine {
     }
 
     Size2D TransformComponent::GetSize() const {
-        return {static_cast<size_t>(m_sdlHandle.m_rect.w), static_cast<size_t>(m_sdlHandle.m_rect.h)};
+        return {m_sdlHandle.m_rect.w, m_sdlHandle.m_rect.h};
     }
 
     Rect TransformComponent::GetRect() const {
@@ -48,10 +48,10 @@ namespace GameEngine {
     }
 
     void TransformComponent::Resize(const Size2D &size) {
-        EXPECT_MSG(static_cast<int>(size.w) >= 0 && static_cast<int>(size.h) >= 0,
+        EXPECT_MSG(size.w >= 0 && size.h >= 0,
                    "Resize impossible: invalid dimensions");
-        m_sdlHandle.m_rect.w = static_cast<int>(size.w);
-        m_sdlHandle.m_rect.h = static_cast<int>(size.h);
+        m_sdlHandle.m_rect.w = size.w;
+        m_sdlHandle.m_rect.h = size.h;
         m_sdlHandle.reset_center();
     }
 

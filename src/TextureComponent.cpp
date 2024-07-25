@@ -22,8 +22,8 @@ namespace GameEngine {
                     renderer,
                     SDL_PixelFormatEnum::SDL_PIXELFORMAT_RGBA32, // todo: parameterize?
                     SDL_TextureAccess::SDL_TEXTUREACCESS_STATIC, // todo: parameterize?
-                    static_cast<int>(size.w),
-                    static_cast<int>(size.h)
+                    size.w,
+                    size.h
             ))
     {
         EXPECT_SDL(m_texture, "Unable to create texture");
@@ -73,7 +73,7 @@ namespace GameEngine {
                                 &w,
                                 &h) == 0,
                "Unable to query texture");
-        return {static_cast<size_t>(w), static_cast<size_t>(h)};
+        return {w, h};
     }
 
     SDL_Texture *TextureComponent::get_texture() const {
