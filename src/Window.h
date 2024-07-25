@@ -27,6 +27,10 @@ namespace GameEngine
     public:
         Window(const std::string &title, const Size2D &size, const Pos2D &pos);
         Window(const std::string &title, const Size2D &size, bool centered = true);
+        Window(const Window &) = delete;
+        Window &operator=(const Window &) = delete;
+        Window(Window &&) = delete;
+        Window &operator=(Window &&) = delete;
         ~Window();
 
         // Size

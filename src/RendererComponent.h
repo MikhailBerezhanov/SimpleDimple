@@ -60,6 +60,8 @@ namespace GameEngine {
         //todo: Clone()
         RendererComponent(const RendererComponent &) = delete;
         RendererComponent &operator=(const RendererComponent &) = delete;
+        RendererComponent(RendererComponent &&) = delete;
+        RendererComponent &operator=(RendererComponent &&) = delete;
         ~RendererComponent() = default;
         /// Renderer draw functions
         void SetDrawColor(const RGBColor &rgba);

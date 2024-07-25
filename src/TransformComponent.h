@@ -34,6 +34,8 @@ namespace GameEngine {
     public:
         TransformComponent(const TransformComponent &) = delete;
         TransformComponent &operator=(const TransformComponent &) = delete;
+        TransformComponent(TransformComponent &&) = delete;
+        TransformComponent &operator=(TransformComponent &&) = delete;
         ~TransformComponent() = default;
         //todo: Clone()
         void SetPosition(const Pos2D &pos);

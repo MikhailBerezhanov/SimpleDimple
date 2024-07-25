@@ -30,6 +30,8 @@ namespace GameEngine
         //todo: Clone()
         TextureComponent(const TextureComponent &) = delete;
         TextureComponent& operator=(const TextureComponent&) = delete;
+        TextureComponent(TextureComponent &&) = delete;
+        TextureComponent& operator=(TextureComponent&&) = delete;
         ~TextureComponent() = default;
 
         Size2D GetSize() const;
