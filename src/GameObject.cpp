@@ -1,6 +1,3 @@
-//
-// Created by andrey on 14.07.24.
-//
 
 #include "GameObject.h"
 #include "TransformComponent.h"
