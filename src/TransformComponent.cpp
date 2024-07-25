@@ -55,19 +55,17 @@ namespace GameEngine {
         m_sdlHandle.reset_center();
     }
 
-    void TransformComponent::Downscale(unsigned int factor) {
-        int fac = static_cast<int>(factor);
-        EXPECT_MSG(fac > 0, "Downscale impossible: invalid factor");
-        m_sdlHandle.m_rect.w /= fac;
-        m_sdlHandle.m_rect.h /= fac;
+    void TransformComponent::Downscale(int factor) {
+        EXPECT_MSG(factor > 0, "Downscale impossible: invalid factor");
+        m_sdlHandle.m_rect.w /= factor;
+        m_sdlHandle.m_rect.h /= factor;
         m_sdlHandle.reset_center();
     }
 
-    void TransformComponent::Upscale(unsigned int factor) {
-        int fac = static_cast<int>(factor);
-        EXPECT_MSG(fac >= 0, "Upscale impossible: invalid factor");
-        m_sdlHandle.m_rect.w *= fac;
-        m_sdlHandle.m_rect.h *= fac;
+    void TransformComponent::Upscale(int factor) {
+        EXPECT_MSG(factor >= 0, "Upscale impossible: invalid factor");
+        m_sdlHandle.m_rect.w *= factor;
+        m_sdlHandle.m_rect.h *= factor;
         m_sdlHandle.reset_center();
     }
 
