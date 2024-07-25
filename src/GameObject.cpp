@@ -74,6 +74,7 @@ namespace GameEngine {
     }
 
     std::shared_ptr<IGameObjectComponent> GameObject::GetComponent(GameObjectComponentType type) const {
+        EXPECT(m_components.find(type) != m_components.end());
         return m_components.at(type);
     }
 
