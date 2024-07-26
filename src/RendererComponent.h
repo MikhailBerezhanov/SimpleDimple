@@ -22,6 +22,12 @@ namespace GameEngine {
             ~SDLHandle() = default;
             friend class RendererComponent;
         };
+        class TexRect {
+        private:
+            std::shared_ptr<TextureComponent> m_texture = nullptr;
+            SDL_Rect m_rect{};
+            friend class RendererComponent;
+        };
         class TextureHandle {
         private:
             TextureHandle() = default;
@@ -40,19 +46,19 @@ namespace GameEngine {
             unsigned int m_short_line_wide_textures = 0;
             unsigned int m_tall_textures = 0;
 
+            unsigned int m_line_idx = 0;
+            unsigned int m_tex_in_line_idx = 0;
+
+            // todo: set_texture_lines()
             void add_texture(const std::shared_ptr<TextureComponent> &tex);
-            void adjust_lines_num();
-            std::queue<std::shared_ptr<TextureComponent>> *get_textures_queue();
-            void calculate_texture_traits(const SDL_Rect *main_rect);
-            SDL_Rect calculate_texture_in_line(const SDL_Rect *main_rect,
-                                               unsigned int line_idx,
-                                               unsigned int tex_in_line_idx,
-                                               unsigned int *tex_in_this_line);
+            void calculate_texture_traits(const SDL_Rect *main_rect); // call once
+            TexRect get_texture_and_rect(const SDL_Rect *main_rect); // call for each texture
             friend class RendererComponent;
         };
         SDLHandle m_sdlHdl;
         TextureHandle m_textureHdl;
         const std::shared_ptr<const TransformComponent> m_transform;
+        void update_textures();
         friend class GameObject;
     protected:
         RendererComponent(const RenderContext &context, const std::shared_ptr<const TransformComponent> &transform);
