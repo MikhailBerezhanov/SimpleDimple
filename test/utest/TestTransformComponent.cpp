@@ -102,7 +102,7 @@ TRANSFORM_TEST(CheckCenter) {
     m_transform.SetCenter(Pos2D{10, 0});
     const auto center = m_transform.GetCenter();
     ASSERT_EQ(center.x, 10);
-    ASSERT_EQ(center.y, 10);
+    ASSERT_EQ(center.y, 0);
 }
 
 TRANSFORM_TEST(CheckCenterAfterResize) {
@@ -143,5 +143,49 @@ TRANSFORM_TEST(CheckRotate) {
     ASSERT_EQ(m_transform.GetAngle(), 15.0);
 }
 
+TRANSFORM_TEST(CheckVerticalFlip) {
+    m_transform.FlipVertically();
+    ASSERT_EQ(m_transform.IsFlippedVertically(), true);
+}
+
+TRANSFORM_TEST(CheckHorizontalFlip) {
+    m_transform.FlipHorizontally();
+    ASSERT_EQ(m_transform.IsFlippedHorizontally(), true);
+}
+
+TRANSFORM_TEST(CheckVerticalFlipToggle) {
+    m_transform.FlipVertically();
+    m_transform.FlipVertically();
+    ASSERT_EQ(m_transform.IsFlippedVertically(), false) << "Should work as toggle";
+}
+
+TRANSFORM_TEST(CheckHorizontalFlipToggle) {
+    m_transform.FlipHorizontally();
+    m_transform.FlipHorizontally();
+    ASSERT_EQ(m_transform.IsFlippedHorizontally(), false) << "Should work as toggle";
+}
+
+TRANSFORM_TEST(CheckCombinedFlip) {
+    m_transform.FlipVertically();
+    m_transform.FlipHorizontally();
+    ASSERT_EQ(m_transform.IsFlippedVertically(), true);
+    ASSERT_EQ(m_transform.IsFlippedHorizontally(), true);
+}
+
+TRANSFORM_TEST(CheckCombinedFlipCancelVertical) {
+    m_transform.FlipVertically();
+    m_transform.FlipHorizontally();
+    m_transform.FlipVertically(); // cancel vertical flip
+    ASSERT_EQ(m_transform.IsFlippedVertically(), false) << "Should work as toggle and don't affect other flip";
+    ASSERT_EQ(m_transform.IsFlippedHorizontally(), true);
+}
+
+TRANSFORM_TEST(CheckCombinedFlipCancelHorizontal) {
+    m_transform.FlipVertically();
+    m_transform.FlipHorizontally();
+    m_transform.FlipHorizontally(); // cancel horizontal flip
+    ASSERT_EQ(m_transform.IsFlippedVertically(), true);
+    ASSERT_EQ(m_transform.IsFlippedHorizontally(), false) << "Should work as toggle and don't affect other flip";
+}
 
 

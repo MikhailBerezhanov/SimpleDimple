@@ -53,6 +53,8 @@ namespace GameEngine {
         Pos2D GetCenter() const;
         void FlipVertically();
         void FlipHorizontally();
+        bool IsFlippedVertically() const;
+        bool IsFlippedHorizontally() const;
 
         void OnUpdate() override;
 

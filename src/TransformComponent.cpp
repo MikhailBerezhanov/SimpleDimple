@@ -91,11 +91,19 @@ namespace GameEngine {
     }
 
     void TransformComponent::FlipVertically() {
-        m_sdlHandle.m_flip = SDL_FLIP_VERTICAL;
+        m_sdlHandle.m_flip = static_cast<SDL_RendererFlip>(m_sdlHandle.m_flip ^ SDL_FLIP_VERTICAL);
     }
 
     void TransformComponent::FlipHorizontally() {
-        m_sdlHandle.m_flip = SDL_FLIP_HORIZONTAL;
+        m_sdlHandle.m_flip = static_cast<SDL_RendererFlip>(m_sdlHandle.m_flip ^ SDL_FLIP_HORIZONTAL);
+    }
+
+    bool TransformComponent::IsFlippedVertically() const {
+        return m_sdlHandle.m_flip & SDL_FLIP_VERTICAL;
+    }
+
+    bool TransformComponent::IsFlippedHorizontally() const {
+        return m_sdlHandle.m_flip & SDL_FLIP_HORIZONTAL;
     }
 
     const SDL_Point *TransformComponent::get_center() const {
