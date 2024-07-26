@@ -14,8 +14,8 @@ namespace GameEngine {
         : m_renderer(rend)
         {}
 
-    void RendererComponent::TextureHandle::add_texture(std::shared_ptr<TextureComponent> &&tex) {
-        m_textures_q.emplace(std::move(tex));
+    void RendererComponent::TextureHandle::add_texture(const std::shared_ptr<TextureComponent> &tex) {
+        m_textures_q.emplace(tex);
     }
 
     void RendererComponent::TextureHandle::adjust_lines_num() {
@@ -87,9 +87,9 @@ namespace GameEngine {
         };
     }
 
-    RendererComponent::RendererComponent(const RenderContext &context, std::shared_ptr<const TransformComponent> transform)
+    RendererComponent::RendererComponent(const RenderContext &context, const std::shared_ptr<const TransformComponent> &transform)
         : m_sdlHdl(context.m_renderer),
-          m_transform(std::move(transform))
+          m_transform(transform)
         {}
 
     void RendererComponent::SetDrawColor(const RGBColor &rgba) {
@@ -205,8 +205,8 @@ namespace GameEngine {
         return RenderContext(m_sdlHdl.m_renderer);
     }
 
-    void RendererComponent::AddTexture(std::shared_ptr<TextureComponent> tex) {
-        m_textureHdl.add_texture(std::move(tex));
+    void RendererComponent::AddTexture(const std::shared_ptr<TextureComponent> &tex) {
+        m_textureHdl.add_texture(tex);
     }
 
     void RendererComponent::OnUpdate() {
@@ -227,7 +227,7 @@ namespace GameEngine {
             const auto tex = textures_q->front();
             textures_q->pop();
 
-            unsigned int tex_in_this_line;
+            unsigned int tex_in_this_line = 0;
             const auto dstrect = m_textureHdl
                     .calculate_texture_in_line(
                             main_rect,

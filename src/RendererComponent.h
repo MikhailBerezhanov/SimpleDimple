@@ -40,7 +40,7 @@ namespace GameEngine {
             unsigned int m_short_line_wide_textures = 0;
             unsigned int m_tall_textures = 0;
 
-            void add_texture(std::shared_ptr<TextureComponent> &&tex);
+            void add_texture(const std::shared_ptr<TextureComponent> &tex);
             void adjust_lines_num();
             std::queue<std::shared_ptr<TextureComponent>> *get_textures_queue();
             void calculate_texture_traits(const SDL_Rect *main_rect);
@@ -55,7 +55,7 @@ namespace GameEngine {
         const std::shared_ptr<const TransformComponent> m_transform;
         friend class GameObject;
     protected:
-        RendererComponent(const RenderContext &context, std::shared_ptr<const TransformComponent> transform);
+        RendererComponent(const RenderContext &context, const std::shared_ptr<const TransformComponent> &transform);
     public:
         //todo: Clone()
         RendererComponent(const RendererComponent &) = delete;
@@ -75,7 +75,7 @@ namespace GameEngine {
         void FillRect(const Rect &rect) const;
         void FillRects(const std::vector<Rect> &rects) const;
         RenderContext GetRenderContext() const;
-        void AddTexture(std::shared_ptr<TextureComponent> tex);
+        void AddTexture(const std::shared_ptr<TextureComponent> &tex);
 
         void OnUpdate() override;
     };
