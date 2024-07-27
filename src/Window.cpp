@@ -1,13 +1,10 @@
 #include <stdexcept>
 
+#include "ErrorHandling.h"
 #include "Window.h"
 
-#define EXPECT(condition, message) do { \
-    if (!(condition)) { \
-        throw std::runtime_error(std::string(__func__) \
-        + " " + message \
-        + ": " + SDL_GetError()); \
-    }} while(0)
+#define EXPECT_SDL(condition, message) \
+    EXPECT_MSG(condition, message << ": " << SDL_GetError())
 
 namespace GameEngine 
 {
@@ -17,13 +14,13 @@ namespace GameEngine
                 title.c_str(), // title
                 pos.x, // x pos
                 pos.y, // y pos
-                static_cast<int>(size.w), // width
-                static_cast<int>(size.h), // height
+                size.w, // width
+                size.h, // height
                 0 // window flags
             )
         )
     {
-        EXPECT(m_window, "Unable to create window " + title);
+        EXPECT_SDL(m_window, "Unable to create window " + title);
         m_renderer = SDL_CreateRenderer(m_window, -1, 0);
         if (! m_renderer){
             //free window
@@ -50,17 +47,17 @@ namespace GameEngine
     Size2D Window::get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const {
         int w, h;
         sdl_func(m_window, &w, &h);
-        return Size2D{static_cast<size_t>(w), static_cast<size_t>(h)};
+        return {w, h};
     }
 
     Pos2D Window::get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const {
-        Pos2D pos{};
-        sdl_func(m_window, &pos.x, &pos.y);
-        return pos;
+        int x, y;
+        sdl_func(m_window, &x, &y);
+        return {x, y};
     }
 
     void Window::set_size_generic(void (*sdl_func)(SDL_Window *, int, int), const Size2D &size) const {
-        sdl_func(m_window, static_cast<int>(size.w), static_cast<int>(size.h));
+        sdl_func(m_window, size.w, size.h);
     }
 
     void Window::set_pos_generic(void (*sdl_func)(SDL_Window *, int, int), const Pos2D &pos) const {
@@ -99,115 +96,33 @@ namespace GameEngine
         SDL_RestoreWindow(m_window);
     }
 
-    IWindow & Window::SetMinSize(const Size2D &size) {
+    void Window::SetMinSize(const Size2D &size) {
         set_size_generic(SDL_SetWindowMinimumSize, size);
-        return *this;
     }
 
-    IWindow & Window::SetMaxSize(const Size2D &size) {
+    void Window::SetMaxSize(const Size2D &size) {
         set_size_generic(SDL_SetWindowMaximumSize, size);
-        return *this;
     }
 
-    IWindow & Window::SetBordered(bool bordered) {
+    void Window::SetBordered(bool bordered) {
         SDL_SetWindowBordered(m_window, bordered ? SDL_TRUE : SDL_FALSE);
-        return *this;
     }
 
-    IWindow & Window::SetResizable(bool resizable) {
+    void Window::SetResizable(bool resizable) {
         SDL_SetWindowResizable(m_window, resizable ? SDL_TRUE : SDL_FALSE);
-        return *this;
     }
 
-    IWindow & Window::SetAlwaysOnTop(bool on_top) {
+    void Window::SetAlwaysOnTop(bool on_top) {
         SDL_SetWindowAlwaysOnTop(m_window, on_top ? SDL_TRUE : SDL_FALSE);
-        return *this;
-    }
-
-    IWindow &Window::SetDrawColor(const RGBColor &rgba) {
-        EXPECT(SDL_SetRenderDrawColor(m_renderer, rgba.r, rgba.g, rgba.b, rgba.a) == 0,
-                "Error setting renderer color");
-        return *this;
-    }
-
-    void Window::DrawPoint(const Pos2D &point) const {
-        EXPECT(SDL_RenderDrawPoint(m_renderer, point.x, point.y) == 0,
-               "Error drawing point");
-    }
-
-    void Window::DrawPoints(const std::vector<Pos2D> &points) const {
-        EXPECT(SDL_RenderDrawPoints(m_renderer,
-                                    reinterpret_cast<const SDL_Point*>(points.data()),
-                                    static_cast<int>(points.size())) == 0,
-               "Error drawing points");
-    }
-
-    void Window::DrawLine(const Pos2D &start, const Pos2D &end) const {
-        EXPECT(SDL_RenderDrawLine(m_renderer, start.x, start.y, end.x, end.y) == 0,
-               "Error drawing line");
-    }
-
-    void Window::DrawLines(const std::vector<Pos2D> &points) const {
-        EXPECT(SDL_RenderDrawLines(m_renderer,
-                                   reinterpret_cast<const SDL_Point*>(points.data()),
-                                   static_cast<int>(points.size())) == 0,
-               "Error drawing lines");
-    }
-
-    void Window::DrawRect(const Rect &rect) const {
-        EXPECT(SDL_RenderDrawRect(m_renderer,
-                                  reinterpret_cast<const SDL_Rect *>(&rect)) == 0,
-               "Error drawing rect");
-    }
-
-    void Window::DrawRects(const std::vector<Rect> &rects) const {
-        EXPECT(SDL_RenderDrawRects(m_renderer,
-                                   reinterpret_cast<const SDL_Rect*>(rects.data()),
-                                   static_cast<int>(rects.size())) == 0,
-               "Error drawing rects");
-    }
-
-    void Window::FillRect(const Rect &rect) const {
-        EXPECT(SDL_RenderFillRect(m_renderer,
-                                  reinterpret_cast<const SDL_Rect*>(&rect)) == 0,
-               "Error filling rect");
-    }
-
-    void Window::FillRects(const std::vector<Rect> &rects) const {
-        EXPECT(SDL_RenderFillRects(m_renderer,
-                                   reinterpret_cast<const SDL_Rect*>(rects.data()),
-                                   static_cast<int>(rects.size())) == 0,
-               "Error filling rects");
     }
 
     void Window::Clear() const {
-        EXPECT(SDL_RenderClear(m_renderer) == 0, "Unable to clear window");
+        EXPECT_SDL(SDL_RenderClear(m_renderer) == 0, "Unable to clear window");
     }
 
-    void Window::Refresh() const {
-        // call SDL_RenderCopy() only for active textures
-        for (auto texture : m_active_textures) {
-
-            if (texture->get_angle() != 0.0 || texture->get_flip() != SDL_FLIP_NONE) {
-                // special treatment for flip and rotation
-                EXPECT(SDL_RenderCopyEx(m_renderer, // sdl renderer
-                                        texture->get_texture(), // sdl texture
-                                        nullptr, // apply to whole texture
-                                        texture->get_rect(), // texture destination
-                                        texture->get_angle(), // rotation angle
-                                        texture->get_center(), // rotation center (if null, rotate around dstrect.w / 2, dstrect.h / 2)
-                                        texture->get_flip() // flip action
-                ) == 0, "Unable to render-copy texture");
-            }
-            else {
-                // general treatment
-                EXPECT(SDL_RenderCopy(m_renderer, // sdl renderer
-                                      texture->get_texture(), // sdl texture
-                                      nullptr, // apply to whole texture
-                                      texture->get_rect() // texture destination
-                ) == 0,
-                       "Unable to render-copy texture");
-            }
+    void Window::Update() const {
+        for (const auto o : m_activeObjects) {
+            o->Update();
         }
     }
 
@@ -215,40 +130,45 @@ namespace GameEngine
         SDL_RenderPresent(m_renderer);
     }
 
-    TextureId Window::AppendTexture(const std::string &image) {
-        auto tex = new Texture(m_renderer, image);
-        m_textures.emplace(m_num_textures, std::unique_ptr<Texture>(tex));
-        return m_num_textures++;
+    RenderContext Window::GetRenderContext() const {
+        return RenderContext(m_renderer);
     }
 
-    TextureId Window::AppendTexture(const Size2D &size) {
-        auto tex = std::unique_ptr<Texture>(new Texture(m_renderer, size));
-        m_textures.emplace(m_num_textures, std::move(tex));
-        return m_num_textures++;
+    GameObjectId Window::AppendObject(std::unique_ptr<IGameObject> obj) {
+        return AppendObject(std::move(obj), false);
     }
 
-    void Window::RemoveTexture(TextureId texture_id) {
-        auto tex = m_textures.find(texture_id);
-        if (tex != m_textures.end()) {
-            m_active_textures.erase(tex->second.get());
-            m_textures.erase(tex);
-            --m_num_textures;
-        }
-    }
-
-    ITexture &Window::GetTexture(TextureId texture_id) const {
-        return *m_textures.at(texture_id);
-    }
-
-    void Window::SetTextureActive(TextureId texture_id, bool active) {
-        auto it = m_textures.find(texture_id);
-        EXPECT(it != m_textures.end(), "Texture " + std::to_string(texture_id) + " not found");
+    GameObjectId Window::AppendObject(std::unique_ptr<IGameObject> obj, bool active) {
+        auto it = m_gameObjects.emplace(m_objectsNum, std::move(obj));
         if (active) {
-            m_active_textures.insert(it->second.get());
-        }else {
-            m_active_textures.erase(it->second.get());
+            m_activeObjects.insert(it.first->second.get());
+        }
+        return m_objectsNum++;
+    }
+
+    void Window::RemoveObject(GameObjectId id) {
+        const auto &obj = m_gameObjects.find(id);
+        if (obj != m_gameObjects.end()) {
+           m_activeObjects.erase(obj->second.get());
+           m_gameObjects.erase(obj);
+           --m_objectsNum;
         }
     }
+
+    IGameObject *Window::GetObject(GameObjectId id) const {
+        return m_gameObjects.at(id).get();
+    }
+
+    void Window::SetObjectActive(GameObjectId id, bool active) {
+        auto it = m_gameObjects.find(id);
+        EXPECT_SDL(it != m_gameObjects.end(), "Game Object " + std::to_string(id) + " not found");
+        if (active) {
+            m_activeObjects.insert(it->second.get());
+        }else{
+            m_activeObjects.erase(it->second.get());
+        }
+    }
+
 
 
 } // namespace GameEngine

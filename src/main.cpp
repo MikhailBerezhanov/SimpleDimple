@@ -8,6 +8,10 @@
 #include "Logger.h"
 #include "ErrorHandling.h"
 #include "Window.h"
+#include "GameObject.h"
+
+#include "TransformComponent.h"
+#include "RendererComponent.h"
 
 using namespace GameEngine;
 
@@ -32,20 +36,30 @@ int main(int argc, char *argv[])
 
         std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
-        // create texture from bmp
-        const auto tex_id = win.AppendTexture(logo_file);
-        const auto tex_id_2 = win.AppendTexture(logo_file);
-        // obtain texture
-        auto &tex = win.GetTexture(tex_id);
-        auto &tex2 = win.GetTexture(tex_id_2);
-        // resize texture
-        tex.Downscale(6);
-        tex2.Downscale(3);
-        // make texture active
-        win.SetTextureActive(tex_id, true);
-        win.SetTextureActive(tex_id_2, true);
-        // obtain texture rect to control its position
-        auto dest = tex.GetRect();
+        // create game object and set properties
+        auto go = std::make_unique<GameObject>("logo");
+        go->AddComponent(GameObjectComponentType::TRANSFORM);
+        go->AddComponent(GameObjectComponentType::RENDERER, win.GetRenderContext());
+        go->AddComponent(GameObjectComponentType::TEXTURE, logo_file);
+
+        // get renderer
+        auto renderer = go->GetRenderer();
+        // get texture
+        auto texture = go->GetTexture();
+        // get transform
+        auto transform = go->GetTransform();
+
+        // set transform size according to texture's initial size
+        transform->Resize(texture->GetSize());
+        // resize rect
+        transform->Downscale(6);
+
+        // add object to window and make active
+        auto go_id = win.AppendObject(std::move(go), true);
+
+        // get transform rectangle
+        auto dest = transform->GetRect();
+
         // sets initial x-position of object
         dest.x = (1000 - dest.w) / 2;
         // sets initial y-position of object
@@ -53,7 +67,6 @@ int main(int argc, char *argv[])
 
         // speed of box
         int speed = 300;
-        double angle = 0.0;
 
         SDL_Event event;
         bool quit = false;
@@ -113,17 +126,19 @@ int main(int argc, char *argv[])
 
             // clear the screen
             win.Clear();
-            // set texture position
-            tex.SetPosition(GameEngine::Pos2D{dest.x, dest.y});
-            tex.SetAngle(angle);
-            // refresh
-            win.Refresh();
+            //todo: these should be set inside GameObject's OnUpdate()
+
+            transform->SetPosition(Pos2D{dest.x, dest.y}); // set object position (absolute)
+            //transform->SetAngle(angle); // set object rotation angle (absolute)
+            transform->Rotate(0.2); // set object rotation angle (relative)
+            renderer->AddTexture(texture); // set renderer active texture
+
+            // update (calls go->renderer->OnUpdate())
+            win.Update();
             // present
             win.Present();
             // calculates to 60 fps
             SDL_Delay(1000 / 60);
-
-            angle += 0.2;
         }
 
         std::cout << "End of loop!" << std::endl;
@@ -137,7 +152,7 @@ int main(int argc, char *argv[])
     }
     catch (...)
     {
-        std::cerr << "unexpected exception occured" << std::endl;
+        std::cerr << "unexpected exception occurred" << std::endl;
     }
 
     return 0;

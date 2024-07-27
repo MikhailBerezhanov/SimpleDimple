@@ -5,9 +5,10 @@
 #include <unordered_set>
 
 #include "IWindow.h"
-#include "Texture.h"
+#include "TextureComponent.h"
+#include "RenderContext.h"
+#include "GameObject.h"
 #include "sdl.h"
-
 
 namespace GameEngine 
 {
@@ -15,9 +16,9 @@ namespace GameEngine
     class Window : public IWindow {
         SDL_Window *m_window;
         SDL_Renderer *m_renderer;
-        std::unordered_map<size_t, std::unique_ptr<Texture>> m_textures; // all textures
-        std::unordered_set<Texture*> m_active_textures; // textures to update
-        size_t m_num_textures = 0;
+        std::unordered_map<GameObjectId, std::unique_ptr<IGameObject>> m_gameObjects; // all objects
+        std::unordered_set<IGameObject*> m_activeObjects; // objects to update
+        GameObjectId m_objectsNum = 0;
         // Private methods
         Size2D get_size_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
         Pos2D get_pos_generic(void (*sdl_func)(SDL_Window *, int *, int *)) const;
@@ -26,6 +27,10 @@ namespace GameEngine
     public:
         Window(const std::string &title, const Size2D &size, const Pos2D &pos);
         Window(const std::string &title, const Size2D &size, bool centered = true);
+        Window(const Window &) = delete;
+        Window &operator=(const Window &) = delete;
+        Window(Window &&) = delete;
+        Window &operator=(Window &&) = delete;
         ~Window();
 
         // Size
@@ -40,28 +45,22 @@ namespace GameEngine
         void Minimize() const override;
         void Restore() const override; //Restore the size and position of a minimized or maximized window
         // Modifiers
-        IWindow & SetMinSize(const Size2D &size) override;
-        IWindow & SetMaxSize(const Size2D &size) override;
-        IWindow & SetBordered(bool bordered) override;
-        IWindow & SetResizable(bool resizable) override;
-        IWindow & SetAlwaysOnTop(bool on_top) override;
-        // Renderer functions
-        IWindow &SetDrawColor(const RGBColor &rgba) override;
-        void DrawPoint(const Pos2D &point) const override;
-        void DrawPoints(const std::vector<Pos2D> &points) const override;
-        void DrawLine(const Pos2D &start, const Pos2D &end) const override;
-        void DrawLines(const std::vector<Pos2D> &points) const override;
-        void DrawRect(const Rect &rect) const override;
-        void DrawRects(const std::vector<Rect> &rects) const override;
-        void FillRect(const Rect &rect) const override;
-        void FillRects(const std::vector<Rect> &rects) const override;
+        void SetMinSize(const Size2D &size) override;
+        void SetMaxSize(const Size2D &size) override;
+        void SetBordered(bool bordered) override;
+        void SetResizable(bool resizable) override;
+        void SetAlwaysOnTop(bool on_top) override;
         void Clear() const override;
-        void Refresh() const override;
+        void Update() const override;
         void Present() const override;
-        TextureId AppendTexture(const std::string &image) override;
-        TextureId AppendTexture(const Size2D &size) override;
-        void RemoveTexture(TextureId texture_id) override;
-        ITexture &GetTexture(TextureId texture_id) const override;
-        void SetTextureActive(TextureId texture_id, bool active) override;
+        RenderContext GetRenderContext() const;
+        // Objects
+        GameObjectId AppendObject(std::unique_ptr<IGameObject> obj) override;
+
+        GameObjectId AppendObject(std::unique_ptr<IGameObject> obj, bool active) override;
+
+        void RemoveObject(GameObjectId id) override;
+        IGameObject *GetObject(GameObjectId id) const override;
+        void SetObjectActive(GameObjectId id, bool active) override;
     };
 };
