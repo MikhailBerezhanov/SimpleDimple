@@ -32,7 +32,10 @@ set(UNITS_SOURCES
     ${SOURCE_DIR}/Logger.cpp
     ${SOURCE_DIR}/ErrorHandling.cpp
     ${SOURCE_DIR}/Window.cpp
-    ${SOURCE_DIR}/Texture.cpp
+    ${SOURCE_DIR}/TextureComponent.cpp
+    ${SOURCE_DIR}/RendererComponent.cpp
+    ${SOURCE_DIR}/TransformComponent.cpp
+    ${SOURCE_DIR}/GameObject.cpp
 )
 
 # Build unit modules as static lib

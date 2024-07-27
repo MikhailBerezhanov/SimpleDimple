@@ -2,8 +2,9 @@
 # GTEST_INCLUDE_DIR
 # GTEST_LINK_LIBS
 
-# set utest exe name
+# set utest exe name and test name
 set(TEST_EXE "utest")
+set(TEST_NAME "UnitTests")
 
 include(FetchContent)
 
@@ -20,6 +21,8 @@ FetchContent_MakeAvailable(googletest)
 set(GTEST_SOURCES
     TestLogger.cpp
     TestErrorHandling.cpp
+    TestGameObject.cpp
+    TestTransformComponent.cpp
     TestInputEvent.cpp
 )
 
@@ -38,3 +41,5 @@ target_link_libraries(
     GTest::gtest_main
     GTest::gmock_main
 )
+
+add_test(NAME ${TEST_NAME} COMMAND ${TEST_EXE} --gtest_color=yes)
