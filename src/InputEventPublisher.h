@@ -38,7 +38,7 @@ namespace GameEngine
                     if (sp)
                     {
                         ++it;
-                        std::invoke(c, sp, std::forward<Args>(args)...);
+                        std::invoke(c, sp.get(), std::forward<Args>(args)...);
                     }
                     else
                     {
