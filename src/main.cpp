@@ -20,7 +20,7 @@ using namespace GameEngine;
 class DemoGameObject : public GameObject, public IInputEventSubscriber
 {
 private:
-    int m_speed = 300;
+    const int m_speed = 300;
 
 public:
     using GameObject::GameObject;
@@ -105,20 +105,20 @@ int main(int argc, char *argv[])
         // Create window
         const auto mainWindow = std::make_shared<Window>("SDL2 Window", Size2D{1000, 1000});
 
-        std::string logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
+        const auto logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
         // create game object and set properties
-        auto go = std::make_shared<DemoGameObject>("logo");
+        const auto go = std::make_shared<DemoGameObject>("logo");
         go->AddComponent(GameObjectComponentType::TRANSFORM);
         go->AddComponent(GameObjectComponentType::RENDERER, mainWindow->GetRenderContext());
         go->AddComponent(GameObjectComponentType::TEXTURE, logo_file);
 
         // get renderer
-        auto renderer = go->GetRenderer();
+        const auto renderer = go->GetRenderer();
         // get texture
-        auto texture = go->GetTexture();
+        const auto texture = go->GetTexture();
         // get transform
-        auto transform = go->GetTransform();
+        const auto transform = go->GetTransform();
 
         // set transform size according to texture's initial size
         transform->Resize(texture->GetSize());
@@ -126,19 +126,14 @@ int main(int argc, char *argv[])
         transform->Downscale(6);
 
         // add object to window and make active
-        auto go_id = mainWindow->AppendObject(go, true);
+        const auto go_id = mainWindow->AppendObject(go, true);
 
         // get transform rectangle
         auto dest = transform->GetRect();
-
         // sets initial x-position of object
         dest.x = (1000 - dest.w) / 2;
         // sets initial y-position of object
         dest.y = (1000 - dest.h) / 2;
-
-        // speed of box
-        int speed = 300;
-
         // set object position (absolute)
         transform->SetPosition(Pos2D{dest.x, dest.y}); 
          // set renderer active texture
