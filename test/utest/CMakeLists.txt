@@ -23,6 +23,7 @@ set(GTEST_SOURCES
     TestErrorHandling.cpp
     TestGameObject.cpp
     TestTransformComponent.cpp
+    TestInputEvent.cpp
 )
 
 # Add test sources to executable

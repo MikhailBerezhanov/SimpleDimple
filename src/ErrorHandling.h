@@ -23,6 +23,7 @@ namespace GameEngine
 } // namespace GameEngine
 
 #define HANDLE_EXCEPTION() HandleException(*GetLogger())
+#define HANDLE_EXCEPTION_MSG(message) HandleException(*GetLogger(), message)
 
 #define CHECK_EX(condition, exType, ...) do { if (!(condition)) throw exType(__VA_ARGS__); } while (false);
 
