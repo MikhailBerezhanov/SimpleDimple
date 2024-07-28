@@ -1,9 +1,10 @@
 
 #pragma once
 
-#include <any>
-
 #include "IGameObjectComponent.h"
+
+#include <any>
+#include <memory>
 
 namespace GameEngine {
 

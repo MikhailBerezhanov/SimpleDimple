@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include <vector>
-
-#include "Types.h"
 #include "IGameObject.h"
+#include "Types.h"
+
+#include <memory>
 
 namespace GameEngine {
 
@@ -32,8 +32,8 @@ namespace GameEngine {
         virtual void Update() const = 0; // refresh textures (coordinates, flip, angle)
         virtual void Present() const = 0; // update changes made to screen
         /// GameObject
-        virtual GameObjectId AppendObject(std::unique_ptr<IGameObject> obj) = 0;
-        virtual GameObjectId AppendObject(std::unique_ptr<IGameObject> obj, bool active) = 0;
+        virtual GameObjectId AppendObject(const std::shared_ptr<IGameObject>& obj) = 0;
+        virtual GameObjectId AppendObject(const std::shared_ptr<IGameObject>& obj, bool active) = 0;
         virtual void RemoveObject(GameObjectId id) = 0;
         virtual IGameObject *GetObject(GameObjectId id) const = 0;
         virtual void SetObjectActive(GameObjectId id, bool active) = 0;

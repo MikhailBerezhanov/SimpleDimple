@@ -134,12 +134,12 @@ namespace GameEngine
         return RenderContext(m_renderer);
     }
 
-    GameObjectId Window::AppendObject(std::unique_ptr<IGameObject> obj) {
-        return AppendObject(std::move(obj), false);
+    GameObjectId Window::AppendObject(const std::shared_ptr<IGameObject>& obj) {
+        return AppendObject(obj, false);
     }
 
-    GameObjectId Window::AppendObject(std::unique_ptr<IGameObject> obj, bool active) {
-        auto it = m_gameObjects.emplace(m_objectsNum, std::move(obj));
+    GameObjectId Window::AppendObject(const std::shared_ptr<IGameObject>& obj, bool active) {
+        auto it = m_gameObjects.emplace(m_objectsNum, obj);
         if (active) {
             m_activeObjects.insert(it.first->second.get());
         }

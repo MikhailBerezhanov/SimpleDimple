@@ -8,7 +8,7 @@ namespace GameEngine::Testing
 {
     struct InputEventSubscriberMock : GameEngine::IInputEventSubscriber
     {
-        MOCK_METHOD(void, OnKeyUp, (int), (override));
-        MOCK_METHOD(void, OnKeyDown, (int), (override));
+        MOCK_METHOD(void, OnKeyUp, (GameEngine::KeyCodes), (override));
+        MOCK_METHOD(void, OnKeyDown, (GameEngine::KeyCodes), (override));
     };
 }

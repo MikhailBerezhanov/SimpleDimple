@@ -13,12 +13,12 @@ namespace GameEngine
         remove_subscriber(sub);
     }
 
-    void InputEventPublisher::OnKeyUp(int keyCode)
+    void InputEventPublisher::OnKeyUp(KeyCodes keyCode)
     {
         call_subscribers(&IInputEventSubscriber::OnKeyUp, keyCode);
     }
 
-    void InputEventPublisher::OnKeyDown(int keyCode)
+    void InputEventPublisher::OnKeyDown(KeyCodes keyCode)
     {
         call_subscribers(&IInputEventSubscriber::OnKeyDown, keyCode);
     }

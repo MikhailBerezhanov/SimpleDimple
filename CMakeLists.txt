@@ -37,6 +37,7 @@ set(UNITS_SOURCES
     ${SOURCE_DIR}/TransformComponent.cpp
     ${SOURCE_DIR}/GameObject.cpp
     ${SOURCE_DIR}/InputEventPublisher.cpp
+    ${SOURCE_DIR}/GameLoop.cpp
 )
 
 # Build unit modules as static lib

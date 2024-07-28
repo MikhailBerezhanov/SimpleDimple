@@ -59,7 +59,7 @@ namespace GameEngine
         void UnsubscribeFromInputEvents(const std::shared_ptr<IInputEventSubscriber>& sub) override;
 
         // IInputEventSubscriber
-        void OnKeyUp(int keyCode) override;
-        void OnKeyDown(int keyCode) override;
+        void OnKeyUp(KeyCodes keyCode) override;
+        void OnKeyDown(KeyCodes keyCode) override;
     };
 } // namespace GameEngine
