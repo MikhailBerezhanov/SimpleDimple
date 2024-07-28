@@ -1,13 +1,14 @@
 #pragma once
 
-#include <InputEvent.h>
+#include <IInputEvent.h>
 
 #include <gmock/gmock.h>
 
 namespace GameEngine::Testing
 {
-    struct InputEventMock : GameEngine::IInputEvent
+    struct InputEventSubscriberMock : GameEngine::IInputEventSubscriber
     {
-        MOCK_METHOD(void, OnKeyPress, (int), (override));
+        MOCK_METHOD(void, OnKeyUp, (int), (override));
+        MOCK_METHOD(void, OnKeyDown, (int), (override));
     };
 }
