@@ -22,7 +22,8 @@ TEST(InputEventPublisher, ShouldPublishOnKeyDownEventToOneSubscriber)
     const auto sut = std::make_unique<InputEventPublisher>();
 
     const auto subscriber = std::make_shared<InputEventSubscriberMock>();
-    const auto testKeyCode = 10;
+    const auto testKeyCode = KeyCodes::ARROW_RIGHT;
+
     EXPECT_CALL(*subscriber, OnKeyDown(testKeyCode)).Times(1);
 
     sut->SubscribeToInputEvents(subscriber);
@@ -35,7 +36,7 @@ TEST(InputEventPublisher, ShouldPublishOnKeyDownEventsToAllSubscribers)
     const auto sut = std::make_unique<InputEventPublisher>();
 
     const auto subscribersNumber = 1'000;
-    const auto testKeyCode = 43;
+    const auto testKeyCode = KeyCodes::ARROW_UP;
 
     std::vector<std::shared_ptr<InputEventSubscriberMock>> subscribersHolder;
     subscribersHolder.reserve(subscribersNumber);
@@ -57,7 +58,7 @@ TEST(InputEventPublisher, ShouldPublishOnKeyDownEventsToAllSubscribersMultipleTi
     const auto sut = std::make_unique<InputEventPublisher>();
 
     const auto subscribersNumber = 100;
-    const auto testKeyCode = 0;
+    const auto testKeyCode = KeyCodes::ARROW_UP;
     const auto numberOfEvents = 10;
 
     std::vector<std::shared_ptr<InputEventSubscriberMock>> subscribersHolder;
@@ -86,11 +87,11 @@ TEST(InputEventPublisher, ShouldUnsubscribeSubscriber)
     
     sut->SubscribeToInputEvents(subscriber);
     EXPECT_CALL(*subscriber, OnKeyDown).Times(1);
-    sut->OnKeyDown(1);
+    sut->OnKeyDown(KeyCodes::A);
 
     sut->UnsubscribeFromInputEvents(subscriber);
     EXPECT_CALL(*subscriber, OnKeyDown).Times(0);
-    sut->OnKeyDown(1);
+    sut->OnKeyDown(KeyCodes::A);
 }
 
 TEST(InputEventPublisher, ShouldIngoreDestoyedSubscriber)
@@ -104,7 +105,7 @@ TEST(InputEventPublisher, ShouldIngoreDestoyedSubscriber)
         // subscriber should be destroyed out of scope
     }
     
-    sut->OnKeyDown(1);
+    sut->OnKeyDown(KeyCodes::D);
 }
 
 TEST(InputEventPublisher, ShouldNotUnsubscribeSubscriberIfAnotherUnsubscribed)
@@ -132,8 +133,9 @@ TEST(InputEventPublisher, ShouldNotUnsubscribeSubscriberIfAnotherUnsubscribed)
     EXPECT_CALL(*subscriber1, OnKeyUp).Times(2);
     EXPECT_CALL(*subscriber2, OnKeyUp).Times(0);
     EXPECT_CALL(*subscriber3, OnKeyUp).Times(0);
-    sut->OnKeyUp(1);
-    sut->OnKeyUp(2);
+
+    sut->OnKeyUp(KeyCodes::W);
+    sut->OnKeyUp(KeyCodes::S);
 }
 
 TEST(InputEventPublisher, ShouldDeliverEventsIfSubscriberThrowsStdException)
@@ -158,7 +160,7 @@ TEST(InputEventPublisher, ShouldDeliverEventsIfSubscriberThrowsStdException)
 
     for (auto i = 0; i < numberOfEvents; ++i)
     {
-        sut->OnKeyUp(i);
+        sut->OnKeyUp(KeyCodes::A);
     }
 }
 
@@ -167,7 +169,7 @@ TEST(InputEventPublisher, ShouldUnsubscribeHalfOfSubscribers)
     const auto sut = std::make_unique<InputEventPublisher>();
 
     const auto subscribersNumber = 1'000;
-    const auto testKeyCode = 10;
+    const auto testKeyCode = KeyCodes::ARROW_DOWN;
     const auto testEventsNumber = 3;
 
     std::vector<std::shared_ptr<InputEventSubscriberMock>> subscribersHolder;
@@ -228,6 +230,6 @@ TEST(InputEventPublisher, ShouldPublishEventsInEventsOrder)
     sut->SubscribeToInputEvents(subscriber1);
     sut->SubscribeToInputEvents(subscriber2);
 
-    sut->OnKeyDown(1);
-    sut->OnKeyUp(1);
+    sut->OnKeyDown(KeyCodes::ARROW_DOWN);
+    sut->OnKeyUp(KeyCodes::ARROW_DOWN);
 }

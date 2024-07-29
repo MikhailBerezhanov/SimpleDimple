@@ -4,12 +4,27 @@
 
 namespace GameEngine
 {
+    enum class KeyCodes
+    {
+        UNSUPPORTED = 0,
+
+        ARROW_UP,
+        ARROW_LEFT,
+        ARROW_DOWN,
+        ARROW_RIGHT,
+
+        W,
+        A,
+        S,
+        D,
+    };
+
     struct IInputEventSubscriber
     {
         virtual ~IInputEventSubscriber() = default;
 
-        virtual void OnKeyUp(int keyCode) = 0;
-        virtual void OnKeyDown(int keyCode) = 0;
+        virtual void OnKeyUp(KeyCodes keyCode) = 0;
+        virtual void OnKeyDown(KeyCodes keyCode) = 0;
     };
 
     struct IInputEventPublisher

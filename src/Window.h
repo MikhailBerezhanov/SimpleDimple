@@ -16,7 +16,7 @@ namespace GameEngine
     class Window : public IWindow {
         SDL_Window *m_window;
         SDL_Renderer *m_renderer;
-        std::unordered_map<GameObjectId, std::unique_ptr<IGameObject>> m_gameObjects; // all objects
+        std::unordered_map<GameObjectId, std::shared_ptr<IGameObject>> m_gameObjects; // all objects
         std::unordered_set<IGameObject*> m_activeObjects; // objects to update
         GameObjectId m_objectsNum = 0;
         // Private methods
@@ -55,9 +55,9 @@ namespace GameEngine
         void Present() const override;
         RenderContext GetRenderContext() const;
         // Objects
-        GameObjectId AppendObject(std::unique_ptr<IGameObject> obj) override;
+        GameObjectId AppendObject(const std::shared_ptr<IGameObject>& obj) override;
 
-        GameObjectId AppendObject(std::unique_ptr<IGameObject> obj, bool active) override;
+        GameObjectId AppendObject(const std::shared_ptr<IGameObject>& obj, bool active) override;
 
         void RemoveObject(GameObjectId id) override;
         IGameObject *GetObject(GameObjectId id) const override;
