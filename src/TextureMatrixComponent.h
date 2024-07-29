@@ -13,8 +13,8 @@ namespace GameEngine {
     class TextureMatrixComponent : public IGameObjectComponent {
     private:
         struct RowIdxLen {
-            unsigned int start = 0;
-            unsigned int len = 0;
+            size_t start = 0;
+            size_t len = 0;
         };
         using TexturePtr = std::shared_ptr<TextureComponent>;
         std::vector<TexturePtr> m_textureMatrix;
@@ -22,7 +22,6 @@ namespace GameEngine {
 
         TextureMatrixComponent();
     public:
-
 
         void AddRow(std::vector<TexturePtr> row);
         void Clear();

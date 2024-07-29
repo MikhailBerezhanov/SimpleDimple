@@ -9,10 +9,10 @@ namespace GameEngine {
 
     void TextureMatrixComponent::AddRow(std::vector<TexturePtr> row) {
         if (m_rowMap.empty()) {
-            m_rowMap.emplace_back(0, row.size());
+            m_rowMap.emplace_back(RowIdxLen{0, row.size()});
         } else {
             const auto &prev_row = m_rowMap.back();
-            m_rowMap.emplace_back(prev_row.start + prev_row.len, row.size());
+            m_rowMap.emplace_back(RowIdxLen{prev_row.start + prev_row.len, row.size()});
         }
         m_textureMatrix.insert(m_textureMatrix.end(),
                                std::make_move_iterator(row.begin()),
