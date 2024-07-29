@@ -32,25 +32,6 @@ public:
         const auto texture = GetTexture();
         const auto transform = GetTransform();
 
-        auto dest = transform->GetRect();
-
-        // right boundary
-        if (dest.x + dest.w > 1000)
-            dest.x = 1000 - dest.w;
-
-        // left boundary
-        if (dest.x < 0)
-            dest.x = 0;
-
-        // bottom boundary
-        if (dest.y + dest.h > 1000)
-            dest.y = 1000 - dest.h;
-
-        // upper boundary
-        if (dest.y < 0)
-            dest.y = 0;
-
-        transform->SetPosition(Pos2D{dest.x, dest.y});
         transform->Rotate(0.2);
         renderer->AddTexture(texture);
     }
@@ -84,6 +65,22 @@ public:
             default:
                 break;
         }
+
+        // right boundary
+        if (dest.x + dest.w > 1000)
+            dest.x = 1000 - dest.w;
+
+        // left boundary
+        if (dest.x < 0)
+            dest.x = 0;
+
+        // bottom boundary
+        if (dest.y + dest.h > 1000)
+            dest.y = 1000 - dest.h;
+
+        // upper boundary
+        if (dest.y < 0)
+            dest.y = 0;
 
         transform->SetPosition(Pos2D{dest.x, dest.y});
     }
