@@ -23,6 +23,7 @@ TEST(InputEventPublisher, ShouldPublishOnKeyDownEventToOneSubscriber)
 
     const auto subscriber = std::make_shared<InputEventSubscriberMock>();
     const auto testKeyCode = KeyCodes::ARROW_RIGHT;
+
     EXPECT_CALL(*subscriber, OnKeyDown(testKeyCode)).Times(1);
 
     sut->SubscribeToInputEvents(subscriber);
@@ -132,6 +133,7 @@ TEST(InputEventPublisher, ShouldNotUnsubscribeSubscriberIfAnotherUnsubscribed)
     EXPECT_CALL(*subscriber1, OnKeyUp).Times(2);
     EXPECT_CALL(*subscriber2, OnKeyUp).Times(0);
     EXPECT_CALL(*subscriber3, OnKeyUp).Times(0);
+
     sut->OnKeyUp(KeyCodes::W);
     sut->OnKeyUp(KeyCodes::S);
 }
