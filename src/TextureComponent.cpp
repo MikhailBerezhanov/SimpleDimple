@@ -8,11 +8,8 @@
 namespace GameEngine {
 
     /// Nested class
-    TextureComponent::SDLHandle::SDLHandle(SDL_Renderer *renderer, const std::string &image) {
-        auto surface = IMG_Load(image.c_str());
-        EXPECT_SDL(surface, "Unable to create surface from image");
-        m_texture = SDL_CreateTextureFromSurface(renderer, surface);
-        SDL_FreeSurface(surface); // no need for surface anymore
+    TextureComponent::SDLHandle::SDLHandle(SDL_Renderer *renderer, const std::string &image)
+        : m_texture(IMG_LoadTexture(renderer, image.c_str())){
         EXPECT_SDL(m_texture, "Unable to create texture");
     }
 
