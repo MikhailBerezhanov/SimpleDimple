@@ -20,8 +20,11 @@ using namespace GameEngine;
 class DemoGameObject : public GameObject, public IInputEventSubscriber
 {
 private:
-    const int m_speed = 300;
-
+    const int m_speed = 5;
+    const int m_boundary_x = 1000;
+    const int m_boundary_y = 1000;
+    int m_direction_x = 0;
+    int m_direction_y = 0;
 public:
     using GameObject::GameObject;
 
@@ -32,57 +35,65 @@ public:
         const auto texture = GetTexture();
         const auto transform = GetTransform();
 
+        auto dest = transform->GetRect();
+
+        // Apply movement based on speed and direction
+        dest.x += m_speed * m_direction_x;
+        dest.y += m_speed * m_direction_y;
+
+        // Check x boundaries
+        dest.x = std::max(0, std::min(dest.x, m_boundary_x - dest.w));
+        // Check y boundaries
+        dest.y = std::max(0, std::min(dest.y, m_boundary_y - dest.h));
+
+        transform->SetPosition(Pos2D{dest.x, dest.y});
         transform->Rotate(0.2);
         renderer->AddTexture(texture);
     }
 
     // IInputEventSubscriber
-    void OnKeyUp(KeyCodes keyCode) override {}
-
-    void OnKeyDown(KeyCodes keyCode) override
+    void OnKeyUp(KeyCodes keyCode) override
     {
-        const auto transform = GetTransform();
-        auto dest = transform->GetRect();
-
-        switch (keyCode)
-        {
+        switch (keyCode) {
             case KeyCodes::W:
+            case KeyCodes::S:
             case KeyCodes::ARROW_UP:
-                dest.y -= m_speed / 30;
+            case KeyCodes::ARROW_DOWN:
+                m_direction_y = 0;
                 break;
             case KeyCodes::A:
-            case KeyCodes::ARROW_LEFT:
-                dest.x -= m_speed / 30;
-                break;
-            case KeyCodes::S:
-            case KeyCodes::ARROW_DOWN:
-                dest.y += m_speed / 30;
-                break;
             case KeyCodes::D:
+            case KeyCodes::ARROW_LEFT:
             case KeyCodes::ARROW_RIGHT:
-                dest.x += m_speed / 30;
+                m_direction_x = 0;
                 break;
             default:
                 break;
         }
+    }
 
-        // right boundary
-        if (dest.x + dest.w > 1000)
-            dest.x = 1000 - dest.w;
-
-        // left boundary
-        if (dest.x < 0)
-            dest.x = 0;
-
-        // bottom boundary
-        if (dest.y + dest.h > 1000)
-            dest.y = 1000 - dest.h;
-
-        // upper boundary
-        if (dest.y < 0)
-            dest.y = 0;
-
-        transform->SetPosition(Pos2D{dest.x, dest.y});
+    void OnKeyDown(KeyCodes keyCode) override
+    {
+        switch (keyCode) {
+            case KeyCodes::W:
+            case KeyCodes::ARROW_UP:
+                m_direction_y = -1;
+                break;
+            case KeyCodes::A:
+            case KeyCodes::ARROW_LEFT:
+                m_direction_x = -1;
+                break;
+            case KeyCodes::S:
+            case KeyCodes::ARROW_DOWN:
+                m_direction_y = 1;
+                break;
+            case KeyCodes::D:
+            case KeyCodes::ARROW_RIGHT:
+                m_direction_x = 1;
+                break;
+            default:
+                break;
+        }
     }
 };
 

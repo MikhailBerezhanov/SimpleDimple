@@ -5,7 +5,6 @@
 
 #include "sdl.h"
 
-
 namespace GameEngine
 {
     constexpr KeyCodes SdlScancodeToKeyCodes(SDL_Scancode scancode)
@@ -77,12 +76,24 @@ namespace GameEngine
                 {
                     return true;
                 }
+                // filter keyboard keys events
                 case SDL_KEYDOWN:
+                case SDL_KEYUP:
                 {
+                    // don't handle repeated events (pressed-and-held keys)
+                    if (event.key.repeat) break;
                     const auto keyCode = SdlScancodeToKeyCodes(event.key.keysym.scancode);
-                    if (keyCode != KeyCodes::UNSUPPORTED)
-                    {
-                        OnKeyDown(keyCode);
+                    // don't handle unsupported keys
+                    if (keyCode == KeyCodes::UNSUPPORTED) break;
+                    switch (event.type) {
+                        case SDL_KEYDOWN:
+                            // handle keydown
+                            OnKeyDown(keyCode);
+                            break;
+                        case SDL_KEYUP:
+                            // handle keyup
+                            OnKeyUp(keyCode);
+                            break;
                     }
                 }
             }
