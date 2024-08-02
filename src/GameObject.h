@@ -21,6 +21,9 @@ namespace GameEngine {
         void Update() final; // cannot be overridden
     protected:
         void OnUpdate() override;
+        void Awake() override;
+        void OnEnable() override;
+        void OnDisable() override;
     public:
         explicit GameObject(std::string name);
         GameObject(const GameObject &) = delete;

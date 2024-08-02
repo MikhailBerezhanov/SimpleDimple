@@ -140,10 +140,18 @@ namespace GameEngine
 
     GameObjectId Window::AppendObject(const std::shared_ptr<IGameObject>& obj, bool active) {
         auto it = m_gameObjects.emplace(m_objectsNum, obj);
-        if (active) {
-            m_activeObjects.insert(it.first->second.get());
+        if (it.second) {
+            auto obj_ptr = it.first->second.get();
+            obj_ptr->Awake(); // 'initialize' object
+
+            if (active) {
+                if (m_activeObjects.insert(obj_ptr).second) {
+                    obj_ptr->OnEnable(); // enable object
+                }
+            }
+            return m_objectsNum++;
         }
-        return m_objectsNum++;
+        return it.first->first;
     }
 
     void Window::RemoveObject(GameObjectId id) {
@@ -163,12 +171,14 @@ namespace GameEngine
         auto it = m_gameObjects.find(id);
         EXPECT_SDL(it != m_gameObjects.end(), "Game Object " + std::to_string(id) + " not found");
         if (active) {
-            m_activeObjects.insert(it->second.get());
-        }else{
-            m_activeObjects.erase(it->second.get());
+            if (m_activeObjects.insert(it->second.get()).second) {
+                it->second->OnEnable(); // enable object
+            }
+        }else {
+            if (m_activeObjects.erase(it->second.get())) {
+                it->second->OnDisable(); // disable object
+            }
         }
     }
-
-
 
 } // namespace GameEngine

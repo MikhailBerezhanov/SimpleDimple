@@ -92,6 +92,18 @@ namespace GameEngine {
         // do nothing, should be overridden in derived classes
     }
 
+    void GameObject::Awake() {
+        // do nothing, should be overridden in derived classes
+    }
+
+    void GameObject::OnEnable() {
+        // do nothing, should be overridden in derived classes
+    }
+
+    void GameObject::OnDisable() {
+        // do nothing, should be overridden in derived classes
+    }
+
     void GameObject::Update() {
         // call OnUpdate()
         this->OnUpdate();
@@ -101,8 +113,5 @@ namespace GameEngine {
         }
         //todo: children?
     }
-
-
-
-
+    
 } // GameEngine
