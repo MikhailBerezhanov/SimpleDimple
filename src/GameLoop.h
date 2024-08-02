@@ -20,7 +20,7 @@ namespace GameEngine
 
     private:
         bool poll_events();
-        void handle_key_events(SDL_Event &event);
+        void handle_key_events(const SDL_Event &event);
     public:
         GameLoop();
         ~GameLoop();

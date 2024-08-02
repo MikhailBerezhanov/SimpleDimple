@@ -64,7 +64,7 @@ namespace GameEngine
         LOG_INFO("Stopped");
     }
 
-    void GameLoop::handle_key_events(SDL_Event &event) {
+    void GameLoop::handle_key_events(const SDL_Event &event) {
         // don't handle repeated events (pressed-and-held keys)
         if (event.key.repeat) return;
         const auto keyCode = SdlScancodeToKeyCodes(event.key.keysym.scancode);
