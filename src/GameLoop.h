@@ -5,6 +5,8 @@
 #include "Logger.h"
 #include "InputEventPublisher.h"
 
+#include "sdl.h"
+
 #include <memory>
 
 namespace GameEngine
@@ -18,7 +20,7 @@ namespace GameEngine
 
     private:
         bool poll_events();
-
+        void handle_key_events(SDL_Event &event);
     public:
         GameLoop();
         ~GameLoop();

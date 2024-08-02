@@ -93,9 +93,19 @@ TRANSFORM_TEST(CheckAngle) {
     ASSERT_EQ(m_transform.GetAngle(), 123.0);
 }
 
+TRANSFORM_TEST(CheckNegativeAngle) {
+    m_transform.SetAngle(-123);
+    ASSERT_EQ(m_transform.GetAngle(), -123.0);
+}
+
 TRANSFORM_TEST(CheckAngleOverflow) {
     m_transform.SetAngle(450);
     ASSERT_EQ(m_transform.GetAngle(), 90.0);
+}
+
+TRANSFORM_TEST(CheckNegativeAngleOverflow) {
+    m_transform.SetAngle(-450);
+    ASSERT_EQ(m_transform.GetAngle(), -90.0);
 }
 
 TRANSFORM_TEST(CheckCenter) {
@@ -141,6 +151,24 @@ TRANSFORM_TEST(CheckRotate) {
     m_transform.SetAngle(10);
     m_transform.Rotate(5);
     ASSERT_EQ(m_transform.GetAngle(), 15.0);
+}
+
+TRANSFORM_TEST(CheckNegativeRotate) {
+    m_transform.SetAngle(10);
+    m_transform.Rotate(-5);
+    ASSERT_EQ(m_transform.GetAngle(), 5.0);
+}
+
+TRANSFORM_TEST(CheckRotateOverflow) {
+    m_transform.SetAngle(350);
+    m_transform.Rotate(20);
+    ASSERT_EQ(m_transform.GetAngle(), 10.0);
+}
+
+TRANSFORM_TEST(CheckNegativeRotateOverflow) {
+    m_transform.SetAngle(-350);
+    m_transform.Rotate(-20);
+    ASSERT_EQ(m_transform.GetAngle(), -10.0);
 }
 
 TRANSFORM_TEST(CheckVerticalFlip) {

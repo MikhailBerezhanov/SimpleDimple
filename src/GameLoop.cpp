@@ -64,6 +64,22 @@ namespace GameEngine
         LOG_INFO("Stopped");
     }
 
+    void GameLoop::handle_key_events(SDL_Event &event) {
+        // don't handle repeated events (pressed-and-held keys)
+        if (event.key.repeat) return;
+        const auto keyCode = SdlScancodeToKeyCodes(event.key.keysym.scancode);
+        switch (event.type) {
+            case SDL_KEYDOWN:
+                // handle keydown
+                OnKeyDown(keyCode);
+                break;
+            case SDL_KEYUP:
+                // handle keyup
+                OnKeyUp(keyCode);
+                break;
+        }
+    }
+
     bool GameLoop::poll_events()
     {
         SDL_Event event;
@@ -80,21 +96,7 @@ namespace GameEngine
                 case SDL_KEYDOWN:
                 case SDL_KEYUP:
                 {
-                    // don't handle repeated events (pressed-and-held keys)
-                    if (event.key.repeat) break;
-                    const auto keyCode = SdlScancodeToKeyCodes(event.key.keysym.scancode);
-                    // don't handle unsupported keys
-                    if (keyCode == KeyCodes::UNSUPPORTED) break;
-                    switch (event.type) {
-                        case SDL_KEYDOWN:
-                            // handle keydown
-                            OnKeyDown(keyCode);
-                            break;
-                        case SDL_KEYUP:
-                            // handle keyup
-                            OnKeyUp(keyCode);
-                            break;
-                    }
+                    handle_key_events(event);
                 }
             }
         }
