@@ -38,6 +38,7 @@ namespace GameEngine {
         std::shared_ptr<T> GetComponent() const {
             return std::dynamic_pointer_cast<T>(GetComponent(ComponentTypes<T>::type));
         }
+
         std::shared_ptr<TransformComponent> GetTransform() const;
         std::shared_ptr<RendererComponent> GetRenderer() const;
         std::shared_ptr<TextureComponent> GetTexture() const;

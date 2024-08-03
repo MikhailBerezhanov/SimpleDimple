@@ -9,9 +9,6 @@
 #include "GameObject.h"
 #include "GameLoop.h"
 
-#include "TransformComponent.h"
-#include "RendererComponent.h"
-
 using namespace GameEngine;
 
 
@@ -39,9 +36,9 @@ public:
 
         LOG_DEBUG("Awake() called");
         // initialize members
-        m_renderer = GetRenderer();
-        m_texture = GetTexture();
-        m_transform = GetTransform();
+        m_renderer = GetComponent<RendererComponent>();
+        m_texture = GetComponent<TextureComponent>();
+        m_transform = GetComponent<TransformComponent>();
 
         // set transform size according to texture's initial size
         m_transform->Resize(m_texture->GetSize());
@@ -133,7 +130,6 @@ int main(int argc, char *argv[])
     const LoggerInitializer loggerInitialer(LogLevel::DEBUG);
     const auto winSize = Size2D{1000, 1000};
     const int player_speed = 5;
-
     try
     {
         AddLogHandler(CreateStdoutLogChannel());
