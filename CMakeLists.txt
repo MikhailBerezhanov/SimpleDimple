@@ -70,14 +70,15 @@ target_compile_definitions(${EXEC_NAME} PRIVATE
     ${DEPENDENCY_DEFINITIONS} 
 )
 
+# Building parameters across project
+set(PROJECT_INCLUDE_DIR ${INCLUDE_DIR} ${DEPENDENCY_INCLUDE_DIRS})
+set(PROJECT_LINK_LIBS ${UNITS_LIB_NAME} ${DEPENDENCY_LIBS})
+
 # Add include dirs
-include_directories(${DEPENDENCY_INCLUDE_DIRS} ${INCLUDE_DIR})
+include_directories(${PROJECT_INCLUDE_DIR})
 
 # Link libs (ZLIB after LIBZIP)
-target_link_libraries(${EXEC_NAME} 
-    ${UNITS_LIB_NAME}
-    ${DEPENDENCY_LIBS}
-)
+target_link_libraries(${EXEC_NAME} ${PROJECT_LINK_LIBS})
 
 # set rpath for executable relative to $ORIGIN (the executable location)
 # Linux-only, ignored for windows
@@ -85,24 +86,19 @@ set_target_properties(${EXEC_NAME} PROPERTIES
     INSTALL_RPATH "$ORIGIN" 
     BUILD_WITH_INSTALL_RPATH FALSE)
 
-# No testing for Windows version as there's no way we can run .exe in linux container
+# No testing for Windows version 
 if (ENABLE_GTESTS)
     # Enable tests
     enable_testing()
-    # Specify include path for tests
-    set(GTEST_INCLUDE_DIR 
-        ${DEPENDENCY_INCLUDE_DIRS} 
-        ${INCLUDE_DIR}
-    )
-    # Specify libs to link with
-    set(GTEST_LINK_LIBS ${DEPENDENCY_LIBS} ${UNITS_LIB_NAME})
     # Do not automatically install gtest
     set(INSTALL_GTEST OFF)
     # Add subdir with tests and pass above variables
     add_subdirectory(${TESTS_DIR}/utest)
 endif()
 
+if (ENABLE_EXPERIMENTS)
+    add_subdirectory(${TESTS_DIR}/experiments)
+endif()
+
 # Include installation rules
 include(${MODULES_DIR}/InstallRules.cmake)
-
-
