@@ -1,6 +1,6 @@
 # These vars need to be provided for tests:
-# GTEST_INCLUDE_DIR
-# GTEST_LINK_LIBS
+# PROJECT_INCLUDE_DIR
+# PROJECT_LINK_LIBS
 
 # set utest exe name and test name
 set(TEST_EXE "utest")
@@ -18,7 +18,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 # Specify sources for tests
-set(GTEST_SOURCES
+set(TEST_SOURCES
     TestLogger.cpp
     TestErrorHandling.cpp
     TestGameObject.cpp
@@ -27,13 +27,13 @@ set(GTEST_SOURCES
 )
 
 # Add test sources to executable
-add_executable(${TEST_EXE} ${GTEST_SOURCES} test_main.cpp)
+add_executable(${TEST_EXE} ${TEST_SOURCES} test_main.cpp)
 
 # Include .h files location
-target_include_directories(${TEST_EXE} PRIVATE ${GTEST_INCLUDE_DIR})
+target_include_directories(${TEST_EXE} PRIVATE ${PROJECT_INCLUDE_DIR})
 
 # Link libs
-target_link_libraries(${TEST_EXE} ${GTEST_LINK_LIBS})
+target_link_libraries(${TEST_EXE} ${PROJECT_LINK_LIBS})
 
 # Link gtest libs to test exe
 target_link_libraries(
