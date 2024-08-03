@@ -21,7 +21,7 @@ class DemoGameObject : public GameObject, public IInputEventSubscriber
 {
 private:
     Size2D m_boundaries = {};
-    const int m_speed = 5;
+    int m_speed = 0;
     int m_direction_x = 0;
     int m_direction_y = 0;
     // components
@@ -30,10 +30,11 @@ private:
     std::shared_ptr<TransformComponent> m_transform = nullptr;
 public:
     using GameObject::GameObject;
-    DemoGameObject(std::string name, const Size2D &boundaries)
-        : GameObject(std::move(name))
+    DemoGameObject(const std::string &name, const Size2D &boundaries, int speed)
+        : GameObject(name)
         {
             m_boundaries = boundaries;
+            m_speed = speed;
         }
 
     void Awake() override {
@@ -133,6 +134,7 @@ int main(int argc, char *argv[])
 {
     const LoggerInitializer loggerInitialer(LogLevel::DEBUG);
     const auto winSize = Size2D{1000, 1000};
+    const int player_speed = 5;
 
     try
     {
@@ -149,7 +151,7 @@ int main(int argc, char *argv[])
         const auto logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
         // create game object and set properties
-        const auto go = std::make_shared<DemoGameObject>("logo", winSize);
+        const auto go = std::make_shared<DemoGameObject>("logo", winSize, player_speed);
         go->AddComponent(GameObjectComponentType::TRANSFORM);
         go->AddComponent(GameObjectComponentType::RENDERER, mainWindow->GetRenderContext());
         go->AddComponent(GameObjectComponentType::TEXTURE, logo_file);
