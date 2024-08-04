@@ -32,16 +32,22 @@ ENV ZLIB_PREFIX_LINUX=/opt/zlib/linux
 ENV ZLIB_PREFIX_WINDOWS=/opt/zlib/windows
 ENV LIBZIP_PREFIX_LINUX=/opt/libzip/linux
 ENV LIBZIP_PREFIX_WINDOWS=/opt/libzip/windows
+ENV FREETYPE_PREFIX_LINUX=/opt/freetype/linux
+ENV FREETYPE_PREFIX_WINDOWS=/opt/freetype/windows
 
 ARG SDL_SRC=/tmp/sdl_sources
 ARG SDL_IMAGE_SRC=/tmp/sdl_image_sources
 ARG ZLIB_SRC=/tmp/zlib_sources
 ARG LIBZIP_SRC=/tmp/libzip_sources
+ARG FREETYPE_SRC=/tmp/freetype_sources
+ARG SDL_TTF_SRC=/tmp/sdl_ttf_sources
 
 ARG SDL_ARCHIVE=/tmp/SDL.tar.gz
 ARG SDL_IMAGE_ARCHIVE=/tmp/SDL_Image.tar.gz
 ARG ZLIB_ARCHIVE=/tmp/ZLIB.tar.gz
 ARG LIBZIP_ARCHIVE=/tmp/LIBZIP.tar.gz
+ARG FREETYPE_ARCHIVE=/tmp/FREETYPE.tar.gz
+ARG SDL_TTF_ARCHIVE=/tmp/SDL_TTF.tar.gz
 
 # SDL lib
 ADD https://github.com/libsdl-org/SDL/archive/refs/tags/release-2.30.4.tar.gz ${SDL_ARCHIVE}
@@ -117,6 +123,27 @@ RUN mkdir -p ${LIBZIP_PREFIX_LINUX} && \
     cmake --build . --target install && \
     rm -rf ./* && \
     cd / && rm -rf ${LIBZIP_SRC}
+
+ADD https://github.com/libsdl-org/SDL_ttf/archive/refs/tags/release-2.22.0.tar.gz ${SDL_TTF_ARCHIVE}
+ADD https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.gz ${FREETYPE_ARCHIVE}
+RUN mkdir -p ${SDL_PREFIX_LINUX} && \
+    mkdir -p ${SDL_PREFIX_WINDOWS} && \
+    mkdir -p ${SDL_TTF_SRC} && \
+    tar -xzf ${SDL_TTF_ARCHIVE} -C ${SDL_TTF_SRC}/ --strip-components 1 && \
+    tar -xzf ${FREETYPE_ARCHIVE} -C ${SDL_TTF_SRC}/external/freetype --strip-components 1 && \
+    rm ${SDL_TTF_ARCHIVE} && \
+    rm ${FREETYPE_ARCHIVE} && \
+    mkdir -p ${SDL_TTF_SRC}/build && \
+    cd ${SDL_TTF_SRC}/build && \
+    cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_LINUX} -DSDL2TTF_VENDORED=true && \
+    cmake --build . --config Release && \
+    cmake --build . --target install && \
+    rm -rf ./* && \
+    cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_WINDOWS} -DSDL2TTF_VENDORED=true && \
+    cmake --build . --config Release && \
+    cmake --build . --target install && \
+    rm -rf ./* && \
+    cd / && rm -rf ${SDL_TTF_SRC}
 
 # Start from a Bash prompt
 CMD [ "/bin/bash" ]
