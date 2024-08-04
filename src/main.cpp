@@ -1,8 +1,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "sdl.h"
-
 #include "config.h"
 
 #include "Logger.h"
@@ -20,14 +18,14 @@ using namespace GameEngine;
 class DemoGameObject : public GameObject, public IInputEventSubscriber
 {
 private:
-    Size2D m_boundaries = {};
     int m_speed = 0;
     int m_direction_x = 0;
     int m_direction_y = 0;
+    Size2D m_boundaries;
     // components
-    std::shared_ptr<RendererComponent> m_renderer = nullptr;
-    std::shared_ptr<TextureComponent> m_texture = nullptr;
-    std::shared_ptr<TransformComponent> m_transform = nullptr;
+    std::shared_ptr<RendererComponent> m_renderer;
+    std::shared_ptr<TextureComponent> m_texture;
+    std::shared_ptr<TransformComponent> m_transform;
 public:
     using GameObject::GameObject;
     DemoGameObject(const std::string &name, const Size2D &boundaries, int speed)
@@ -151,15 +149,15 @@ int main(int argc, char *argv[])
         const auto logo_file = std::string(ASSETS_IMAGES_DIR) + "/sdl_logo.bmp";
 
         // create game object and set properties
-        const auto go = std::make_shared<DemoGameObject>("logo", winSize, player_speed);
-        go->AddComponent(GameObjectComponentType::TRANSFORM);
-        go->AddComponent(GameObjectComponentType::RENDERER, mainWindow->GetRenderContext());
-        go->AddComponent(GameObjectComponentType::TEXTURE, logo_file);
+        const auto player = std::make_shared<DemoGameObject>("logo", winSize, player_speed);
+        player->AddComponent(GameObjectComponentType::TRANSFORM);
+        player->AddComponent(GameObjectComponentType::RENDERER, mainWindow->GetRenderContext());
+        player->AddComponent(GameObjectComponentType::TEXTURE, logo_file);
 
         // add object to window and make active
-        mainWindow->AppendObject(go, true);
+        mainWindow->AppendObject(player, true);
 
-        gameLoop->SubscribeToInputEvents(go);
+        gameLoop->SubscribeToInputEvents(player);
         gameLoop->SetWindow(mainWindow);
         gameLoop->Run();
     }

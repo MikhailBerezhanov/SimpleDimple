@@ -88,22 +88,6 @@ namespace GameEngine {
         return std::dynamic_pointer_cast<TextureComponent>(GetComponent(GameObjectComponentType::TEXTURE));
     }
 
-    void GameObject::OnUpdate() {
-        // do nothing, should be overridden in derived classes
-    }
-
-    void GameObject::Awake() {
-        // do nothing, should be overridden in derived classes
-    }
-
-    void GameObject::OnEnable() {
-        // do nothing, should be overridden in derived classes
-    }
-
-    void GameObject::OnDisable() {
-        // do nothing, should be overridden in derived classes
-    }
-
     void GameObject::Update() {
         // call OnUpdate()
         this->OnUpdate();
