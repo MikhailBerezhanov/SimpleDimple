@@ -16,7 +16,7 @@ namespace GameEngine {
     void GameObject::AddComponent(GameObjectComponentType type, std::any arg) {
 
         EXPECT_MSG(m_components.find(type) == m_components.end(),
-                   GameObjectComponentNames[static_cast<unsigned int>(type)] << " already exists");
+                   static_cast<unsigned int>(type) << " already exists");
 
         switch (type) {
 
