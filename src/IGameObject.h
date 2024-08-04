@@ -2,6 +2,7 @@
 #pragma once
 
 #include "IGameObjectComponent.h"
+#include "GameObjectComponentTypes.h"
 
 #include <any>
 #include <memory>
