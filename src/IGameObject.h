@@ -18,9 +18,9 @@ namespace GameEngine {
         //todo: AddChild()
         virtual void OnUpdate() = 0;
         virtual void Update() = 0;
-        //todo: OnKeyDown()
-        //todo: OnKeyUp()
-//        virtual std::unique_ptr<IGameObject> Clone() const = 0;
+        virtual void Awake() = 0; // call once when instantiated
+        virtual void OnEnable() = 0;
+        virtual void OnDisable() = 0;
     };
 
 } // GameEngine
