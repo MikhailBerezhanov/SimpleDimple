@@ -76,18 +76,6 @@ namespace GameEngine {
         return m_components.at(type);
     }
 
-    std::shared_ptr<TransformComponent> GameObject::GetTransform() const {
-        return std::dynamic_pointer_cast<TransformComponent>(GetComponent(GameObjectComponentType::TRANSFORM));
-    }
-
-    std::shared_ptr<RendererComponent> GameObject::GetRenderer() const {
-        return std::dynamic_pointer_cast<RendererComponent>(GetComponent(GameObjectComponentType::RENDERER));
-    }
-
-    std::shared_ptr<TextureComponent> GameObject::GetTexture() const {
-        return std::dynamic_pointer_cast<TextureComponent>(GetComponent(GameObjectComponentType::TEXTURE));
-    }
-
     void GameObject::Update() {
         // call OnUpdate()
         this->OnUpdate();

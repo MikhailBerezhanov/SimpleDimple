@@ -11,7 +11,6 @@
 
 using namespace GameEngine;
 
-
 class DemoGameObject : public GameObject, public IInputEventSubscriber
 {
 private:

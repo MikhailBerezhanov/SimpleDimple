@@ -27,7 +27,6 @@ namespace GameEngine
         friend class RendererComponent;
         friend class GameObject;
     public:
-        //todo: Clone()
         TextureComponent(const TextureComponent &) = delete;
         TextureComponent& operator=(const TextureComponent&) = delete;
         TextureComponent(TextureComponent &&) = delete;

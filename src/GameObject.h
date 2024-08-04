@@ -28,7 +28,7 @@ namespace GameEngine {
         GameObject(GameObject &&) = delete;
         GameObject &operator=(GameObject &&) = delete;
         ~GameObject() override = default;
-        // todo: Clone()
+
         void AddComponent(GameObjectComponentType type) final; // cannot be overridden
         void AddComponent(GameObjectComponentType type, std::any arg) final; // cannot be overridden
         std::shared_ptr<IGameObjectComponent> GetComponent(GameObjectComponentType type) const override;

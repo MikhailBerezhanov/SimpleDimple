@@ -37,7 +37,7 @@ namespace GameEngine {
         TransformComponent(TransformComponent &&) = delete;
         TransformComponent &operator=(TransformComponent &&) = delete;
         ~TransformComponent() = default;
-        //todo: Clone()
+
         void SetPosition(const Pos2D &pos);
         void Move(const Pos2D &pos); // similar to SetPosition() but with relative coordinates
         Pos2D GetPosition() const;
