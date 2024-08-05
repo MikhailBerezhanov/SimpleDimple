@@ -29,7 +29,7 @@ namespace GameEngine {
         TextureMatrixComponent &operator=(TextureMatrixComponent&&) = delete;
         ~TextureMatrixComponent() = default;
 
-        void AddRow(std::vector<TexturePtr> row);
+        void AddRow(std::vector<TexturePtr> &&row);
         void Clear();
         size_t GetRowsNum() const;
         std::span<const TexturePtr> GetRow(size_t row) const;

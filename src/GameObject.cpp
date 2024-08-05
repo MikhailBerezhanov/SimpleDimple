@@ -67,7 +67,7 @@ namespace GameEngine {
             for (const auto &filename : row) {
                 tex_row.emplace_back(new TextureComponent(renderer->GetRenderContext(), filename));
             }
-            texture_matrix->AddRow(tex_row);
+            texture_matrix->AddRow(std::move(tex_row));
         }
         m_components[GameObjectComponentType::TEXTURE_MATRIX] = texture_matrix;
     }
