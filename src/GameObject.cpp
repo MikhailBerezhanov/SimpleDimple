@@ -60,16 +60,17 @@ namespace GameEngine {
         // check if Renderer exists
         const auto renderer = GetComponent<const RendererComponent>();
         const auto tex_files = std::any_cast<tex_files_list_type>(arg);
-        auto texture_matrix = std::shared_ptr<TextureMatrixComponent>(new TextureMatrixComponent());
         // populate with textures
+        std::vector<std::vector<std::shared_ptr<TextureComponent>>> rows;
         for (const auto &row : tex_files) {
             std::vector<std::shared_ptr<TextureComponent>> tex_row;
             for (const auto &filename : row) {
                 tex_row.emplace_back(new TextureComponent(renderer->GetRenderContext(), filename));
             }
-            texture_matrix->AddRow(std::move(tex_row));
+            rows.emplace_back(std::move(tex_row));
         }
-        m_components[GameObjectComponentType::TEXTURE_MATRIX] = texture_matrix;
+        m_components[GameObjectComponentType::TEXTURE_MATRIX] =
+                std::shared_ptr<TextureMatrixComponent>(new TextureMatrixComponent(std::move(rows)));
     }
 
     void GameObject::AddComponent(GameObjectComponentType type, std::any arg) {

@@ -5,11 +5,11 @@ namespace GameEngine {
 
     TextureMatrixComponent::TextureMatrixComponent(std::vector<std::vector<TexturePtr>> &&rows) {
         for(auto & row : rows) {
-            AddRow(std::move(row));
+            add_row(std::move(row));
         }
     }
 
-    void TextureMatrixComponent::AddRow(std::vector<TexturePtr> &&row) {
+    void TextureMatrixComponent::add_row(std::vector<TexturePtr> &&row) {
         if (m_rowMap.empty()) {
             m_rowMap.emplace_back(RowIdxLen{0, row.size()});
         } else {
@@ -19,11 +19,6 @@ namespace GameEngine {
         m_textureMatrix.insert(m_textureMatrix.end(),
                                std::make_move_iterator(row.begin()),
                                std::make_move_iterator(row.end()));
-    }
-
-    void TextureMatrixComponent::Clear() {
-        m_textureMatrix.clear();
-        m_rowMap.clear();
     }
 
     size_t TextureMatrixComponent::GetRowsNum() const {
