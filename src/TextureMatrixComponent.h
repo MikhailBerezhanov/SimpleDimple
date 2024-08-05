@@ -21,12 +21,17 @@ namespace GameEngine {
         std::vector<RowIdxLen> m_rowMap;
 
         TextureMatrixComponent();
+        friend class GameObject;
     public:
 
         void AddRow(std::vector<TexturePtr> row);
         void Clear();
         size_t GetRowsNum() const;
         std::span<const TexturePtr> GetRow(size_t row) const;
+
+        ~TextureMatrixComponent() = default;
+
+        void OnUpdate() override {};
     };
 
 } // GameEngine

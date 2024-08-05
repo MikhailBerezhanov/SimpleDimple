@@ -35,5 +35,4 @@ namespace GameEngine {
         return {m_textureMatrix.data() + row.start, row.len};
     }
 
-
 } // GameEngine

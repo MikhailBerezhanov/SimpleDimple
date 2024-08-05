@@ -38,7 +38,7 @@ namespace GameEngine
         void SetAlphaMode(uint8_t alpha) const;
         void SetPixelData(const std::vector<uint8_t> &pixelData) const;
 
-        void OnUpdate() override;
+        void OnUpdate() override {};
     };
 
 };

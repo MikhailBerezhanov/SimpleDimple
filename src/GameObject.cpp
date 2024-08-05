@@ -10,7 +10,7 @@ namespace GameEngine {
         {}
 
     void GameObject::AddComponent(GameObjectComponentType type) {
-        AddComponent(type, None{});
+        AddComponent(type, std::any()); // call with default no-value
     }
 
     void GameObject::AddComponent(GameObjectComponentType type, std::any arg) {
@@ -21,10 +21,10 @@ namespace GameEngine {
         switch (type) {
 
             case GameObjectComponentType::TRANSFORM: {
-                EXPECT_MSG(arg.type() == typeid(None) || arg.type() == typeid(Size2D),
+                EXPECT_MSG(!arg.has_value() || arg.type() == typeid(Size2D),
                            "Invalid argument type");
                 std::shared_ptr<TransformComponent> new_transform;
-                if (arg.type() != typeid(None)) {
+                if (arg.has_value()) {
                     const auto pos = std::any_cast<Size2D>(arg);
                     new_transform.reset(new TransformComponent(pos));
                 }
@@ -38,23 +38,17 @@ namespace GameEngine {
                 EXPECT_MSG(arg.type() == typeid(RenderContext),
                            "Invalid argument type");
                 // check if Transform exists
-                const auto &transform_it = m_components.find(GameObjectComponentType::TRANSFORM);
-                EXPECT_MSG(transform_it != m_components.end(),
-                           "Renderer requires Transform component");
+                const auto transform = GetComponent<const TransformComponent>();
                 const auto context = std::any_cast<RenderContext>(arg);
-                const auto transform = std::dynamic_pointer_cast<const TransformComponent>(transform_it->second);
                 m_components[type] = std::shared_ptr<RendererComponent>(new RendererComponent(context, transform));
                 break;
             }
             case GameObjectComponentType::TEXTURE: {
                 EXPECT_MSG(arg.type() == typeid(std::string) || arg.type() == typeid(Size2D),
                            "Invalid argument type");
-                // check if Renderer exists
-                const auto &renderer_it = m_components.find(GameObjectComponentType::RENDERER);
-                EXPECT_MSG(renderer_it != m_components.end(),
-                           "Texture requires Renderer component");
                 std::shared_ptr<TextureComponent> new_texture;
-                const auto renderer = std::dynamic_pointer_cast<const RendererComponent>(renderer_it->second);
+                // check if Renderer exists
+                const auto renderer = GetComponent<const RendererComponent>();
                 const auto context = renderer->GetRenderContext();
                 if (arg.type() == typeid(std::string)) {
                     const auto name = std::any_cast<std::string>(arg);
@@ -65,6 +59,18 @@ namespace GameEngine {
                 }
                 m_components[type] = new_texture;
                 break;
+            }
+            case GameObjectComponentType::TEXTURE_MATRIX: {
+                using tex_files_list_type = std::initializer_list<std::string>;
+                EXPECT_MSG(arg.type() == typeid(tex_files_list_type),
+                           "Invalid argument type");
+                // check if Renderer exists
+                const auto renderer = GetComponent<const RendererComponent>();
+                const auto context = renderer->GetRenderContext();
+                const auto tex_files = std::any_cast<tex_files_list_type>(arg);
+                auto texture_matrix = std::shared_ptr<TextureMatrixComponent>(new TextureMatrixComponent());
+                // populate with textures
+
             }
             default:
                 EXPECT_MSG(false, "No handler for component type " << static_cast<unsigned int>(type));

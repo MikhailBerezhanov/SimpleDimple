@@ -36,7 +36,12 @@ namespace GameEngine {
         /// template GetComponent
         template<typename T>
         std::shared_ptr<T> GetComponent() const {
-            return std::dynamic_pointer_cast<T>(GetComponent(ComponentTypes<T>::type));
+            return std::dynamic_pointer_cast<T>(
+                    GetComponent(
+                            // remove cv qualifiers to correctly find the type
+                            ComponentTypes<std::remove_cvref_t<T>>::type
+                            )
+                    );
         }
 
     };
