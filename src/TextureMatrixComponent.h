@@ -20,7 +20,7 @@ namespace GameEngine {
         std::vector<TexturePtr> m_textureMatrix;
         std::vector<RowIdxLen> m_rowMap;
 
-        TextureMatrixComponent();
+        TextureMatrixComponent() = default;
         friend class GameObject;
     public:
 
