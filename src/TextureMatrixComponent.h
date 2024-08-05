@@ -20,7 +20,7 @@ namespace GameEngine {
         std::vector<TexturePtr> m_textureMatrix;
         std::vector<RowIdxLen> m_rowMap;
 
-        explicit TextureMatrixComponent(std::vector<std::vector<TexturePtr>> && rows);
+        explicit TextureMatrixComponent(std::vector<std::vector<TexturePtr>> &&rows);
         void add_row(std::vector<TexturePtr> &&row);
         friend class GameObject;
     public:
@@ -32,7 +32,7 @@ namespace GameEngine {
 
         size_t GetRowsNum() const;
         std::span<const TexturePtr> GetRow(size_t row) const;
-        
+
         void OnUpdate() override {};
     };
 
