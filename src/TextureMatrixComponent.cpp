@@ -3,6 +3,12 @@
 
 namespace GameEngine {
 
+    TextureMatrixComponent::TextureMatrixComponent(std::vector<std::vector<TexturePtr>> &&rows) {
+        for(auto & row : rows) {
+            AddRow(std::move(row));
+        }
+    }
+
     void TextureMatrixComponent::AddRow(std::vector<TexturePtr> &&row) {
         if (m_rowMap.empty()) {
             m_rowMap.emplace_back(RowIdxLen{0, row.size()});

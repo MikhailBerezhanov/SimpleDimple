@@ -21,6 +21,7 @@ namespace GameEngine {
         std::vector<RowIdxLen> m_rowMap;
 
         TextureMatrixComponent() = default;
+        explicit TextureMatrixComponent(std::vector<std::vector<TexturePtr>> && rows);
         friend class GameObject;
     public:
         TextureMatrixComponent(const TextureMatrixComponent&) = delete;

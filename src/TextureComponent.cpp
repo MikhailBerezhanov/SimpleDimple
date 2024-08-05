@@ -13,7 +13,7 @@ namespace GameEngine {
         EXPECT_SDL(m_texture, "Unable to create texture");
     }
 
-    TextureComponent::SDLHandle::SDLHandle(SDL_Renderer *renderer, const GameEngine::Size2D &size)
+    TextureComponent::SDLHandle::SDLHandle(SDL_Renderer *renderer, const Size2D &size)
             : m_texture(
             SDL_CreateTexture(
                     renderer,
