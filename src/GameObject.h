@@ -16,6 +16,10 @@ namespace GameEngine {
         std::string m_name;
         std::map<GameObjectComponentType, ComponentPtr> m_components;
         void Update() final; // cannot be overridden
+        void add_transform(const std::any &arg);
+        void add_renderer(const std::any &arg);
+        void add_texture(const std::any &arg);
+        void add_texture_matrix(const std::any &arg);
     protected:
         void OnUpdate() override {};
         void Awake() override {};
