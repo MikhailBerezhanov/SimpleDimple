@@ -23,14 +23,16 @@ namespace GameEngine {
         TextureMatrixComponent() = default;
         friend class GameObject;
     public:
+        TextureMatrixComponent(const TextureMatrixComponent&) = delete;
+        TextureMatrixComponent &operator=(const TextureMatrixComponent&) = delete;
+        TextureMatrixComponent(TextureMatrixComponent&&) = delete;
+        TextureMatrixComponent &operator=(TextureMatrixComponent&&) = delete;
+        ~TextureMatrixComponent() = default;
 
         void AddRow(std::vector<TexturePtr> row);
         void Clear();
         size_t GetRowsNum() const;
         std::span<const TexturePtr> GetRow(size_t row) const;
-
-        ~TextureMatrixComponent() = default;
-
         void OnUpdate() override {};
     };
 
