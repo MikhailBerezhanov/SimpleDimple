@@ -159,10 +159,12 @@ int main(int argc, char *argv[])
     catch (const std::exception &e)
     {
         HANDLE_EXCEPTION();
+        return 1;
     }
     catch (...)
     {
         std::cerr << "unexpected exception occurred" << std::endl;
+        return 1;
     }
 
     return 0;

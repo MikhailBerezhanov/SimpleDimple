@@ -27,3 +27,10 @@ endif()
 install(DIRECTORY ${ASSETS_TO_INSTALL_DIR}/ 
     DESTINATION ${INSTALL_LOCATION_ASSETS}
 )
+
+# Installation of experimental binaries
+if(ENABLE_EXPERIMENTS)
+    install(TARGETS ${EXPERIMENT_TARGETS_LIST}
+            DESTINATION ${INSTALL_LOCATION_BIN}
+    )
+endif()
