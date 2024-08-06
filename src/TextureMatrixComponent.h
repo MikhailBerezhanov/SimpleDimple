@@ -32,6 +32,7 @@ namespace GameEngine {
 
         size_t GetRowsNum() const;
         std::span<const TexturePtr> GetRow(size_t row) const;
+        const std::vector<TexturePtr> &GetSerializedMatrix() const;
 
         void OnUpdate() override {};
     };

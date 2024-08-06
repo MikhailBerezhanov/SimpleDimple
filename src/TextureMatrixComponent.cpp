@@ -32,4 +32,9 @@ namespace GameEngine {
         return {m_textureMatrix.data() + row.start, row.len};
     }
 
+    const std::vector<TextureMatrixComponent::TexturePtr> &
+            TextureMatrixComponent::GetSerializedMatrix() const {
+        return m_textureMatrix;
+    }
+
 } // GameEngine
