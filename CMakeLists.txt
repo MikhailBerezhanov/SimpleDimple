@@ -22,6 +22,7 @@ set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INSTALL_DIR ${CMAKE_SOURCE_DIR}/out)
 # Tests location
 set(TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
+set(EXPERIMENTS_DIR ${CMAKE_SOURCE_DIR}/test/experiments)
 # Assets to be installed location ( !ASSETS_DIR already reserved in RuntimeConfigs.cmake! )
 set(ASSETS_TO_INSTALL_DIR ${CMAKE_SOURCE_DIR}/assets)
 # Static linkage for stdlib to reduce dependencies
@@ -84,7 +85,8 @@ target_link_libraries(${EXEC_NAME} ${PROJECT_LINK_LIBS})
 # Linux-only, ignored for windows
 set_target_properties(${EXEC_NAME} PROPERTIES 
     INSTALL_RPATH "$ORIGIN" 
-    BUILD_WITH_INSTALL_RPATH FALSE)
+    BUILD_WITH_INSTALL_RPATH FALSE
+)
 
 # No testing for Windows version 
 if (ENABLE_GTESTS)
@@ -97,7 +99,7 @@ if (ENABLE_GTESTS)
 endif()
 
 if (ENABLE_EXPERIMENTS)
-    add_subdirectory(${TESTS_DIR}/experiments)
+    add_subdirectory(${EXPERIMENTS_DIR})
 endif()
 
 # Include installation rules
