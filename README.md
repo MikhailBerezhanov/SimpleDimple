@@ -85,3 +85,12 @@ xhost -local:docker
 #### Linkage:
 
 See PlatformDependencies.cmake
+
+#### Experiments
+
+To enable development experimental binaries :
+```
+cmake .. --preset linux -DENABLE_EXPERIMENTS=ON
+cmake --build Linux/ -t install
+```
+Note: experimental binaries has `*_exp` at the file name ending.
