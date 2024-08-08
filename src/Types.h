@@ -33,7 +33,5 @@ namespace GameEngine {
 
     using GameObjectId = size_t;
 
-    class None{};
-
 }
 

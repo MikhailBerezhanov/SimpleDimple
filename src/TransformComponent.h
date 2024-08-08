@@ -56,7 +56,7 @@ namespace GameEngine {
         bool IsFlippedVertically() const;
         bool IsFlippedHorizontally() const;
 
-        void OnUpdate() override;
+        void OnUpdate() override {};
 
     };
 
