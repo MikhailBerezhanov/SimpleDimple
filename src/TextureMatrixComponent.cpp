@@ -4,7 +4,7 @@
 namespace GameEngine {
 
     TextureMatrixComponent::TextureMatrixComponent(std::vector<std::vector<TexturePtr>> &&rows) {
-        for(auto & row : rows) {
+        for(auto && row : rows) {
             add_row(std::move(row));
         }
     }
