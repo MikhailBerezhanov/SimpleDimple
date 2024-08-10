@@ -16,7 +16,7 @@ namespace GameEngine {
 
     void RendererComponent::TextureHandle::set_texture_lines(unsigned int lines) {
         m_texture_lines = std::max(1u, lines);
-    }  
+    }
 
     void RendererComponent::TextureHandle::add_texture(const std::shared_ptr<TextureComponent> &tex) {
         m_textures_q.emplace(tex);
