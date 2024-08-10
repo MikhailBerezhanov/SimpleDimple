@@ -8,17 +8,18 @@
 
 namespace GameEngine {
 
-    template<typename COMPONENT,
-            typename = std::enable_if_t<
-                    // ensure COMPONENT is derived from IGameObjectComponent
-                    std::is_base_of_v<IGameObjectComponent, COMPONENT>>>
+    // ensure COMPONENT is derived from IGameObjectComponent
+    template<typename T>
+    concept COMPONENT = std::is_base_of_v<IGameObjectComponent, T>;
+
+    template<COMPONENT C>
     class ComponentMatrix : public IGameObjectComponent {
     private:
         struct RowIdxLen {
             size_t start = 0;
             size_t len = 0;
         };
-        using ComponentPtr = std::shared_ptr<COMPONENT>;
+        using ComponentPtr = std::shared_ptr<C>;
         std::vector<ComponentPtr> m_matrix;
         std::vector<RowIdxLen> m_rowMap;
 
