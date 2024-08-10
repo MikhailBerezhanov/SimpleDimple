@@ -263,8 +263,8 @@ namespace GameEngine {
         m_textureHdl.add_texture(tex);
     }
 
-    void RendererComponent::SetTextureRows(unsigned int lines) {
-        m_textureHdl.set_texture_lines(lines);
+    void RendererComponent::SetTextureRows(unsigned int rows) {
+        m_textureHdl.set_texture_lines(rows);
     }
 
     void RendererComponent::OnUpdate() {

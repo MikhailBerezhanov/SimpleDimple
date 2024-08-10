@@ -84,7 +84,7 @@ namespace GameEngine {
         void FillRects(const std::vector<Rect> &rects) const;
         RenderContext GetRenderContext() const;
         void AddTexture(const std::shared_ptr<TextureComponent> &tex);
-        void SetTextureRows(unsigned int lines);
+        void SetTextureRows(unsigned int rows);
 
         void OnUpdate() override;
     };
