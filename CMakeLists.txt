@@ -36,7 +36,6 @@ set(UNITS_SOURCES
     ${SOURCE_DIR}/RendererComponent.cpp
     ${SOURCE_DIR}/TransformComponent.cpp
     ${SOURCE_DIR}/GameObject.cpp
-    ${SOURCE_DIR}/TextureMatrixComponent.cpp
     ${SOURCE_DIR}/InputEventPublisher.cpp
     ${SOURCE_DIR}/GameLoop.cpp
 )

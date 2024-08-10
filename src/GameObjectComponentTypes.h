@@ -4,7 +4,7 @@
 #include "TransformComponent.h"
 #include "RendererComponent.h"
 #include "TextureComponent.h"
-#include "TextureMatrixComponent.h"
+#include "ComponentMatrix.h"
 
 namespace GameEngine {
 
@@ -37,6 +37,8 @@ namespace GameEngine {
         static constexpr GameObjectComponentType type = GameObjectComponentType::TEXTURE;
         static constexpr const char* name = "Texture";
     };
+
+    using TextureMatrixComponent = ComponentMatrix<TextureComponent>;
 
     template<>
     struct ComponentTypes<TextureMatrixComponent> {
