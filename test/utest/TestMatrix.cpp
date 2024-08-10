@@ -72,12 +72,11 @@ MATRIX_TEST(CheckRows) {
 
 MATRIX_TEST(CheckSpan) {
     MatrixMock matrix(generate_dummies(3, 5));
-    ASSERT_EQ(matrix.GetRow(0)[0]->m_int, 0);
-    ASSERT_EQ(matrix.GetRow(0)[4]->m_int, 4);
-    ASSERT_EQ(matrix.GetRow(1)[0]->m_int, 5);
-    ASSERT_EQ(matrix.GetRow(1)[4]->m_int, 9);
-    ASSERT_EQ(matrix.GetRow(2)[0]->m_int, 10);
-    ASSERT_EQ(matrix.GetRow(2)[4]->m_int, 14);
+    int cnt = 0;
+    for (int i = 0; i < 15; ++i) {
+        ASSERT_EQ(matrix.GetRow(i/5)[i%5]->m_int, cnt);
+        ++cnt;
+    }
 }
 
 MATRIX_TEST(CheckSerialized) {
