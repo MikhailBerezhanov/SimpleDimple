@@ -24,15 +24,17 @@ namespace GameEngine {
         std::vector<RowIdxLen> m_rowMap;
 
         void add_row(std::vector<ComponentPtr> &&row) {
-            if (m_rowMap.empty()) {
-                m_rowMap.emplace_back(RowIdxLen{0, row.size()});
-            } else {
-                const auto &prev_row = m_rowMap.back();
-                m_rowMap.emplace_back(RowIdxLen{prev_row.start + prev_row.len, row.size()});
+            if (!row.empty()) {
+                if (m_rowMap.empty()) {
+                    m_rowMap.emplace_back(RowIdxLen{0, row.size()});
+                } else {
+                    const auto &prev_row = m_rowMap.back();
+                    m_rowMap.emplace_back(RowIdxLen{prev_row.start + prev_row.len, row.size()});
+                }
+                m_matrix.insert(m_matrix.end(),
+                                std::make_move_iterator(row.begin()),
+                                std::make_move_iterator(row.end()));
             }
-            m_matrix.insert(m_matrix.end(),
-                                   std::make_move_iterator(row.begin()),
-                                   std::make_move_iterator(row.end()));
         }
     protected:
         explicit ComponentMatrix(std::vector<std::vector<ComponentPtr>> &&matrix) {
