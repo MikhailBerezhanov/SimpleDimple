@@ -1,7 +1,3 @@
-#
-#   This dockerfile is to be used only to create a working image with SDL support
-#
-
 FROM ubuntu:jammy
 
 #### Dependencies ####
@@ -19,7 +15,8 @@ RUN apt-get update \
     libx11-dev \
     xorg-dev \
     libgl1-mesa-glx \
-    libglib2.0-0 
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 # CMake
 ADD https://github.com/Kitware/CMake/releases/download/v3.30.0/cmake-3.30.0-linux-x86_64.tar.gz /tmp
