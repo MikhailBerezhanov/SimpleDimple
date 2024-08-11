@@ -104,3 +104,6 @@ endif()
 
 # Include installation rules
 include(${MODULES_DIR}/InstallRules.cmake)
+
+# Disable caching of option
+unset(ENABLE_EXPERIMENTS CACHE)
