@@ -15,8 +15,8 @@ struct Dummy : public IGameObjectComponent {
     void OnUpdate() override {}
 };
 
-struct MatrixMock : public ComponentMatrix<Dummy> {
-    explicit MatrixMock(std::vector<std::vector<std::shared_ptr<Dummy>>> && vec)
+struct TestMatrix : public ComponentMatrix<Dummy> {
+    explicit TestMatrix(std::vector<std::vector<std::shared_ptr<Dummy>>> && vec)
         : ComponentMatrix<Dummy>(std::move(vec))
     {}
 };
@@ -36,7 +36,7 @@ auto generate_dummies(int rows, int cols) {
 }
 
 MATRIX_TEST(CheckIgnoreEmpty) {
-    MatrixMock matrix({
+    TestMatrix matrix({
         {},
         {std::make_shared<Dummy>()},
         {}
@@ -46,7 +46,7 @@ MATRIX_TEST(CheckIgnoreEmpty) {
 
 MATRIX_TEST(CheckRange) {
     auto d = std::make_shared<Dummy>();
-    MatrixMock matrix({
+    TestMatrix matrix({
         {d},
         {d}
     });
@@ -57,7 +57,7 @@ MATRIX_TEST(CheckRange) {
 
 MATRIX_TEST(CheckRows) {
     auto d = std::make_shared<Dummy>();
-    MatrixMock matrix({
+    TestMatrix matrix({
         {d, d, d},
         {d, d},
         {d, d, d, d},
@@ -71,7 +71,7 @@ MATRIX_TEST(CheckRows) {
 }
 
 MATRIX_TEST(CheckSpan) {
-    MatrixMock matrix(generate_dummies(3, 5));
+    TestMatrix matrix(generate_dummies(3, 5));
     int cnt = 0;
     for (int i = 0; i < 15; ++i) {
         ASSERT_EQ(matrix.GetRow(i/5)[i%5]->m_int, cnt);
@@ -80,7 +80,7 @@ MATRIX_TEST(CheckSpan) {
 }
 
 MATRIX_TEST(CheckSerialized) {
-    MatrixMock matrix(generate_dummies(3, 5));
+    TestMatrix matrix(generate_dummies(3, 5));
     auto serialized = matrix.GetSerializedMatrix();
     int cnt = 0;
     for (const auto & d : serialized) {
