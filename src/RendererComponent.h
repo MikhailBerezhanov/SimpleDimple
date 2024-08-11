@@ -49,10 +49,13 @@ namespace GameEngine {
             unsigned int m_line_idx = 0;
             unsigned int m_tex_in_line_idx = 0;
 
-            // todo: set_texture_lines()
+            Pos2D m_offset;
+            int m_x_carry = 0;
+
+            void set_texture_lines(unsigned int lines);
             void add_texture(const std::shared_ptr<TextureComponent> &tex);
             void calculate_texture_traits(const SDL_Rect *main_rect); // call once
-            TexRect get_texture_and_rect(const SDL_Rect *main_rect); // call for each texture
+            TexRect get_texture_and_rect(); // call for each texture
             friend class RendererComponent;
         };
         SDLHandle m_sdlHdl;
@@ -81,6 +84,7 @@ namespace GameEngine {
         void FillRects(const std::vector<Rect> &rects) const;
         RenderContext GetRenderContext() const;
         void AddTexture(const std::shared_ptr<TextureComponent> &tex);
+        void SetTextureRows(unsigned int rows);
 
         void OnUpdate() override;
     };

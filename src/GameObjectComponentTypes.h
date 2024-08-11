@@ -4,6 +4,7 @@
 #include "TransformComponent.h"
 #include "RendererComponent.h"
 #include "TextureComponent.h"
+#include "ComponentMatrix.h"
 
 namespace GameEngine {
 
@@ -12,7 +13,8 @@ namespace GameEngine {
     enum class GameObjectComponentType : unsigned int {
         TRANSFORM,
         RENDERER,
-        TEXTURE
+        TEXTURE,
+        TEXTURE_MATRIX
     };
 
     template<typename T>
@@ -34,6 +36,14 @@ namespace GameEngine {
     struct ComponentTypes<TextureComponent> {
         static constexpr GameObjectComponentType type = GameObjectComponentType::TEXTURE;
         static constexpr const char* name = "Texture";
+    };
+
+    using TextureMatrixComponent = ComponentMatrix<TextureComponent>;
+
+    template<>
+    struct ComponentTypes<TextureMatrixComponent> {
+        static constexpr GameObjectComponentType type = GameObjectComponentType::TEXTURE_MATRIX;
+        static constexpr const char* name = "Texture Matrix";
     };
 
 
