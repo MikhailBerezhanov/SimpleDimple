@@ -9,6 +9,11 @@ https://hub.docker.com/repository/docker/clownmik/sdl2_builder/general
 docker pull clownmik/sdl2_builder
 ```
 
+Start development container under current user:
+```
+docker run -it --rm --user $(id -u):$(id -g) -v $(pwd):/workspace --workdir /workspace clownmik/sdl2_builder
+```
+
 ### Building with terminal
 Prepare build directory
 ```
