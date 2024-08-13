@@ -30,10 +30,14 @@ jobs:
           tags: sdl-test-image:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+          load: true  # Ensure the image is loaded into the Docker daemon
 
 #      - name: Build Docker image
 #        run: |
 #          docker build -t sdl-test-image .
+
+      - name: Verify Docker Image Exists
+        run: docker images sdl-test-image:latest
 
       - name: Build and test
         run: |
