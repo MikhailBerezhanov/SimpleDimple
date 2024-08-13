@@ -2,7 +2,20 @@
 
 # An attempt to reproduce VSCode's Dev Containers extension behaviour
 
+# Cleanup function to remove docker from X11 list when finished
+cleanup() {
+  xhost -local:docker > /dev/null
+}
+
+# Invoke cleanup whenever script exits
+trap cleanup EXIT
+
 set -e
+
+if [[ "./$(basename "$0")" != "$0" ]]; then
+  echo "This script shouldn't be invoked from outside its location"
+  exit 1
+fi
 
 # Container name
 CONTAINER="sdl-container"
