@@ -23,6 +23,7 @@ jobs:
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
+            --user $(id -u):$(id -g) \
             sdl-test-image \
             /bin/sh -c "
               mkdir -p build &&
