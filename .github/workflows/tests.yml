@@ -7,17 +7,23 @@ on: [push, pull_request]
 #    branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: clownmik/sdl2_builder:latest
+  build-and-test:
+    runs-on: ubuntu-latest  # This runner is used to build the Docker image
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Build Docker image
+        run: |
+          docker build -t sdl-test-image .
+
       - name: Build and test
         run: |
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          cmake --build .
+          docker run --rm sdl-test-image /bin/sh -c "
+          mkdir -p build &&
+          cd build &&
+          cmake .. -DCMAKE_BUILD_TYPE=Release &&
+          cmake --build . &&
           ctest --output-on-failure --extra-verbose
+          "
