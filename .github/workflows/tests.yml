@@ -1,0 +1,32 @@
+name: unit_tests
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t sdl-test-image .
+
+      - name: Build and test
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            --user $(id -u):$(id -g) \
+            sdl-test-image:latest \
+            /bin/sh -c "
+              mkdir -p build &&
+              cd build &&
+              cmake .. -DCMAKE_BUILD_TYPE=Release &&
+              cmake --build . &&
+              ctest --output-on-failure --extra-verbose
+            "
