@@ -1,7 +1,5 @@
 name: unit_tests
 
-#on: [push, pull_request]
-
 on:
   pull_request:
     branches: [ "main" ]
@@ -14,9 +12,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Build Docker image
-        run: |
-          docker build -t sdl-test-image .
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: sdl-test-image
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+#      - name: Build Docker image
+#        run: |
+#          docker build -t sdl-test-image .
 
       - name: Build and test
         run: |
