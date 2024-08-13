@@ -20,10 +20,14 @@ jobs:
 
       - name: Build and test
         run: |
-          docker run --rm sdl-test-image /bin/sh -c "
-          mkdir -p build &&
-          cd build &&
-          cmake .. -DCMAKE_BUILD_TYPE=Release &&
-          cmake --build . &&
-          ctest --output-on-failure --extra-verbose
-          "
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            sdl-test-image \
+            /bin/sh -c "
+              mkdir -p build &&
+              cd build &&
+              cmake .. -DCMAKE_BUILD_TYPE=Release &&
+              cmake --build . &&
+              ctest --output-on-failure --extra-verbose
+            "
