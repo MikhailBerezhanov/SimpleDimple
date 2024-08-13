@@ -1,14 +1,14 @@
 name: unit_tests
 
-on: [push, pull_request]
+#on: [push, pull_request]
 
-#on:
-#  pull_request:
-#    branches: [ "main" ]
+on:
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest  # This runner is used to build the Docker image
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
