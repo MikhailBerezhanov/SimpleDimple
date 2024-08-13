@@ -41,7 +41,7 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
             --user $(id -u):$(id -g) \
-            sdl-test-image \
+            sdl-test-image:latest \
             /bin/sh -c "
               mkdir -p build &&
               cd build &&
