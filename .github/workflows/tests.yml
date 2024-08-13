@@ -35,7 +35,6 @@ jobs:
 #      - name: Build Docker image
 #        run: |
 #          docker build -t sdl-test-image .
-
       - name: Verify Docker Image Exists
         run: docker images sdl-test-image:latest
 
