@@ -36,32 +36,29 @@ else()
     set(__SDL_DEFINITIONS _REENTRANT) 
 endif()
 
-set(__SDL_INCLUDE_DIR "${__SDL_PREFIX}/include")
-
-set(__ZLIB_LIB_DIR "${__ZLIB_PREFIX}/lib")
-set(__ZLIB_INCLUDE_DIR "${__ZLIB_PREFIX}/include")
-
-set(__LIBZIP_LIB_DIR "${__LIBZIP_PREFIX}/lib")
-set(__LIBZIP_INCLUDE_DIR "${__LIBZIP_PREFIX}/include")
-
-set(SDL_LIB_DIR "${__SDL_PREFIX}/lib")
-set(SDL_BIN_DIR "${__SDL_PREFIX}/bin")
-
 # Common function to find libraries
-function(find_libs OUTPUT_VAR LIB_NAMES LIB_PATH)
+function(find_libs LIB_VAR INC_PATH_VAR LIB_NAMES LIB_PREFIX)
     set(LIBS "")
+    # Look for libs
     foreach(LIB ${LIB_NAMES})
-        find_library(FOUND_LIB ${LIB} REQUIRED PATHS ${LIB_PATH} NO_DEFAULT_PATH)
+        find_library(FOUND_LIB ${LIB} REQUIRED PATHS "${LIB_PREFIX}/lib" NO_DEFAULT_PATH)
         list(APPEND LIBS "${FOUND_LIB}")
         unset(FOUND_LIB CACHE)
     endforeach()
-    set(${OUTPUT_VAR} ${LIBS} PARENT_SCOPE)
+    # Look for includes
+    set(INC_PATH "${LIB_PREFIX}/include")
+    if(NOT EXISTS "${INC_PATH}")
+        message(FATAL_ERROR "${INC_PATH} does not exist")
+    endif()
+    # Set parent vars
+    set(${LIB_VAR} ${LIBS} PARENT_SCOPE)
+    set(${INC_PATH_VAR} "${INC_PATH}" PARENT_SCOPE)
 endfunction()
 
-find_libs(__SDL_LIBS "${__SDL_LIB_NAMES}" "${SDL_LIB_DIR}")
+find_libs(__SDL_LIBS __SDL_INCLUDE_DIR "${__SDL_LIB_NAMES}" "${__SDL_PREFIX}")
 # Not used for now
-#find_libs(__ZLIB_LIBS "${__ZLIB_LIB_NAMES}" "${__ZLIB_LIB_DIR}")
-#find_libs(__LIBZIP_LIBS "${__LIBZIP_LIB_NAMES}" "${__LIBZIP_LIB_DIR}")
+#find_libs(__ZLIB_LIBS __ZLIB_INCLUDE_DIR "${__ZLIB_LIB_NAMES}" "${__ZLIB_PREFIX}")
+#find_libs(__LIBZIP_LIBS __LIBZIP_INCLUDE_DIR "${__LIBZIP_LIB_NAMES}" "${__LIBZIP_PREFIX}")
 
 # A full collection of libs
 set(DEPENDENCY_LIBS 
@@ -76,12 +73,16 @@ set(DEPENDENCY_LIBS
 set(DEPENDENCY_INCLUDE_DIRS
     ${__SDL_INCLUDE_DIR}
     ${__LIBZIP_INCLUDE_DIR}
+    ${__ZLIB_INCLUDE_DIR}
 )
 
 # A full list of compile definitions
 set(DEPENDENCY_DEFINITIONS
     ${__SDL_DEFINITIONS}
 )
+
+set(SDL_LIB_DIR "${__SDL_PREFIX}/lib")
+set(SDL_BIN_DIR "${__SDL_PREFIX}/bin")
 
 # Exported variables:
 # SDL_USED_VERSION
