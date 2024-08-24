@@ -9,7 +9,11 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     # From sdl2-config --libs
     # !PUT THESE BEFORE SDL2 LIBS!
     set(__SDL_EXTRA_LIBS "-lmingw32" "-mwindows")
-    set(__SDL_LIB_NAMES "${SDL_USED_VERSION}main" "${SDL_USED_VERSION}.dll" "${SDL_USED_VERSION}_image.dll")
+    set(__SDL_LIB_NAMES
+            "${SDL_USED_VERSION}main"
+            "${SDL_USED_VERSION}.dll"
+            "${SDL_USED_VERSION}_image.dll"
+            "${SDL_USED_VERSION}_ttf.dll")
     # need static pthread for mingw-posix
     set(__OTHER_LIBS "-static" "winpthread")
     set(__ZLIB_LIB_NAMES "zlibstatic")
@@ -22,15 +26,15 @@ else()
     set(__SDL_PREFIX "/opt/sdl/linux")
     set(__ZLIB_PREFIX "/opt/zlib/linux")
     set(__LIBZIP_PREFIX "/opt/libzip/linux")
-    set(__SDL_LIB_NAMES "${SDL_USED_VERSION}" "${SDL_USED_VERSION}_image") 
+    set(__SDL_LIB_NAMES
+            "${SDL_USED_VERSION}"
+            "${SDL_USED_VERSION}_image"
+            "${SDL_USED_VERSION}_ttf")
     set(__ZLIB_LIB_NAMES "libz.a")
     set(__LIBZIP_LIB_NAMES "zip")
     # From sdl2-config --cflags
     set(__SDL_DEFINITIONS _REENTRANT) 
 endif()
-
-set(SDL_LIB_DIR "${__SDL_PREFIX}/lib")
-set(SDL_BIN_DIR "${__SDL_PREFIX}/bin")
 
 set(__SDL_INCLUDE_DIR "${__SDL_PREFIX}/include")
 
@@ -42,9 +46,12 @@ set(__LIBZIP_INCLUDE_DIR "${__LIBZIP_PREFIX}/include")
 
 set(__SDL_LIBS "")
 
+set(SDL_LIB_DIR "${__SDL_PREFIX}/lib")
+set(SDL_BIN_DIR "${__SDL_PREFIX}/bin")
+
 # Collect all SDL libs
 foreach(X ${__SDL_LIB_NAMES})
-    find_library(__SDL_EL ${X} PATHS ${SDL_LIB_DIR} NO_DEFAULT_PATH)
+    find_library(__SDL_EL ${X} REQUIRED PATHS ${SDL_LIB_DIR} NO_DEFAULT_PATH)
     list(APPEND __SDL_LIBS "${__SDL_EL}")
     unset(__SDL_EL CACHE)
 endforeach()
