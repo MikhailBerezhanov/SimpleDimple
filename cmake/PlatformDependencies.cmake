@@ -46,9 +46,8 @@ function(find_libs LIB_VAR INC_PATH_VAR LIB_NAMES LIB_PREFIX)
         unset(FOUND_LIB CACHE)
     endforeach()
     # Look for includes
-    set(INC_PATH "${LIB_PREFIX}/include")
-    if(NOT EXISTS "${INC_PATH}")
-        message(FATAL_ERROR "${INC_PATH} does not exist")
+    if(NOT EXISTS "${LIB_PREFIX}/include")
+        message(FATAL_ERROR "${LIB_PREFIX}/include does not exist")
     endif()
     # Set parent vars
     set(${LIB_VAR} ${LIBS} PARENT_SCOPE)
