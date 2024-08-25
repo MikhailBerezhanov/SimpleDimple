@@ -37,7 +37,7 @@ else()
 endif()
 
 # Common function to find libraries
-function(find_libs LIB_VAR INC_PATH_VAR LIB_NAMES LIB_PREFIX)
+function(find_pkg VAR LIB_NAMES LIB_PREFIX)
     set(LIBS "")
     # Look for libs
     foreach(LIB ${LIB_NAMES})
@@ -50,14 +50,18 @@ function(find_libs LIB_VAR INC_PATH_VAR LIB_NAMES LIB_PREFIX)
         message(FATAL_ERROR "${LIB_PREFIX}/include does not exist")
     endif()
     # Set parent vars
-    set(${LIB_VAR} "${LIBS}" PARENT_SCOPE)
-    set(${INC_PATH_VAR} "${LIB_PREFIX}/include" PARENT_SCOPE)
+    set(${VAR}_LIBS "${LIBS}" PARENT_SCOPE)
+    set(${VAR}_INCLUDE_DIR "${LIB_PREFIX}/include" PARENT_SCOPE)
+    set(${VAR}_LIB_DIR "${LIB_PREFIX}/lib" PARENT_SCOPE)
+    if(EXISTS "${LIB_PREFIX}/bin")
+        set(${VAR}_BIN_DIR "${LIB_PREFIX}/bin" PARENT_SCOPE)
+    endif()
 endfunction()
 
-find_libs(__SDL_LIBS __SDL_INCLUDE_DIR "${__SDL_LIB_NAMES}" "${__SDL_PREFIX}")
+find_pkg(__SDL "${__SDL_LIB_NAMES}" "${__SDL_PREFIX}")
 # Not used for now
-#find_libs(__ZLIB_LIBS __ZLIB_INCLUDE_DIR "${__ZLIB_LIB_NAMES}" "${__ZLIB_PREFIX}")
-#find_libs(__LIBZIP_LIBS __LIBZIP_INCLUDE_DIR "${__LIBZIP_LIB_NAMES}" "${__LIBZIP_PREFIX}")
+#find_pkg(__ZLIB "${__ZLIB_LIB_NAMES}" "${__ZLIB_PREFIX}")
+#find_pkg(__LIBZIP "${__LIBZIP_LIB_NAMES}" "${__LIBZIP_PREFIX}")
 
 # A full collection of libs
 set(DEPENDENCY_LIBS 
@@ -80,8 +84,8 @@ set(DEPENDENCY_DEFINITIONS
     ${__SDL_DEFINITIONS}
 )
 
-set(SDL_LIB_DIR "${__SDL_PREFIX}/lib")
-set(SDL_BIN_DIR "${__SDL_PREFIX}/bin")
+set(SDL_LIB_DIR "${__SDL_LIB_DIR}")
+set(SDL_BIN_DIR "${__SDL_BIN_DIR}")
 
 # Exported variables:
 # SDL_USED_VERSION
