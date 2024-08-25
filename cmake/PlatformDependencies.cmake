@@ -50,8 +50,8 @@ function(find_libs LIB_VAR INC_PATH_VAR LIB_NAMES LIB_PREFIX)
         message(FATAL_ERROR "${LIB_PREFIX}/include does not exist")
     endif()
     # Set parent vars
-    set(${LIB_VAR} ${LIBS} PARENT_SCOPE)
-    set(${INC_PATH_VAR} "${INC_PATH}" PARENT_SCOPE)
+    set(${LIB_VAR} "${LIBS}" PARENT_SCOPE)
+    set(${INC_PATH_VAR} "${LIB_PREFIX}/include" PARENT_SCOPE)
 endfunction()
 
 find_libs(__SDL_LIBS __SDL_INCLUDE_DIR "${__SDL_LIB_NAMES}" "${__SDL_PREFIX}")
