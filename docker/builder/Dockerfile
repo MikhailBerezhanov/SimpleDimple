@@ -16,6 +16,7 @@ RUN apt-get update \
     xorg-dev \
     libgl1-mesa-glx \
     libglib2.0-0 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # CMake
@@ -30,21 +31,24 @@ ENV ZLIB_PREFIX_LINUX=/opt/zlib/linux
 ENV ZLIB_PREFIX_WINDOWS=/opt/zlib/windows
 ENV LIBZIP_PREFIX_LINUX=/opt/libzip/linux
 ENV LIBZIP_PREFIX_WINDOWS=/opt/libzip/windows
-ENV FREETYPE_PREFIX_LINUX=/opt/freetype/linux
-ENV FREETYPE_PREFIX_WINDOWS=/opt/freetype/windows
 
 ARG SDL_SRC=/tmp/sdl_sources
 ARG SDL_IMAGE_SRC=/tmp/sdl_image_sources
 ARG SDL_TTF_SRC=/tmp/sdl_ttf_sources
 ARG ZLIB_SRC=/tmp/zlib_sources
 ARG LIBZIP_SRC=/tmp/libzip_sources
-ARG FREETYPE_SRC=/tmp/freetype_sources
 
 ARG SDL_ARCHIVE=/tmp/SDL.tar.gz
 ARG SDL_IMAGE_ARCHIVE=/tmp/SDL_Image.tar.gz
 ARG SDL_TTF_ARCHIVE=/tmp/SDL_TTF.tar.gz
 ARG ZLIB_ARCHIVE=/tmp/ZLIB.tar.gz
 ARG LIBZIP_ARCHIVE=/tmp/LIBZIP.tar.gz
+# SDL_image deps
+ARG LIBJPEG_ARCHIVE=/tmp/LIBJPEG.tar.gz
+ARG LIBTIFF_ARCHIVE=/tmp/LIBTIFF.tar.gz
+ARG SDL_ZLIB_ARCHIVE=/tmp/SDL_ZLIB.tar.gz
+ARG LIBPNG_ARCHIVE=/tmp/LIBPNG.tar.gz
+# SDL_ttf deps
 ARG FREETYPE_ARCHIVE=/tmp/FREETYPE.tar.gz
 
 # SDL lib
@@ -69,18 +73,32 @@ RUN mkdir -p ${SDL_PREFIX_LINUX} && \
 
 # SDL_Image lib
 ADD https://github.com/libsdl-org/SDL_image/archive/refs/tags/release-2.8.2.tar.gz ${SDL_IMAGE_ARCHIVE}
+ADD https://github.com/libsdl-org/zlib/archive/refs/tags/v1.3.1.tar.gz ${SDL_ZLIB_ARCHIVE}
+ADD https://github.com/libsdl-org/libtiff/archive/refs/tags/v4.6.0.tar.gz ${LIBTIFF_ARCHIVE}
+ADD https://github.com/libsdl-org/libpng/archive/refs/tags/v1.6.43.tar.gz ${LIBPNG_ARCHIVE}
+# For some reason ADD doesn't work
+RUN curl -k -o ${LIBJPEG_ARCHIVE} https://www.ijg.org/files/jpegsrc.v9f.tar.gz
+
 RUN mkdir -p ${SDL_PREFIX_LINUX} && \
     mkdir -p ${SDL_PREFIX_WINDOWS} && \
     mkdir -p ${SDL_IMAGE_SRC} && \
     tar -xzf ${SDL_IMAGE_ARCHIVE} -C ${SDL_IMAGE_SRC}/ --strip-components 1 && \
+    tar -xzf ${LIBJPEG_ARCHIVE} -C ${SDL_IMAGE_SRC}/external/jpeg --strip-components 1 && \
+    tar -xzf ${SDL_ZLIB_ARCHIVE} -C ${SDL_IMAGE_SRC}/external/zlib --strip-components 1 && \
+    tar -xzf ${LIBTIFF_ARCHIVE} -C ${SDL_IMAGE_SRC}/external/libtiff --strip-components 1 && \
+    tar -xzf ${LIBPNG_ARCHIVE} -C ${SDL_IMAGE_SRC}/external/libpng --strip-components 1 && \
     rm ${SDL_IMAGE_ARCHIVE} && \
+    rm ${LIBJPEG_ARCHIVE} && \
+    rm ${SDL_ZLIB_ARCHIVE} && \
+    rm ${LIBTIFF_ARCHIVE} && \
+    rm ${LIBPNG_ARCHIVE} && \
     mkdir -p ${SDL_IMAGE_SRC}/build && \
     cd ${SDL_IMAGE_SRC}/build && \
-    cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_LINUX} && \
+    cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_LINUX} -DSDL2IMAGE_VENDORED=true && \
     cmake --build . --config Release && \
     cmake --build . --target install && \
     rm -rf ./* && \
-    cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_WINDOWS} && \
+    cmake .. -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_RC_COMPILER=x86_64-w64-mingw32-windres -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX=${SDL_PREFIX_WINDOWS} -DSDL2IMAGE_VENDORED=true && \
     cmake --build . --config Release && \
     cmake --build . --target install && \
     rm -rf ./* && \
